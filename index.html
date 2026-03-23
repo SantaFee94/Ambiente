@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LumaControl">
+<meta name="theme-color" content="#050508">
+<title>LumaControl</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg:       #050508;
+  --s1:       #0d0d14;
+  --s2:       #13131e;
+  --s3:       #191926;
+  --border:   rgba(255,255,255,0.05);
+  --c:        #00f5ff;   /* cyan neon */
+  --m:        #bf00ff;   /* magenta neon */
+  --g:        #00ff88;   /* green neon */
+  --o:        #ff6b00;   /* orange neon */
+  --text:     #e8e8f0;
+  --muted:    rgba(232,232,240,0.32);
+  --T: env(safe-area-inset-top,0px);
+  --B: env(safe-area-inset-bottom,0px);
+  --glow-c: 0 0 20px rgba(0,245,255,0.4), 0 0 60px rgba(0,245,255,0.15);
+  --glow-m: 0 0 20px rgba(191,0,255,0.4), 0 0 60px rgba(191,0,255,0.15);
+  --glow-g: 0 0 20px rgba(0,255,136,0.4), 0 0 60px rgba(0,255,136,0.15);
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100dvh;
+  overflow-x:hidden;
+  padding-bottom:calc(var(--B) + 80px);
+  user-select:none;-webkit-user-select:none;
+}
+
+/* Animated background */
+body::before {
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,245,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 90%, rgba(191,0,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(0,255,136,0.03) 0%, transparent 60%);
+}
+
+/* Scanline overlay */
+body::after {
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* ═══ HEADER ═══ */
+.hdr {
+  position:sticky;top:0;z-index:100;
+  padding:calc(var(--T) + 14px) 18px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(5,5,8,0.85);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(0,245,255,0.1);
+}
+
+.logo {
+  font-family:'Space Mono',monospace;
+  font-size:18px;font-weight:700;letter-spacing:2px;
+  color:var(--text);
+  text-transform:uppercase;
+}
+.logo span {
+  color:var(--c);
+  text-shadow:var(--glow-c);
+}
+
+.ble-btn {
+  display:flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:6px;
+  border:1px solid rgba(0,245,255,0.2);
+  background:rgba(0,245,255,0.05);
+  color:var(--muted);
+  font-family:'Space Mono',monospace;font-size:10px;
+  cursor:pointer;transition:all .25s;letter-spacing:1px;
+  text-transform:uppercase;
+}
+.ble-btn.on {
+  border-color:rgba(0,255,136,0.5);
+  color:var(--g);
+  background:rgba(0,255,136,0.08);
+  box-shadow:0 0 16px rgba(0,255,136,0.12);
+}
+.ble-dot { width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0; }
+.ble-btn.on .ble-dot { animation:neonblink 2s infinite; }
+@keyframes neonblink {
+  0%,100%{opacity:1;box-shadow:0 0 6px currentColor;}
+  50%{opacity:.2;box-shadow:none;}
+}
+
+/* ═══ CONTENT ═══ */
+.content { position:relative;z-index:1;padding:14px;display:flex;flex-direction:column;gap:12px; }
+.page { display:none;flex-direction:column;gap:12px; }
+.page.active { display:flex; }
+
+/* ═══ CARD ═══ */
+.card {
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+  display:flex;flex-direction:column;gap:16px;
+  position:relative;overflow:hidden;
+}
+.card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,245,255,0.4),rgba(191,0,255,0.4),transparent);
+}
+.card-label {
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--c);opacity:0.6;
+}
+
+/* ═══ POWER ROW ═══ */
+.power-row {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;border-radius:12px;
+  background:var(--s1);
+  border:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.power-row::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,136,0.5),transparent);
+}
+.power-text h2 { font-size:20px;font-weight:700;letter-spacing:-0.3px; }
+.power-text p { font-size:11px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace; }
+
+.toggle {
+  width:56px;height:30px;border-radius:4px;
+  background:var(--s3);border:1px solid var(--border);
+  position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;
+}
+.toggle.on {
+  background:rgba(0,255,136,0.1);
+  border-color:rgba(0,255,136,0.4);
+  box-shadow:0 0 16px rgba(0,255,136,0.15);
+}
+.toggle::after {
+  content:'';position:absolute;top:4px;left:4px;
+  width:20px;height:20px;border-radius:2px;
+  background:rgba(232,232,240,0.3);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+.toggle.on::after { transform:translateX(26px);background:var(--g);box-shadow:0 0 10px var(--g); }
+
+/* ═══ SLIDERS ═══ */
+.sl-wrap { display:flex;flex-direction:column;gap:9px; }
+.sl-hdr { display:flex;justify-content:space-between;align-items:center; }
+.sl-lbl { font-size:13px;font-weight:600; }
+.sl-val { font-family:'Space Mono',monospace;font-size:12px;color:var(--c); }
+
+input[type=range] { -webkit-appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer; }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;width:22px;height:22px;border-radius:4px;
+  background:var(--s1);border:2px solid var(--c);
+  box-shadow:0 0 10px rgba(0,245,255,0.5);
+  cursor:pointer;transition:transform .1s;
+}
+input[type=range]::-webkit-slider-thumb:active { transform:scale(1.2); }
+
+#hue-sl  { background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00); }
+#bri-sl  { background:linear-gradient(to right,#0d0d14,var(--text)); }
+#spd-sl  { background:linear-gradient(to right,#0d0d14,var(--c)); }
+#r-sl    { background:linear-gradient(to right,#0d0d14,#ff3366); }
+#g-sl    { background:linear-gradient(to right,#0d0d14,#00ff88); }
+#b-sl    { background:linear-gradient(to right,#0d0d14,#00f5ff); }
+
+/* ═══ COLOR PREVIEW ═══ */
+.color-prev {
+  height:64px;border-radius:8px;
+  border:1px solid var(--border);
+  transition:background .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.color-prev::after {
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1) 0%,transparent 40%,rgba(0,0,0,0.2) 100%);
+}
+
+/* ═══ TABS ═══ */
+.tabs {
+  display:flex;background:var(--s3);padding:3px;border-radius:8px;
+  border:1px solid var(--border);gap:3px;
+}
+.tab {
+  flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;
+  border-radius:6px;cursor:pointer;color:var(--muted);transition:all .2s;
+  letter-spacing:.5px;text-transform:uppercase;font-family:'Space Mono',monospace;
+}
+.tab.active {
+  background:var(--s1);color:var(--c);
+  border:1px solid rgba(0,245,255,0.2);
+  text-shadow:0 0 10px var(--c);
+}
+.tab-pane { display:none;flex-direction:column;gap:14px; }
+.tab-pane.active { display:flex; }
+
+/* ═══ PALETTE ═══ */
+.palette { display:grid;grid-template-columns:repeat(6,1fr);gap:8px; }
+.swatch {
+  aspect-ratio:1;border-radius:6px;cursor:pointer;
+  border:1px solid rgba(255,255,255,0.08);
+  transition:all .15s;
+}
+.swatch:active { transform:scale(.8);box-shadow:0 0 14px currentColor; }
+
+/* ═══ EFFECTS ═══ */
+.eff-tabs { display:flex;background:var(--s3);padding:3px;border-radius:8px;border:1px solid var(--border);gap:3px; }
+.eff-tab {
+  flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;
+  border-radius:6px;cursor:pointer;color:var(--muted);transition:all .2s;
+  letter-spacing:.5px;text-transform:uppercase;font-family:'Space Mono',monospace;
+}
+.eff-tab.active { background:var(--s1);color:var(--m);border:1px solid rgba(191,0,255,0.2);text-shadow:0 0 10px var(--m); }
+.eff-pane { display:none;flex-direction:column;gap:12px; }
+.eff-pane.active { display:flex; }
+
+.eff-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:7px; }
+.eff-btn {
+  aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;
+  text-align:center;padding:6px 3px;transition:all .2s;
+  letter-spacing:.3px;text-transform:uppercase;font-family:'Space Mono',monospace;
+}
+.eff-btn .ico { font-size:20px;line-height:1; }
+.eff-btn.active {
+  border-color:rgba(0,245,255,0.5);color:var(--c);
+  background:rgba(0,245,255,0.06);
+  box-shadow:0 0 16px rgba(0,245,255,0.15), inset 0 0 16px rgba(0,245,255,0.04);
+  text-shadow:0 0 8px var(--c);
+}
+
+/* ═══ PRESETS ═══ */
+.preset-list { display:flex;flex-direction:column;gap:8px; }
+.preset-item {
+  display:flex;align-items:center;gap:14px;
+  padding:13px 16px;background:var(--s2);
+  border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;transition:all .2s;
+}
+.preset-item:active { transform:scale(.98);border-color:rgba(0,245,255,0.2); }
+.preset-dot { width:38px;height:38px;border-radius:8px;flex-shrink:0; }
+.preset-name { font-size:14px;font-weight:700; }
+.preset-sub  { font-size:10px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace; }
+.preset-arrow { color:var(--muted);font-size:18px;margin-left:auto; }
+
+/* ═══ SETUP STRIPS ═══ */
+.strip-item {
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:14px;margin-bottom:10px;transition:all .2s;
+}
+.strip-item:last-child { margin-bottom:0; }
+.strip-item.active {
+  border-color:rgba(0,245,255,0.25);
+  box-shadow:0 0 20px rgba(0,245,255,0.05);
+}
+
+.strip-hdr { display:flex;align-items:center;gap:10px;margin-bottom:13px; }
+.strip-num {
+  width:30px;height:30px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;
+  background:var(--s3);border:1px solid rgba(0,245,255,0.3);
+  color:var(--c);box-shadow:0 0 10px rgba(0,245,255,0.15);
+}
+.strip-name { font-size:14px;font-weight:700;flex:1; }
+.strip-gpio { font-size:10px;color:var(--c);font-family:'Space Mono',monospace;margin-top:1px;opacity:.7; }
+
+.strip-tog {
+  width:46px;height:26px;border-radius:4px;
+  background:var(--s3);border:1px solid var(--border);
+  position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;
+}
+.strip-tog.on {
+  background:rgba(0,245,255,0.08);
+  border-color:rgba(0,245,255,0.4);
+  box-shadow:0 0 12px rgba(0,245,255,0.1);
+}
+.strip-tog::after {
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:3px;
+  background:rgba(232,232,240,0.25);
+  transition:all .28s cubic-bezier(.34,1.56,.64,1);
+}
+.strip-tog.on::after { transform:translateX(20px);background:var(--c);box-shadow:0 0 8px var(--c); }
+
+.led-lbl { font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px; }
+.led-row { display:flex;align-items:center;gap:6px; }
+.num-in {
+  flex:1;padding:10px;background:var(--bg);
+  border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:'Space Mono',monospace;
+  font-size:16px;font-weight:700;text-align:center;outline:none;min-width:0;
+  transition:border-color .2s,box-shadow .2s;
+}
+.num-in:focus { border-color:rgba(0,245,255,0.4);box-shadow:0 0 12px rgba(0,245,255,0.1); }
+.num-btn {
+  width:38px;height:38px;border-radius:8px;border:1px solid var(--border);
+  background:var(--s2);color:var(--text);font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;
+}
+.num-btn:active { background:var(--c);border-color:var(--c);color:var(--bg);box-shadow:0 0 12px var(--c); }
+
+/* ═══ CALC ═══ */
+.calc-box {
+  background:var(--s3);border:1px solid var(--border);
+  border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;
+}
+.calc-row { display:flex;justify-content:space-between;font-size:12px; }
+.calc-row span:first-child { color:var(--muted); }
+.calc-row span:last-child { font-family:'Space Mono',monospace;color:var(--c); }
+
+/* ═══ SAVE BTN ═══ */
+.btn-save {
+  width:100%;padding:15px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(0,245,255,0.1),rgba(191,0,255,0.1));
+  border:1px solid rgba(0,245,255,0.3);
+  color:var(--c);font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;transition:all .2s;
+  text-shadow:0 0 10px var(--c);
+}
+.btn-save:active { transform:scale(.98);box-shadow:0 0 20px rgba(0,245,255,0.2); }
+
+.saved-hint {
+  display:none;text-align:center;padding:10px;
+  font-size:11px;color:var(--g);
+  font-family:'Space Mono',monospace;letter-spacing:1px;
+  background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.2);
+  border-radius:8px;text-shadow:0 0 8px var(--g);
+}
+.saved-hint.show { display:block; }
+
+/* ═══ INFO ═══ */
+.info-list { display:flex;flex-direction:column; }
+.info-row { display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border); }
+.info-row:last-child { border-bottom:none; }
+.info-k { font-size:12px;color:var(--muted); }
+.info-v { font-family:'Space Mono',monospace;font-size:12px;color:var(--c); }
+
+/* ═══ DANGER ═══ */
+.btn-row { display:flex;gap:8px; }
+.btn-d {
+  flex:1;padding:13px 8px;border-radius:8px;
+  font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.btn-d:active { transform:scale(.95); }
+.btn-restart { background:rgba(255,107,0,0.07);border:1px solid rgba(255,107,0,0.25);color:var(--o); }
+.btn-off     { background:rgba(255,50,100,0.07);border:1px solid rgba(255,50,100,0.25);color:#ff3366; }
+.btn-wide    { width:100%;flex-direction:row;gap:8px;padding:11px 14px;margin-top:7px;font-size:11px; }
+.btn-rapp    { background:rgba(255,50,100,0.05);border:1px solid rgba(255,50,100,0.15);color:rgba(255,51,102,.5); }
+.btn-resp    { background:rgba(255,50,100,0.03);border:1px solid rgba(255,50,100,0.1); color:rgba(255,51,102,.3);margin-top:5px; }
+
+/* ═══ INSTALL BANNER ═══ */
+.install-banner {
+  display:none;align-items:center;gap:12px;padding:13px 16px;
+  background:rgba(0,245,255,0.04);border:1px solid rgba(0,245,255,0.15);border-radius:10px;
+}
+.install-banner.show { display:flex; }
+
+/* ═══ NAV ═══ */
+.nav {
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  display:flex;padding:10px 8px calc(var(--B) + 10px);
+  background:rgba(5,5,8,0.92);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(0,245,255,0.08);
+}
+.nav-btn {
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;color:var(--muted);
+  font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  font-family:'Space Mono',monospace;padding:5px 0;transition:all .2s;
+}
+.nav-btn .ni { font-size:20px; }
+.nav-btn.active { color:var(--c); }
+.nav-btn.active .ni { filter:drop-shadow(0 0 8px var(--c)); }
+
+/* ═══ TOAST ═══ */
+.toast {
+  position:fixed;bottom:calc(var(--B) + 90px);left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--s2);border:1px solid rgba(0,245,255,0.25);
+  color:var(--text);padding:10px 20px;border-radius:8px;
+  font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.5px;
+  opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(0,245,255,0.1);
+}
+.toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="logo">LUMA<span>CTRL</span></div>
+  <button class="ble-btn" id="bleBtn" onclick="toggleBLE()">
+    <div class="ble-dot"></div>
+    <span id="bleText">Connect</span>
+  </button>
+</div>
+
+<div class="content">
+
+  <!-- Install Banner -->
+  <div class="install-banner" id="ib">
+    <div style="font-size:22px">📲</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600">Als App speichern</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace">Teilen → Zum Home-Bildschirm</div>
+    </div>
+    <div style="color:var(--muted);cursor:pointer;font-size:18px;padding:4px" onclick="dismissIB()">×</div>
+  </div>
+
+  <!-- ══ STEUERN ══ -->
+  <div class="page active" id="page-ctrl">
+
+    <div class="power-row">
+      <div class="power-text">
+        <h2>LEDs</h2>
+        <p id="pwrTxt">Online</p>
+      </div>
+      <div class="toggle on" id="pwrTog" onclick="togglePower()"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Helligkeit</div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Intensität</span><span class="sl-val" id="briVal">50%</span></div>
+        <input type="range" id="bri-sl" min="0" max="255" value="128"
+          oninput="onBri(this.value)" onchange="sendBri(this.value)">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Farbe</div>
+      <div class="color-prev" id="colorPrev"></div>
+      <div class="tabs">
+        <div class="tab active" onclick="cTab('hsv')">HSV</div>
+        <div class="tab" onclick="cTab('rgb')">RGB</div>
+        <div class="tab" onclick="cTab('pal')">Palette</div>
+      </div>
+
+      <div class="tab-pane active" id="tp-hsv">
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Farbton</span><span class="sl-val" id="hueVal">0°</span></div>
+          <input type="range" id="hue-sl" min="0" max="255" value="0" oninput="onHSV()" onchange="sendHSV()">
+        </div>
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Sättigung</span><span class="sl-val" id="satVal">100%</span></div>
+          <input type="range" id="sat-sl" min="0" max="255" value="255" oninput="onHSV()" onchange="sendHSV()">
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tp-rgb">
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Rot</span><span class="sl-val" id="rVal">255</span></div>
+          <input type="range" id="r-sl" min="0" max="255" value="255" oninput="onRGB()" onchange="sendRGB()">
+        </div>
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Grün</span><span class="sl-val" id="gVal">0</span></div>
+          <input type="range" id="g-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
+        </div>
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Blau</span><span class="sl-val" id="bVal">0</span></div>
+          <input type="range" id="b-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
+        </div>
+      </div>
+
+      <div class="tab-pane" id="tp-pal">
+        <div class="palette">
+          <div class="swatch" style="background:#ff2244" onclick="pal(255,34,68)"></div>
+          <div class="swatch" style="background:#ff7700" onclick="pal(255,119,0)"></div>
+          <div class="swatch" style="background:#ffee00" onclick="pal(255,238,0)"></div>
+          <div class="swatch" style="background:#00ff88" onclick="pal(0,255,136)"></div>
+          <div class="swatch" style="background:#00f5ff" onclick="pal(0,245,255)"></div>
+          <div class="swatch" style="background:#bf00ff" onclick="pal(191,0,255)"></div>
+          <div class="swatch" style="background:#ff00aa" onclick="pal(255,0,170)"></div>
+          <div class="swatch" style="background:#00ffcc" onclick="pal(0,255,204)"></div>
+          <div class="swatch" style="background:#ffffff" onclick="pal(255,255,255)"></div>
+          <div class="swatch" style="background:#ff4488" onclick="pal(255,68,136)"></div>
+          <div class="swatch" style="background:#44ffbb" onclick="pal(68,255,187)"></div>
+          <div class="swatch" style="background:#ff6600" onclick="pal(255,102,0)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EFFEKTE ══ -->
+  <div class="page" id="page-eff">
+    <div class="card">
+      <div class="card-label">Kategorie</div>
+      <div class="eff-tabs">
+        <div class="eff-tab active" onclick="eTab('wow')">✦ WOW</div>
+        <div class="eff-tab" onclick="eTab('auto')">✦ Auto</div>
+      </div>
+    </div>
+
+    <div class="eff-pane active" id="ep-wow">
+      <div class="card">
+        <div class="card-label">WOW Effekte</div>
+        <div class="eff-grid">
+          <div class="eff-btn active" data-id="0"  onclick="selEff(0)"><div class="ico">⬛</div>Solid</div>
+          <div class="eff-btn" data-id="1"  onclick="selEff(1)"><div class="ico">🌈</div>Rainbow</div>
+          <div class="eff-btn" data-id="2"  onclick="selEff(2)"><div class="ico">💫</div>Breathe</div>
+          <div class="eff-btn" data-id="3"  onclick="selEff(3)"><div class="ico">☄</div>Meteor</div>
+          <div class="eff-btn" data-id="4"  onclick="selEff(4)"><div class="ico">🔥</div>Fire</div>
+          <div class="eff-btn" data-id="5"  onclick="selEff(5)"><div class="ico">✨</div>Twinkle</div>
+          <div class="eff-btn" data-id="6"  onclick="selEff(6)"><div class="ico">🌊</div>Wave</div>
+          <div class="eff-btn" data-id="7"  onclick="selEff(7)"><div class="ico">🎊</div>Confetti</div>
+          <div class="eff-btn" data-id="8"  onclick="selEff(8)"><div class="ico">🚗</div>Larson</div>
+          <div class="eff-btn" data-id="9"  onclick="selEff(9)"><div class="ico">🔮</div>Plasma</div>
+          <div class="eff-btn" data-id="10" onclick="selEff(10)"><div class="ico">🚔</div>Police</div>
+          <div class="eff-btn" data-id="11" onclick="selEff(11)"><div class="ico">🌌</div>Aurora</div>
+          <div class="eff-btn" data-id="12" onclick="selEff(12)"><div class="ico">💚</div>Matrix</div>
+          <div class="eff-btn" data-id="13" onclick="selEff(13)"><div class="ico">📡</div>Noise</div>
+          <div class="eff-btn" data-id="14" onclick="selEff(14)"><div class="ico">🌋</div>Lava</div>
+          <div class="eff-btn" data-id="15" onclick="selEff(15)"><div class="ico">🎆</div>Fireworks</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eff-pane" id="ep-auto">
+      <div class="card">
+        <div class="card-label">Auto Effekte</div>
+        <div class="eff-grid">
+          <div class="eff-btn" data-id="100" onclick="selEff(100)"><div class="ico">⬜</div>Steady</div>
+          <div class="eff-btn" data-id="101" onclick="selEff(101)"><div class="ico">💡</div>Pulse</div>
+          <div class="eff-btn" data-id="102" onclick="selEff(102)"><div class="ico">➡</div>Speed</div>
+          <div class="eff-btn" data-id="103" onclick="selEff(103)"><div class="ico">🔴</div>RPM</div>
+          <div class="eff-btn" data-id="104" onclick="selEff(104)"><div class="ico">📊</div>Tacho</div>
+          <div class="eff-btn" data-id="105" onclick="selEff(105)"><div class="ico">🌃</div>Night</div>
+          <div class="eff-btn" data-id="106" onclick="selEff(106)"><div class="ico">🛣</div>Highway</div>
+          <div class="eff-btn" data-id="107" onclick="selEff(107)"><div class="ico">🛑</div>Brake</div>
+          <div class="eff-btn" data-id="108" onclick="selEff(108)"><div class="ico">🟡</div>Signal</div>
+          <div class="eff-btn" data-id="109" onclick="selEff(109)"><div class="ico">🚗</div>Rider</div>
+          <div class="eff-btn" data-id="110" onclick="selEff(110)"><div class="ico">✨</div>Glow</div>
+          <div class="eff-btn" data-id="111" onclick="selEff(111)"><div class="ico">💧</div>Nitro</div>
+          <div class="eff-btn" data-id="112" onclick="selEff(112)"><div class="ico">🏎</div>Race</div>
+          <div class="eff-btn" data-id="113" onclick="selEff(113)"><div class="ico">🌀</div>Drift</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Geschwindigkeit</div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Speed</span><span class="sl-val" id="spdVal">50%</span></div>
+        <input type="range" id="spd-sl" min="1" max="255" value="128"
+          oninput="onSpd(this.value)" onchange="sendEff()">
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PRESETS ══ -->
+  <div class="page" id="page-pre">
+    <div class="card">
+      <div class="card-label">Schnell-Presets</div>
+      <div class="preset-list">
+        <div class="preset-item" onclick="applyPre('sunset')">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#ff6b35,#f7c948)"></div>
+          <div><div class="preset-name">Sunset Lounge</div><div class="preset-sub">warm orange · breathe</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+        <div class="preset-item" onclick="applyPre('ocean')">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#00f5ff,#0033ff)"></div>
+          <div><div class="preset-name">Deep Ocean</div><div class="preset-sub">aurora blue · slow</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+        <div class="preset-item" onclick="applyPre('party')">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#bf00ff,#00f5ff)"></div>
+          <div><div class="preset-name">Party Mode</div><div class="preset-sub">rainbow · max speed</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+        <div class="preset-item" onclick="applyPre('forest')">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#00ff88,#009966)"></div>
+          <div><div class="preset-name">Forest Night</div><div class="preset-sub">noise green · dim</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+        <div class="preset-item" onclick="applyPre('fire')">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#ff2200,#ff8800)"></div>
+          <div><div class="preset-name">Inferno</div><div class="preset-sub">fire · intense</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+        <div class="preset-item" onclick="applyPre('white')">
+          <div class="preset-dot" style="background:#e8e8f0;border:1px solid rgba(255,255,255,.2)"></div>
+          <div><div class="preset-name">Daylight</div><div class="preset-sub">pure white · full</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+        <div class="preset-item" onclick="applyPre('chaos')">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#bf00ff,#ff0044)"></div>
+          <div><div class="preset-name">Cyber Chaos</div><div class="preset-sub">plasma · fast</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+        <div class="preset-item" onclick="applyPre('car')">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#111122,#00f5ff)"></div>
+          <div><div class="preset-name">Car Ambient</div><div class="preset-sub">police · dim</div></div>
+          <div class="preset-arrow">›</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SETUP ══ -->
+  <div class="page" id="page-setup">
+
+    <div class="card">
+      <div class="card-label">LED Bänder</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;line-height:2;letter-spacing:.5px">
+        BAND 1 → GPIO 4 &nbsp;·&nbsp; BAND 2 → GPIO 5<br>
+        BAND 3 → GPIO 6 &nbsp;·&nbsp; BAND 4 → GPIO 7
+      </div>
+      <div id="stripList"></div>
+      <button class="btn-save" onclick="saveStrips()">▶ Speichern & Übertragen</button>
+      <div class="saved-hint" id="savedHint">✓ GESPEICHERT — ESP NEUSTART</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Stromrechner</div>
+      <div class="calc-box">
+        <div class="calc-row"><span>Aktive Bänder</span><span id="calcS">—</span></div>
+        <div class="calc-row"><span>LEDs gesamt</span><span id="calcL">—</span></div>
+        <div class="calc-row"><span>Max. Strom</span><span id="calcP">—</span></div>
+        <div class="calc-row"><span>Netzteil mind.</span><span id="calcN">—</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Max. Helligkeit</div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Limit</span><span class="sl-val" id="maxBriVal">100%</span></div>
+        <input type="range" id="maxbri-sl" min="1" max="255" value="255"
+          style="background:linear-gradient(to right,var(--s1),var(--c))"
+          oninput="cfg.maxBri=+this.value;document.getElementById('maxBriVal').textContent=Math.round(+this.value/2.55)+'%'">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">System</div>
+      <div class="info-list">
+        <div class="info-row"><span class="info-k">Gerät</span><span class="info-v" id="iDev">—</span></div>
+        <div class="info-row"><span class="info-k">Status</span><span class="info-v" id="iSts">Offline</span></div>
+        <div class="info-row"><span class="info-k">Aktive Bänder</span><span class="info-v" id="iStr">—</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Gerät</div>
+      <div class="btn-row">
+        <button class="btn-d btn-restart" onclick="doRestart()"><span style="font-size:18px">🔄</span>Neustart</button>
+        <button class="btn-d btn-off"     onclick="doOff()"><span style="font-size:18px">💤</span>Off</button>
+      </div>
+      <button class="btn-d btn-wide btn-rapp" onclick="resetApp()">⚠ App-Daten zurücksetzen</button>
+      <button class="btn-d btn-wide btn-resp" onclick="resetESP()">⚠ ESP Flash löschen & Neustart</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Nav -->
+<div class="nav">
+  <div class="nav-btn active" onclick="goPage('ctrl',this)"><span class="ni">🎛</span>Steuern</div>
+  <div class="nav-btn" onclick="goPage('eff',this)"><span class="ni">✨</span>Effekte</div>
+  <div class="nav-btn" onclick="goPage('pre',this)"><span class="ni">⭐</span>Presets</div>
+  <div class="nav-btn" onclick="goPage('setup',this)"><span class="ni">⚙</span>Setup</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:')
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+
+window.addEventListener('load', () => {
+  if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone && !localStorage.getItem('ib_ok'))
+    document.getElementById('ib').classList.add('show');
+});
+function dismissIB() { document.getElementById('ib').classList.remove('show'); localStorage.setItem('ib_ok','1'); }
+
+// ── BLE ────────────────────────────────────────────
+const UUID_SVC  = '12345678-1234-1234-1234-123456789abc';
+const UUID_CTRL = '12345678-1234-1234-1234-123456789001';
+const UUID_INFO = '12345678-1234-1234-1234-123456789002';
+
+let bleDevice=null, writeChar=null, connected=false, autoRC=false;
+let lastSent=0, msgQueue=[], draining=false;
+
+async function connectToDevice(device) {
+  const server  = await device.gatt.connect();
+  const service = await server.getPrimaryService(UUID_SVC);
+  writeChar = await service.getCharacteristic(UUID_CTRL);
+  try {
+    const ic = await service.getCharacteristic(UUID_INFO);
+    await ic.startNotifications();
+    ic.addEventListener('characteristicvaluechanged', e => {
+      try { const d=JSON.parse(new TextDecoder().decode(e.target.value)); if(d.type==='config') applyESPConfig(d); } catch(e) {}
+    });
+    try { const d=JSON.parse(new TextDecoder().decode(await ic.readValue())); if(d.type==='config') applyESPConfig(d); } catch(e) {}
+  } catch(e) {}
+}
+
+async function toggleBLE() {
+  if (connected) { bleDevice?.gatt.disconnect(); return; }
+  if (!navigator.bluetooth) { toast('⚠ Bluefy Browser nötig'); return; }
+  try {
+    toast('Suche Geräte…');
+    bleDevice = await navigator.bluetooth.requestDevice({ acceptAllDevices:true, optionalServices:[UUID_SVC] });
+    bleDevice.addEventListener('gattserverdisconnected', () => { setConn(false); toast('Verbindung getrennt'); });
+    await connectToDevice(bleDevice);
+    setConn(true);
+    toast('✓ ' + (bleDevice.name||bleDevice.id));
+    updateInfo();
+  } catch(e) { toast('✕ ' + (e.message||'Fehler')); }
+}
+
+function setConn(v) {
+  connected = v;
+  document.getElementById('bleBtn').classList.toggle('on', v);
+  document.getElementById('bleText').textContent = v ? 'Online' : 'Connect';
+  document.getElementById('iSts').textContent = v ? 'Online' : 'Offline';
+  if (!v && autoRC && bleDevice) {
+    autoRC = false;
+    toast('Reconnect in 8s…');
+    setTimeout(async () => {
+      if (connected) return;
+      try { await connectToDevice(bleDevice); setConn(true); toast('✓ Reconnect OK'); updateInfo(); }
+      catch(e) { toast('✕ Reconnect fehlgeschlagen'); }
+    }, 8000);
+  }
+}
+
+async function send(json) {
+  if (!connected || !writeChar) return;
+  const now = Date.now();
+  if (now - lastSent < 50) { msgQueue=[json]; if(!draining) drainQ(); return; }
+  lastSent = now;
+  try { await writeChar.writeValueWithoutResponse(new TextEncoder().encode(json)); } catch(e) {}
+}
+async function drainQ() {
+  draining=true;
+  while(msgQueue.length) { await send(msgQueue.shift()); await new Promise(r=>setTimeout(r,60)); }
+  draining=false;
+}
+
+// ── State ──────────────────────────────────────────
+let S = { pwr:true, bri:128, h:0, s:255, r:255, g:0, b:0, eid:0, spd:128 };
+
+function togglePower() {
+  S.pwr = !S.pwr;
+  document.getElementById('pwrTog').classList.toggle('on', S.pwr);
+  document.getElementById('pwrTxt').textContent = S.pwr ? 'Online' : 'Offline';
+  send(JSON.stringify({cmd:'power',val:S.pwr?1:0}));
+}
+
+function onBri(v)   { S.bri=+v; document.getElementById('briVal').textContent=Math.round(v/2.55)+'%'; }
+function sendBri(v) { send(JSON.stringify({cmd:'bri',val:+v})); }
+
+function updatePreview() {
+  const el = document.getElementById('colorPrev');
+  el.style.background = `rgb(${S.r},${S.g},${S.b})`;
+  el.style.boxShadow = `0 0 20px rgba(${S.r},${S.g},${S.b},0.35)`;
+}
+
+function onHSV() {
+  S.h=+document.getElementById('hue-sl').value;
+  S.s=+document.getElementById('sat-sl').value;
+  document.getElementById('hueVal').textContent=Math.round(S.h/255*360)+'°';
+  document.getElementById('satVal').textContent=Math.round(S.s/255*100)+'%';
+  document.getElementById('sat-sl').style.background=`linear-gradient(to right,hsl(${Math.round(S.h/255*360)},0%,50%),hsl(${Math.round(S.h/255*360)},100%,50%))`;
+  const [r,g,b]=hsv2rgb(S.h/255,S.s/255,1); S.r=r;S.g=g;S.b=b; updatePreview();
+}
+function sendHSV() { send(JSON.stringify({cmd:'hsv',h:S.h,s:S.s})); }
+
+function onRGB() {
+  S.r=+document.getElementById('r-sl').value;
+  S.g=+document.getElementById('g-sl').value;
+  S.b=+document.getElementById('b-sl').value;
+  document.getElementById('rVal').textContent=S.r;
+  document.getElementById('gVal').textContent=S.g;
+  document.getElementById('bVal').textContent=S.b;
+  updatePreview();
+}
+function sendRGB() { send(JSON.stringify({cmd:'color',r:S.r,g:S.g,b:S.b})); }
+
+function pal(r,g,b) {
+  S.r=r;S.g=g;S.b=b;
+  document.getElementById('r-sl').value=r;
+  document.getElementById('g-sl').value=g;
+  document.getElementById('b-sl').value=b;
+  updatePreview();
+  send(JSON.stringify({cmd:'color',r,g,b}));
+}
+
+function selEff(id) {
+  S.eid=id;
+  document.querySelectorAll('.eff-btn').forEach(el=>el.classList.toggle('active',+el.dataset.id===id));
+  send(JSON.stringify({cmd:'effect',id,spd:S.spd}));
+}
+function onSpd(v)  { S.spd=+v; document.getElementById('spdVal').textContent=Math.round(v/255*100)+'%'; }
+function sendEff() { send(JSON.stringify({cmd:'effect',id:S.eid,spd:S.spd})); }
+
+const PRESETS = {
+  sunset:{r:255,g:107,b:53, e:2, spd:80, bri:180},
+  ocean: {r:0,  g:120,b:220,e:11,spd:100,bri:150},
+  party: {r:220,g:0,  b:200,e:1, spd:220,bri:255},
+  forest:{r:0,  g:200,b:60, e:13,spd:60, bri:80 },
+  fire:  {r:255,g:80, b:0,  e:4, spd:150,bri:200},
+  white: {r:255,g:230,b:200,e:0, spd:128,bri:255},
+  chaos: {r:191,g:0,  b:255,e:9, spd:200,bri:255},
+  car:   {r:0,  g:120,b:220,e:10,spd:60, bri:80 },
+};
+
+function applyPre(name) {
+  const p=PRESETS[name];
+  S={...S,r:p.r,g:p.g,b:p.b,eid:p.e,spd:p.spd,bri:p.bri};
+  document.getElementById('bri-sl').value=p.bri; onBri(p.bri);
+  document.getElementById('spd-sl').value=p.spd; onSpd(p.spd);
+  updatePreview();
+  send(JSON.stringify({cmd:'bri',val:p.bri}));
+  send(JSON.stringify({cmd:'color',r:p.r,g:p.g,b:p.b}));
+  setTimeout(()=>send(JSON.stringify({cmd:'effect',id:p.e,spd:p.spd})),100);
+  toast('✓ '+name+' geladen');
+}
+
+// ── Strip Config ───────────────────────────────────
+const STRIP_PINS=[4,5,6,7];
+
+(function(){
+  const old=JSON.parse(localStorage.getItem('strips')||'null');
+  if(old && old.length!==4) localStorage.removeItem('strips');
+})();
+
+let cfg = {
+  maxBri: parseInt(localStorage.getItem('maxBri')||'255'),
+  strips: JSON.parse(localStorage.getItem('strips')||JSON.stringify([
+    {id:0,leds:60,on:true},{id:1,leds:0,on:false},
+    {id:2,leds:0,on:false},{id:3,leds:0,on:false}
+  ]))
+};
+while(cfg.strips.length<4) cfg.strips.push({id:cfg.strips.length,leds:0,on:false});
+cfg.strips=cfg.strips.slice(0,4);
+
+function buildStrips() {
+  const c=document.getElementById('stripList');
+  c.innerHTML='';
+  cfg.strips.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='strip-item'+(s.on?' active':'');
+    el.id='si'+i;
+    el.innerHTML=`
+      <div class="strip-hdr">
+        <div class="strip-num">${i+1}</div>
+        <div style="flex:1">
+          <div class="strip-name">Band ${i+1}</div>
+          <div class="strip-gpio">GPIO ${STRIP_PINS[i]}</div>
+        </div>
+        <div class="strip-tog ${s.on?'on':''}" id="tog${i}" onclick="togStrip(${i})"></div>
+      </div>
+      <div id="sf${i}" style="${s.on?'':'opacity:.3;pointer-events:none'}">
+        <div class="led-lbl">Anzahl LEDs</div>
+        <div class="led-row">
+          <button class="num-btn" onclick="chLeds(${i},-10)">−−</button>
+          <button class="num-btn" onclick="chLeds(${i},-1)">−</button>
+          <input type="number" class="num-in" id="li${i}" value="${s.leds}" min="0" max="300"
+            onchange="cfg.strips[${i}].leds=Math.max(0,Math.min(300,+this.value));calcPwr()">
+          <button class="num-btn" onclick="chLeds(${i},1)">+</button>
+          <button class="num-btn" onclick="chLeds(${i},10)">++</button>
+        </div>
+      </div>`;
+    c.appendChild(el);
+  });
+  calcPwr();
+}
+
+function togStrip(i) {
+  cfg.strips[i].on=!cfg.strips[i].on;
+  document.getElementById('tog'+i).classList.toggle('on',cfg.strips[i].on);
+  document.getElementById('si'+i).classList.toggle('active',cfg.strips[i].on);
+  const f=document.getElementById('sf'+i);
+  f.style.opacity=cfg.strips[i].on?'1':'.3';
+  f.style.pointerEvents=cfg.strips[i].on?'auto':'none';
+  calcPwr();
+}
+
+function chLeds(i,d) {
+  cfg.strips[i].leds=Math.max(0,Math.min(300,cfg.strips[i].leds+d));
+  document.getElementById('li'+i).value=cfg.strips[i].leds;
+  calcPwr();
+}
+
+function calcPwr() {
+  const act=cfg.strips.filter(s=>s.on&&s.leds>0);
+  const tot=act.reduce((a,s)=>a+s.leds,0);
+  const amps=tot*60/1000;
+  const rec=Math.ceil(amps*1.2*10)/10;
+  document.getElementById('calcS').textContent=act.length+' Bänder';
+  document.getElementById('calcL').textContent=tot+' LEDs';
+  document.getElementById('calcP').textContent=amps.toFixed(1)+' A';
+  document.getElementById('calcN').textContent='≥ '+rec.toFixed(1)+' A / 5V';
+}
+
+function saveStrips() {
+  cfg.strips.forEach((_,i)=>{
+    const el=document.getElementById('li'+i);
+    if(el) cfg.strips[i].leds=parseInt(el.value)||0;
+  });
+  cfg.maxBri=parseInt(document.getElementById('maxbri-sl').value);
+  localStorage.setItem('strips',JSON.stringify(cfg.strips));
+  localStorage.setItem('maxBri',cfg.maxBri);
+  const j='['+cfg.strips.map((s,i)=>`{"id":${i},"leds":${s.leds},"on":${s.on}}`).join(',')+']';
+  send(`{"cmd":"strips","strips":${j},"maxBri":${cfg.maxBri}}`);
+  document.getElementById('savedHint').classList.add('show');
+  setTimeout(()=>document.getElementById('savedHint').classList.remove('show'),5000);
+  if(connected){autoRC=true;toast('Gesendet — ESP Neustart…');setTimeout(()=>setConn(false),1500);}
+  else toast('✓ Lokal gespeichert');
+}
+
+function applyESPConfig(data) {
+  if(!data.strips) return;
+  data.strips.forEach(s=>{if(s.id>=0&&s.id<4){cfg.strips[s.id].leds=s.leds;cfg.strips[s.id].on=s.on;}});
+  buildStrips();
+  const act=cfg.strips.filter(s=>s.on&&s.leds>0).length;
+  document.getElementById('iStr').textContent=act+' aktiv';
+  toast('ESP: '+act+' Bänder');
+}
+
+function updateInfo() {
+  document.getElementById('iDev').textContent=bleDevice?(bleDevice.name||bleDevice.id||'—'):'—';
+  const act=cfg.strips.filter(s=>s.on&&s.leds>0).length;
+  document.getElementById('iStr').textContent=act>0?act+' aktiv':'—';
+}
+
+function doRestart() {
+  if(!connected){toast('Nicht verbunden');return;}
+  autoRC=true; send(JSON.stringify({cmd:'restart'}));
+  toast('🔄 Neustart…'); setTimeout(()=>setConn(false),1000);
+}
+function doOff() {
+  if(!connected){toast('Nicht verbunden');return;}
+  send(JSON.stringify({cmd:'off'})); toast('💤 Ausschalten…');
+}
+function resetApp() {
+  localStorage.removeItem('strips'); localStorage.removeItem('maxBri');
+  cfg.strips=[{id:0,leds:60,on:true},{id:1,leds:0,on:false},{id:2,leds:0,on:false},{id:3,leds:0,on:false}];
+  cfg.maxBri=255; buildStrips();
+  document.getElementById('maxbri-sl').value=255;
+  document.getElementById('maxBriVal').textContent='100%';
+  toast('✓ App zurückgesetzt');
+}
+function resetESP() {
+  if(!connected){toast('Nicht verbunden');return;}
+  autoRC=true; send(JSON.stringify({cmd:'resetflash'}));
+  toast('⚠ ESP Flash löschen…'); setTimeout(()=>setConn(false),1500);
+}
+
+// ── UI ─────────────────────────────────────────────
+function cTab(name) {
+  ['hsv','rgb','pal'].forEach(n=>{
+    document.querySelector(`.tabs .tab[onclick="cTab('${n}')"]`).classList.toggle('active',n===name);
+    document.getElementById('tp-'+n).classList.toggle('active',n===name);
+  });
+}
+function eTab(name) {
+  ['wow','auto'].forEach(n=>{
+    document.querySelector(`.eff-tabs .eff-tab[onclick="eTab('${n}')"]`).classList.toggle('active',n===name);
+    document.getElementById('ep-'+n).classList.toggle('active',n===name);
+  });
+}
+function goPage(name,el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  el.classList.add('active');
+}
+
+let toastT;
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function hsv2rgb(h,s,v) {
+  const i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);
+  let r,g,b;
+  switch(i%6){case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;case 5:r=v;g=p;b=q;break;}
+  return[Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+}
+
+// Init
+updatePreview(); onHSV();
+document.getElementById('maxbri-sl').value=cfg.maxBri;
+document.getElementById('maxBriVal').textContent=Math.round(cfg.maxBri/2.55)+'%';
+buildStrips();
+</script>
+</body>
+</html>
