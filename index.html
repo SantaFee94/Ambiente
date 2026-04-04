@@ -346,6 +346,26 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
     </div>
 
     <button class="btn-save" onclick="sendBlinkConfig()">▶ Blinker Einstellungen speichern</button>
+
+    <div class="card">
+      <div class="lbl">Blinker Test</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">Simuliert den Blinker für 5 Sekunden — ohne echtes Fahrzeugsignal.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('left')">
+          ◄ Links testen
+        </button>
+        <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('right')">
+          Rechts ► testen
+        </button>
+      </div>
+      <button class="btn-d btn-wide" style="background:rgba(255,204,0,.05);border:1px solid rgba(255,204,0,.2);color:var(--warn);flex-direction:row;gap:8px;font-size:12px;opacity:.7" onclick="blinkTest('both')">
+        ◄► Beide testen (Warnblinker)
+      </button>
+      <button class="btn-d btn-wide btn-danger-full" onclick="blinkTestStop()" id="blinkStopBtn" style="display:none">
+        ■ Test stoppen
+      </button>
+      <div id="blinkTestTimer" style="display:none;text-align:center;font-family:'Space Mono',monospace;font-size:13px;color:var(--warn);text-shadow:0 0 8px var(--warn)"></div>
+    </div>
   </div>
 
   <!-- ══ PRESETS ══ -->
@@ -612,6 +632,58 @@ function setBlinkMode(n) {
   blinkCfg.mode = n;
   document.getElementById('bm0').classList.toggle('active', n===0);
   document.getElementById('bm1').classList.toggle('active', n===1);
+}
+
+let blinkTestInterval = null;
+
+function blinkTest(side) {
+  if (!connected) { toast('Nicht verbunden'); return; }
+  const duration = 5000;
+  const left  = side === 'left'  || side === 'both' ? 1 : 0;
+  const right = side === 'right' || side === 'both' ? 1 : 0;
+
+  send(JSON.stringify({ cmd:'blinktest', left, right, duration }));
+
+  // UI
+  document.getElementById('blinkStopBtn').style.display = '';
+  document.getElementById('blinkTestTimer').style.display = '';
+
+  const label = side === 'both' ? '◄► Warnblinker' : side === 'left' ? '◄ Links' : 'Rechts ►';
+  toast('🟡 Test: ' + label + ' — 5s');
+
+  // Countdown
+  let remaining = duration / 1000;
+  clearInterval(blinkTestInterval);
+  const timerEl = document.getElementById('blinkTestTimer');
+  timerEl.textContent = '⏱ Test läuft: ' + remaining + 's';
+  blinkTestInterval = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(blinkTestInterval);
+      document.getElementById('blinkStopBtn').style.display = 'none';
+      timerEl.style.display = 'none';
+      timerEl.textContent = '';
+      // Blinker-Status Badges zurücksetzen
+      document.getElementById('blinkL').classList.remove('active-left');
+      document.getElementById('blinkR').classList.remove('active-right');
+    } else {
+      timerEl.textContent = '⏱ Test läuft: ' + remaining + 's';
+    }
+  }, 1000);
+
+  // Badges live anzeigen
+  if (left)  document.getElementById('blinkL').classList.add('active-left');
+  if (right) document.getElementById('blinkR').classList.add('active-right');
+}
+
+function blinkTestStop() {
+  send(JSON.stringify({ cmd:'blinktestoff' }));
+  clearInterval(blinkTestInterval);
+  document.getElementById('blinkStopBtn').style.display = 'none';
+  document.getElementById('blinkTestTimer').style.display = 'none';
+  document.getElementById('blinkL').classList.remove('active-left');
+  document.getElementById('blinkR').classList.remove('active-right');
+  toast('■ Test gestoppt');
 }
 
 function sendBlinkConfig() {
