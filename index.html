@@ -18,141 +18,69 @@
   --s3:    #191926;
   --b:     rgba(255,255,255,0.05);
   --c:     #00f5ff;
-  --m:     #bf00ff;
   --g:     #00ff88;
-  --o:     #ff6b00;
   --warn:  #ffcc00;
   --text:  #e8e8f0;
   --muted: rgba(232,232,240,0.32);
-  --T: env(safe-area-inset-top,0px);
-  --B: env(safe-area-inset-bottom,0px);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;padding-bottom:calc(var(--B) + 80px);user-select:none;-webkit-user-select:none;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(0,245,255,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 90%,rgba(191,0,255,.07) 0%,transparent 60%);}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);}
 
-/* HEADER */
-.hdr{position:sticky;top:0;z-index:100;padding:calc(var(--T) + 14px) 18px 14px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,8,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,245,255,.1);}
-.logo{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
-.logo span{color:var(--c);text-shadow:0 0 16px var(--c);}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100dvh;
+  padding-bottom:90px;
+  overflow-x:hidden;
+}
 
-.ble-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:6px;border:1px solid rgba(0,245,255,.2);background:rgba(0,245,255,.05);color:var(--muted);font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;transition:all .25s;letter-spacing:1px;text-transform:uppercase;}
-.ble-btn.on{border-color:rgba(0,255,136,.5);color:var(--g);background:rgba(0,255,136,.08);box-shadow:0 0 16px rgba(0,255,136,.12);}
-.ble-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
-.ble-btn.on .ble-dot{animation:nblink 2s infinite;}
-@keyframes nblink{0%,100%{opacity:1;box-shadow:0 0 6px currentColor;}50%{opacity:.2;box-shadow:none;}}
+.hdr {
+  position:sticky; top:0; z-index:100;
+  padding:20px 18px 14px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(5,5,8,0.95); backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(0,245,255,0.1);
+}
+.logo { font-family:'Space Mono',monospace; font-size:19px; font-weight:700; letter-spacing:2px; }
+.logo span { color:var(--c); }
 
-/* CONTENT */
-.content{position:relative;z-index:1;padding:14px;display:flex;flex-direction:column;gap:12px;}
-.page{display:none;flex-direction:column;gap:12px;}
-.page.active{display:flex;}
+.ble-btn {
+  display:flex; align-items:center; gap:8px;
+  padding:9px 18px; border-radius:8px;
+  border:1px solid rgba(0,245,255,0.3);
+  background:rgba(0,245,255,0.08);
+  color:var(--muted); font-size:11px; font-family:'Space Mono',monospace;
+  cursor:pointer; transition:all .3s;
+}
+.ble-btn.on { border-color:var(--g); color:var(--g); background:rgba(0,255,136,0.1); }
+.ble-dot { width:7px; height:7px; border-radius:50%; background:currentColor; animation:blink 2s infinite; }
+@keyframes blink { 50% { opacity:0.3; } }
 
-/* CARD */
-.card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.4),rgba(191,0,255,.4),transparent);}
-.lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--c);opacity:.65;}
+/* Rest der Styles (vereinfacht) */
+.content { padding:16px; display:flex; flex-direction:column; gap:14px; }
+.card { background:var(--s1); border:1px solid var(--b); border-radius:14px; padding:18px; }
+.lbl { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--c); margin-bottom:8px; text-transform:uppercase; }
 
-/* POWER */
-.power-row{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-radius:12px;background:var(--s1);border:1px solid var(--b);position:relative;overflow:hidden;}
-.power-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,136,.5),transparent);}
-.power-text h2{font-size:20px;font-weight:700;}
-.power-text p{font-size:11px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace;}
+.eff-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.eff-btn {
+  aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:var(--s2); border:1px solid var(--b); border-radius:12px; cursor:pointer; font-size:10px;
+  transition:all .2s;
+}
+.eff-btn.active { border-color:var(--c); color:var(--c); background:rgba(0,245,255,0.1); }
 
-.tgl{width:56px;height:30px;border-radius:4px;background:var(--s3);border:1px solid var(--b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
-.tgl.on{background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.4);box-shadow:0 0 16px rgba(0,255,136,.15);}
-.tgl::after{content:'';position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:2px;background:rgba(232,232,240,.3);transition:all .3s cubic-bezier(.34,1.56,.64,1);}
-.tgl.on::after{transform:translateX(26px);background:var(--g);box-shadow:0 0 10px var(--g);}
-
-/* SLIDERS */
-.sl-wrap{display:flex;flex-direction:column;gap:9px;}
-.sl-hdr{display:flex;justify-content:space-between;align-items:center;}
-.sl-lbl{font-size:13px;font-weight:600;}
-.sl-val{font-family:'Space Mono',monospace;font-size:12px;color:var(--c);}
-input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:4px;background:var(--s1);border:2px solid var(--c);box-shadow:0 0 10px rgba(0,245,255,.5);cursor:pointer;transition:transform .1s;}
-input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
-#hue-sl{background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);}
-#bri-sl{background:linear-gradient(to right,#0d0d14,var(--text));}
-#spd-sl{background:linear-gradient(to right,#0d0d14,var(--c));}
-
-/* COLOR PREVIEW */
-.color-prev{height:64px;border-radius:8px;border:1px solid var(--b);transition:background .2s,box-shadow .2s;position:relative;overflow:hidden;}
-.color-prev::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,transparent 40%,rgba(0,0,0,.2) 100%);}
-
-/* TABS */
-.tabs{display:flex;background:var(--s3);padding:3px;border-radius:8px;border:1px solid var(--b);gap:3px;}
-.tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;color:var(--muted);transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:'Space Mono',monospace;}
-.tab.active{background:var(--s1);color:var(--c);border:1px solid rgba(0,245,255,.2);text-shadow:0 0 10px var(--c);}
-.tab-pane{display:none;flex-direction:column;gap:14px;}
-.tab-pane.active{display:flex;}
-
-/* PALETTE */
-.palette{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
-.swatch{aspect-ratio:1;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.08);transition:all .15s;}
-.swatch:active{transform:scale(.8);}
-
-/* EFFECTS */
-.eff-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
-.eff-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:var(--s2);border:1px solid var(--b);border-radius:10px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;text-align:center;padding:6px 3px;transition:all .2s;letter-spacing:.3px;text-transform:uppercase;font-family:'Space Mono',monospace;}
-.eff-btn .ico{font-size:20px;line-height:1;}
-.eff-btn.active{border-color:rgba(0,245,255,.5);color:var(--c);background:rgba(0,245,255,.06);box-shadow:0 0 16px rgba(0,245,255,.15),inset 0 0 16px rgba(0,245,255,.04);text-shadow:0 0 8px var(--c);}
-
-/* BLINKER STATUS */
-.blink-status{display:flex;gap:8px;}
-.blink-badge{flex:1;padding:10px;border-radius:8px;text-align:center;border:1px solid var(--b);background:var(--s2);font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);transition:all .3s;letter-spacing:1px;text-transform:uppercase;}
-.blink-badge.active-left{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(--warn);}
-.blink-badge.active-right{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(--warn);}
-
-/* BLINKER CONFIG */
-.blink-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.blink-option{padding:11px;border-radius:8px;border:1px solid var(--b);background:var(--s2);cursor:pointer;text-align:center;transition:all .2s;font-size:12px;font-weight:600;}
-.blink-option.active{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.07);text-shadow:0 0 8px var(--warn);}
-.blink-option:active{transform:scale(.97);}
-
-/* SETUP STRIPS */
-.strip-item{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;transition:all .2s;}
-.strip-item:last-child{margin-bottom:0;}
-.strip-item.active{border-color:rgba(0,245,255,.25);box-shadow:0 0 20px rgba(0,245,255,.05);}
-.strip-hdr{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
-.strip-num{width:30px;height:30px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;background:var(--s3);border:1px solid rgba(0,245,255,.3);color:var(--c);box-shadow:0 0 10px rgba(0,245,255,.15);}
-.strip-name{font-size:14px;font-weight:700;flex:1;}
-.strip-gpio{font-size:10px;color:var(--c);font-family:'Space Mono',monospace;margin-top:1px;opacity:.7;}
-.strip-tog{width:46px;height:26px;border-radius:4px;background:var(--s3);border:1px solid var(--b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
-.strip-tog.on{background:rgba(0,245,255,.08);border-color:rgba(0,245,255,.4);box-shadow:0 0 12px rgba(0,245,255,.1);}
-.strip-tog::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:3px;background:rgba(232,232,240,.25);transition:all .28s cubic-bezier(.34,1.56,.64,1);}
-.strip-tog.on::after{transform:translateX(20px);background:var(--c);box-shadow:0 0 8px var(--c);}
-
-.led-lbl{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-.led-row{display:flex;align-items:center;gap:6px;}
-.num-in{flex:1;padding:10px;background:var(--bg);border:1px solid var(--b);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:16px;font-weight:700;text-align:center;outline:none;min-width:0;transition:border-color .2s,box-shadow .2s;}
-.num-in:focus{border-color:rgba(0,245,255,.4);box-shadow:0 0 12px rgba(0,245,255,.1);}
-.num-btn{width:38px;height:38px;border-radius:8px;border:1px solid var(--b);background:var(--s2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
-.num-btn:active{background:var(--c);border-color:var(--c);color:var(--bg);box-shadow:0 0 12px var(--c);}
-
-/* CALC */
-.calc-box{background:var(--s3);border:1px solid var(--b);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
-.calc-row{display:flex;justify-content:space-between;font-size:12px;}
-.calc-row span:first-child{color:var(--muted);}
-.calc-row span:last-child{font-family:'Space Mono',monospace;color:var(--c);}
-
-/* SAVE BTN */
-.btn-save{width:100%;padding:15px;border-radius:8px;background:linear-gradient(135deg,rgba(0,245,255,.1),rgba(191,0,255,.1));border:1px solid rgba(0,245,255,.3);color:var(--c);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;text-shadow:0 0 10px var(--c);}
-.btn-save:active{transform:scale(.98);box-shadow:0 0 20px rgba(0,245,255,.2);}
-
-.saved-hint{display:none;text-align:center;padding:10px;font-size:11px;color:var(--g);font-family:'Space Mono',monospace;letter-spacing:1px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:8px;text-shadow:0 0 8px var(--g);}
-.saved-hint.show{display:block;}
-
-/* NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;padding:10px 8px calc(var(--B) + 10px);background:rgba(5,5,8,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(0,245,255,.08);}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;font-family:'Space Mono',monospace;padding:5px 0;transition:all .2s;}
-.nav-btn .ni{font-size:20px;}
-.nav-btn.active{color:var(--c);}
-.nav-btn.active .ni{filter:drop-shadow(0 0 8px var(--c));}
-
-/* TOAST */
-.toast{position:fixed;bottom:calc(var(--B) + 90px);left:50%;transform:translateX(-50%) translateY(12px);background:var(--s2);border:1px solid rgba(0,245,255,.25);color:var(--text);padding:10px 20px;border-radius:8px;font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.5px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(0,245,255,.1);}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.btn-save {
+  width:100%; padding:16px; margin-top:10px; border-radius:10px;
+  background:linear-gradient(135deg,#00f5ff,#bf00ff);
+  color:#000; font-weight:700; font-size:14px; cursor:pointer;
+}
+.toast {
+  position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+  background:#1a1a24; color:#fff; padding:12px 24px; border-radius:8px;
+  font-family:'Space Mono',monospace; font-size:13px; opacity:0; transition:all .3s;
+  z-index:999;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(-10px); }
 </style>
 </head>
 <body>
@@ -161,231 +89,114 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
   <div class="logo">LUMA<span>CTRL</span></div>
   <button class="ble-btn" id="bleBtn" onclick="toggleBLE()">
     <div class="ble-dot"></div>
-    <span id="bleText">Connect</span>
+    <span id="bleText">CONNECT</span>
   </button>
 </div>
 
 <div class="content">
 
-  <!-- STEUERN -->
-  <div class="page active" id="page-ctrl">
-    <div class="power-row">
-      <div class="power-text"><h2>LEDs</h2><p id="pwrTxt">Online</p></div>
-      <div class="tgl on" id="pwrTog" onclick="togglePower()"></div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Helligkeit</div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Intensität</span><span class="sl-val" id="briVal">63%</span></div>
-        <input type="range" id="bri-sl" min="1" max="255" value="160" oninput="onBri(this.value)" onchange="sendBri(this.value)">
+  <!-- Steuern -->
+  <div class="card">
+    <div class="lbl">Power</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <h2 id="powerStatus">LEDs AUS</h2>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Farbe</div>
-      <div class="color-prev" id="colorPrev"></div>
-      <div class="tabs">
-        <div class="tab active" onclick="cTab('hsv')">HSV</div>
-        <div class="tab" onclick="cTab('rgb')">RGB</div>
-        <div class="tab" onclick="cTab('pal')">Palette</div>
-      </div>
-      <!-- HSV, RGB, Palette Tabs bleiben gleich -->
-      <div class="tab-pane active" id="tp-hsv">
-        <div class="sl-wrap">
-          <div class="sl-hdr"><span class="sl-lbl">Farbton</span><span class="sl-val" id="hueVal">0°</span></div>
-          <input type="range" id="hue-sl" min="0" max="255" value="25" oninput="onHSV()" onchange="sendHSV()">
-        </div>
-        <div class="sl-wrap">
-          <div class="sl-hdr"><span class="sl-lbl">Sättigung</span><span class="sl-val" id="satVal">94%</span></div>
-          <input type="range" id="sat-sl" min="0" max="255" value="240" oninput="onHSV()" onchange="sendHSV()">
-        </div>
-      </div>
-      <!-- RGB und Palette können später erweitert werden -->
-    </div>
-
-    <!-- Effekte -->
-    <div class="card">
-      <div class="lbl">Effekt</div>
-      <div class="eff-grid">
-        <div class="eff-btn active" data-id="0" onclick="selEff(0)"><div class="ico">⬛</div>Solid</div>
-        <div class="eff-btn" data-id="1" onclick="selEff(1)"><div class="ico">🌈</div>Rainbow</div>
-        <div class="eff-btn" data-id="2" onclick="selEff(2)"><div class="ico">🚨</div>Police</div>
-        <div class="eff-btn" data-id="3" onclick="selEff(3)"><div class="ico">🏎️</div>Knight Rider</div>
-        <div class="eff-btn" data-id="4" onclick="selEff(4)"><div class="ico">🎆</div>Fireworks</div>
-        <div class="eff-btn" data-id="5" onclick="selEff(5)"><div class="ico">❤️</div>Heartbeat</div>
-        <div class="eff-btn" data-id="6" onclick="selEff(6)"><div class="ico">✨</div>Theater Chase</div>
-        <div class="eff-btn" data-id="7" onclick="selEff(7)"><div class="ico">☄️</div>Meteor</div>
-      </div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Speed</span><span class="sl-val" id="spdVal">55%</span></div>
-        <input type="range" id="spd-sl" min="1" max="255" value="140" oninput="onSpd(this.value)" onchange="sendEff()">
-      </div>
-    </div>
-
-    <!-- Blinker Status -->
-    <div class="card">
-      <div class="lbl">Blinker Status</div>
-      <div class="blink-status">
-        <div class="blink-badge" id="blinkL">◄ Links</div>
-        <div class="blink-badge" id="blinkR">Rechts ►</div>
+      <div onclick="togglePower()" style="width:60px;height:34px;background:#222;border-radius:20px;position:relative;cursor:pointer" id="powerToggle">
+        <div id="powerKnob" style="position:absolute;top:3px;left:3px;width:28px;height:28px;background:#555;border-radius:50%;transition:all 0.3s"></div>
       </div>
     </div>
   </div>
 
-  <!-- BLINKER SEITE -->
-  <div class="page" id="page-blink">
-    <div class="card">
-      <div class="lbl">Blinker Konfiguration</div>
-      <div class="blink-grid">
-        <div class="blink-option active" id="bm0" onclick="setBlinkMode(0)">Normal (Ende)</div>
-        <div class="blink-option" id="bm1" onclick="setBlinkMode(1)">Lauflicht (Mitte → Außen)</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Blinker Länge</div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Bereich in LEDs</span><span class="sl-val" id="blinkLenVal">12</span></div>
-        <input type="range" id="blink-len-sl" min="4" max="40" value="12" oninput="onBlinkLen(this.value)">
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Blinker Band</div>
-      <div class="blink-grid">
-        <div class="blink-option active" id="bb0" onclick="setBlinkBand(0)">Alle Bänder</div>
-        <div class="blink-option" id="bb1" onclick="setBlinkBand(1)">Band 1</div>
-        <div class="blink-option" id="bb2" onclick="setBlinkBand(2)">Band 2</div>
-        <div class="blink-option" id="bb3" onclick="setBlinkBand(3)">Band 3</div>
-        <div class="blink-option" id="bb4" onclick="setBlinkBand(4)">Band 4</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Hintergrund Dimmen</div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Dim-Faktor</span><span class="sl-val" id="blinkDimVal">16%</span></div>
-        <input type="range" id="blink-dim-sl" min="0" max="255" value="40" oninput="onBlinkDim(this.value)">
-      </div>
-    </div>
-
-    <button class="btn-save" onclick="sendBlinkConfig()">Speichern & Senden</button>
+  <div class="card">
+    <div class="lbl">Helligkeit</div>
+    <input type="range" id="bri" min="10" max="255" value="160" style="width:100%" oninput="sendBri(this.value)">
   </div>
 
-  <!-- PRESETS & SETUP Seiten bleiben gleich (kann später erweitert werden) -->
-</div>
+  <div class="card">
+    <div class="lbl">Effekt</div>
+    <div class="eff-grid">
+      <div class="eff-btn active" data-id="0" onclick="selEff(0)">Solid</div>
+      <div class="eff-btn" data-id="1" onclick="selEff(1)">Rainbow</div>
+      <div class="eff-btn" data-id="2" onclick="selEff(2)">Police</div>
+      <div class="eff-btn" data-id="3" onclick="selEff(3)">Knight</div>
+      <div class="eff-btn" data-id="4" onclick="selEff(4)">Fireworks</div>
+      <div class="eff-btn" data-id="5" onclick="selEff(5)">Heartbeat</div>
+      <div class="eff-btn" data-id="6" onclick="selEff(6)">Chase</div>
+      <div class="eff-btn" data-id="7" onclick="selEff(7)">Meteor</div>
+    </div>
+  </div>
 
-<!-- NAV -->
-<div class="nav">
-  <div class="nav-btn active" onclick="goPage('ctrl',this)"><span class="ni">🎛</span>Steuern</div>
-  <div class="nav-btn" onclick="goPage('blink',this)"><span class="ni">🚦</span>Blinker</div>
-  <div class="nav-btn" onclick="goPage('pre',this)"><span class="ni">⭐</span>Presets</div>
-  <div class="nav-btn" onclick="goPage('setup',this)"><span class="ni">⚙</span>Setup</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// === Grundlegende Variablen ===
-let connected = false;
-let writeChar = null;
-let bleDevice = null;
+// ================== BLE Verbindung ==================
+let device = null;
+let writeCharacteristic = null;
+let isConnected = false;
 
-const S = {
-  pwr: true,
-  bri: 160,
-  h: 25,
-  s: 240,
-  r: 220, g: 60, b: 0,
-  eid: 0,
-  spd: 140
-};
+const SERVICE_UUID = "12345678-1234-1234-1234-123456789abc";
+const CTRL_UUID    = "12345678-1234-1234-1234-123456789001";
 
-let blinkCfg = {
-  length: 12,
-  band: 0,
-  mode: 0,        // 0 = Normal, 1 = Lauflicht
-  dim: 40
-};
-
-// === BLE Funktionen (kurz gehalten) ===
 async function toggleBLE() {
-  // ... (bleib gleich wie vorher)
-  toast('BLE-Funktion noch nicht vollständig implementiert – bitte später');
+  const btn = document.getElementById('bleBtn');
+  const txt = document.getElementById('bleText');
+
+  if (isConnected) {
+    if (device) device.gatt.disconnect();
+    return;
+  }
+
+  try {
+    txt.textContent = "Suche...";
+    device = await navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: [SERVICE_UUID]
+    });
+
+    const server = await device.gatt.connect();
+    const service = await server.getPrimaryService(SERVICE_UUID);
+    writeCharacteristic = await service.getCharacteristic(CTRL_UUID);
+
+    isConnected = true;
+    btn.classList.add('on');
+    txt.textContent = "VERBUNDEN";
+
+    toast("✅ Erfolgreich verbunden mit LumaControl");
+
+  } catch (err) {
+    txt.textContent = "CONNECT";
+    toast("❌ Verbindung fehlgeschlagen");
+    console.error(err);
+  }
 }
 
-// === UI Funktionen ===
-function onBri(v) {
-  S.bri = +v;
-  document.getElementById('briVal').textContent = Math.round(v/2.55) + '%';
+// ================== Senden ==================
+function send(obj) {
+  if (!writeCharacteristic || !isConnected) {
+    toast("❌ Nicht verbunden");
+    return;
+  }
+  const str = JSON.stringify(obj);
+  writeCharacteristic.writeValueWithoutResponse(new TextEncoder().encode(str));
 }
 
-function sendBri(v) {
-  send({cmd:'bri', val:+v});
+// ================== Einfache Steuerung ==================
+function togglePower() {
+  send({ cmd: "power", val: 1 });   // Toggle wird später erweitert
+  toast("Power-Befehl gesendet");
+}
+
+function sendBri(val) {
+  send({ cmd: "bri", val: parseInt(val) });
 }
 
 function selEff(id) {
-  S.eid = id;
-  document.querySelectorAll('.eff-btn').forEach(el => el.classList.toggle('active', +el.dataset.id === id));
-  send({cmd:'effect', id: id, spd: S.spd});
-}
-
-function onSpd(v) {
-  S.spd = +v;
-  document.getElementById('spdVal').textContent = Math.round(v/255*100) + '%';
-}
-
-function sendEff() {
-  send({cmd:'effect', id: S.eid, spd: S.spd});
-}
-
-// Blinker
-function setBlinkMode(mode) {
-  blinkCfg.mode = mode;
-  document.getElementById('bm0').classList.toggle('active', mode === 0);
-  document.getElementById('bm1').classList.toggle('active', mode === 1);
-}
-
-function onBlinkLen(v) {
-  blinkCfg.length = +v;
-  document.getElementById('blinkLenVal').textContent = v;
-}
-
-function onBlinkDim(v) {
-  blinkCfg.dim = +v;
-  document.getElementById('blinkDimVal').textContent = Math.round(v/2.55) + '%';
-}
-
-function sendBlinkConfig() {
-  send({
-    cmd: 'blinkconfig',
-    length: blinkCfg.length,
-    band: blinkCfg.band,
-    mode: blinkCfg.mode,
-    dim: blinkCfg.dim
-  });
-  toast('✓ Blinker-Einstellungen gesendet');
-}
-
-function send(obj) {
-  if (!connected || !writeChar) return;
-  writeChar.writeValueWithoutResponse(new TextEncoder().encode(JSON.stringify(obj)));
-}
-
-// Tab & Page Navigation
-function goPage(name, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  el.classList.add('active');
-}
-
-function cTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelector(`[onclick="cTab('${name}')"]`).classList.add('active');
-  document.getElementById('tp-'+name).classList.add('active');
+  send({ cmd: "effect", id: parseInt(id) });
+  document.querySelectorAll('.eff-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.eff-btn[data-id="${id}"]`).classList.add('active');
 }
 
 // Toast
@@ -393,14 +204,12 @@ function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 // Init
 window.onload = () => {
-  // Default Effekt-Button aktiv setzen
-  document.querySelector('[data-id="0"]').classList.add('active');
-  toast('LumaControl bereit');
+  toast("LumaControl Web-App geladen");
 };
 </script>
 </body>
