@@ -340,7 +340,21 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
     </div>
 
     <div class="card">
-      <div class="lbl">Blinker Farbe (unabhängig vom Effekt)</div>
+      <div class="lbl">Hintergrund-Dimmen</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">Wie stark die aktuelle Effektfarbe beim Blinken gedimmt wird.</div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Dim-Faktor</span><span class="sl-val" id="blinkDimVal">16%</span></div>
+        <input type="range" id="blink-dim-sl" min="0" max="255" value="40"
+          style="background:linear-gradient(to right,var(--s1),var(--warn))"
+          oninput="onBlinkDim(this.value)">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="blink-option" onclick="setBlinkDim(0)"   style="flex:1;font-size:11px">Aus (0%)</button>
+        <button class="blink-option" onclick="setBlinkDim(40)"  style="flex:1;font-size:11px">Schwach</button>
+        <button class="blink-option" onclick="setBlinkDim(100)" style="flex:1;font-size:11px">Mittel</button>
+        <button class="blink-option" onclick="setBlinkDim(180)" style="flex:1;font-size:11px">Hell</button>
+      </div>
+    </div>
       <div class="color-prev" id="blinkColorPrev" style="height:50px"></div>
       <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px">
         <div class="swatch" style="background:#ff8c00" title="Orange" onclick="setBlinkColor(255,140,0)"></div>
@@ -706,7 +720,12 @@ function blinkTestStop() {
 }
 
 // Blinkerfarbe (unabhängig von Effektfarbe)
-let blink = { r:255, g:140, b:0 };
+let blink = {
+  r:   parseInt(localStorage.getItem('blinkR')  ||'255'),
+  g:   parseInt(localStorage.getItem('blinkG')  ||'140'),
+  b:   parseInt(localStorage.getItem('blinkB')  ||'0'),
+  dim: parseInt(localStorage.getItem('blinkDim')||'40'),
+};
 
 function setBlinkColor(r,g,b) {
   blink.r=r; blink.g=g; blink.b=b;
@@ -724,27 +743,37 @@ function onBlinkColor() {
   document.getElementById('bBVal').textContent=blink.b;
   updateBlinkPreview();
 }
+function onBlinkDim(v) {
+  blink.dim=+v;
+  document.getElementById('blinkDimVal').textContent=Math.round(v/2.55)+'%';
+}
+function setBlinkDim(v) {
+  blink.dim=v;
+  document.getElementById('blink-dim-sl').value=v;
+  document.getElementById('blinkDimVal').textContent=Math.round(v/2.55)+'%';
+}
 function updateBlinkPreview() {
   const el=document.getElementById('blinkColorPrev');
   if(el){el.style.background=`rgb(${blink.r},${blink.g},${blink.b})`;el.style.boxShadow=`0 0 16px rgba(${blink.r},${blink.g},${blink.b},0.3)`;}
 }
 
 function sendBlinkConfig() {
+  localStorage.setItem('blinkR',   blink.r);
+  localStorage.setItem('blinkG',   blink.g);
+  localStorage.setItem('blinkB',   blink.b);
+  localStorage.setItem('blinkDim', blink.dim);
   localStorage.setItem('blinkLen',  blinkCfg.length);
   localStorage.setItem('blinkBand', blinkCfg.band);
   localStorage.setItem('blinkMode', blinkCfg.mode);
-  localStorage.setItem('blinkR',    blink.r);
-  localStorage.setItem('blinkG',    blink.g);
-  localStorage.setItem('blinkB',    blink.b);
-  // br/bg/bb = Blinkerfarbe, unabhängig von r/g/b
   send(JSON.stringify({
-    cmd:'blinkconfig',
+    cmd:    'blinkconfig',
     length: blinkCfg.length,
     band:   blinkCfg.band,
     mode:   blinkCfg.mode,
     br:     blink.r,
     bg:     blink.g,
-    bb:     blink.b
+    bb:     blink.b,
+    dim:    blink.dim,
   }));
   toast('✓ Blinker gespeichert');
 }
@@ -937,11 +966,10 @@ function hsv2rgb(h,s,v) {
 
 // Init
 updatePreview(); onHSV(); initBlinkUI();
-// Gespeicherte Blinkerfarbe laden
-blink.r=parseInt(localStorage.getItem('blinkR')||'255');
-blink.g=parseInt(localStorage.getItem('blinkG')||'140');
-blink.b=parseInt(localStorage.getItem('blinkB')||'0');
+// Gespeicherte Blinkerfarbe und Dim laden
 setBlinkColor(blink.r, blink.g, blink.b);
+document.getElementById('blink-dim-sl').value=blink.dim;
+document.getElementById('blinkDimVal').textContent=Math.round(blink.dim/2.55)+'%';
 document.getElementById('maxbri-sl').value=cfg.maxBri;
 document.getElementById('maxBriVal').textContent=Math.round(cfg.maxBri/2.55)+'%';
 buildStrips();
