@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -13,33 +12,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-–bg:    #050508;
-–s1:    #0d0d14;
-–s2:    #13131e;
-–s3:    #191926;
-–b:     rgba(255,255,255,0.05);
-–c:     #00f5ff;
-–m:     #bf00ff;
-–g:     #00ff88;
-–o:     #ff6b00;
-–warn:  #ffcc00;
-–text:  #e8e8f0;
-–muted: rgba(232,232,240,0.32);
-–T: env(safe-area-inset-top,0px);
-–B: env(safe-area-inset-bottom,0px);
+  --bg:    #050508;
+  --s1:    #0d0d14;
+  --s2:    #13131e;
+  --s3:    #191926;
+  --b:     rgba(255,255,255,0.05);
+  --c:     #00f5ff;
+  --m:     #bf00ff;
+  --g:     #00ff88;
+  --o:     #ff6b00;
+  --warn:  #ffcc00;
+  --text:  #e8e8f0;
+  --muted: rgba(232,232,240,0.32);
+  --T: env(safe-area-inset-top,0px);
+  --B: env(safe-area-inset-bottom,0px);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:‘Space Grotesk’,sans-serif;background:var(–bg);color:var(–text);min-height:100dvh;overflow-x:hidden;padding-bottom:calc(var(–B) + 80px);user-select:none;-webkit-user-select:none;}
-body::before{content:’’;position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(0,245,255,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 90%,rgba(191,0,255,.07) 0%,transparent 60%);}
-body::after{content:’’;position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;padding-bottom:calc(var(--B) + 80px);user-select:none;-webkit-user-select:none;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(0,245,255,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 90%,rgba(191,0,255,.07) 0%,transparent 60%);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);}
 
 /* HEADER */
-.hdr{position:sticky;top:0;z-index:100;padding:calc(var(–T) + 14px) 18px 14px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,8,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,245,255,.1);}
-.logo{font-family:‘Space Mono’,monospace;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
-.logo span{color:var(–c);text-shadow:0 0 16px var(–c);}
+.hdr{position:sticky;top:0;z-index:100;padding:calc(var(--T) + 14px) 18px 14px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,8,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,245,255,.1);}
+.logo{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.logo span{color:var(--c);text-shadow:0 0 16px var(--c);}
 
-.ble-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:6px;border:1px solid rgba(0,245,255,.2);background:rgba(0,245,255,.05);color:var(–muted);font-family:‘Space Mono’,monospace;font-size:10px;cursor:pointer;transition:all .25s;letter-spacing:1px;text-transform:uppercase;}
-.ble-btn.on{border-color:rgba(0,255,136,.5);color:var(–g);background:rgba(0,255,136,.08);box-shadow:0 0 16px rgba(0,255,136,.12);}
+.ble-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:6px;border:1px solid rgba(0,245,255,.2);background:rgba(0,245,255,.05);color:var(--muted);font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;transition:all .25s;letter-spacing:1px;text-transform:uppercase;}
+.ble-btn.on{border-color:rgba(0,255,136,.5);color:var(--g);background:rgba(0,255,136,.08);box-shadow:0 0 16px rgba(0,255,136,.12);}
 .ble-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
 .ble-btn.on .ble-dot{animation:nblink 2s infinite;}
 @keyframes nblink{0%,100%{opacity:1;box-shadow:0 0 6px currentColor;}50%{opacity:.2;box-shadow:none;}}
@@ -50,44 +49,44 @@ body::after{content:’’;position:fixed;inset:0;pointer-events:none;z-index:0;
 .page.active{display:flex;}
 
 /* CARD */
-.card{background:var(–s1);border:1px solid var(–b);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;}
-.card::before{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.4),rgba(191,0,255,.4),transparent);}
-.lbl{font-family:‘Space Mono’,monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(–c);opacity:.65;}
+.card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.4),rgba(191,0,255,.4),transparent);}
+.lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--c);opacity:.65;}
 
 /* POWER */
-.power-row{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-radius:12px;background:var(–s1);border:1px solid var(–b);position:relative;overflow:hidden;}
-.power-row::before{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,136,.5),transparent);}
+.power-row{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-radius:12px;background:var(--s1);border:1px solid var(--b);position:relative;overflow:hidden;}
+.power-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,136,.5),transparent);}
 .power-text h2{font-size:20px;font-weight:700;}
-.power-text p{font-size:11px;color:var(–muted);margin-top:3px;font-family:‘Space Mono’,monospace;}
+.power-text p{font-size:11px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace;}
 
-.tgl{width:56px;height:30px;border-radius:4px;background:var(–s3);border:1px solid var(–b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
+.tgl{width:56px;height:30px;border-radius:4px;background:var(--s3);border:1px solid var(--b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
 .tgl.on{background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.4);box-shadow:0 0 16px rgba(0,255,136,.15);}
-.tgl::after{content:’’;position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:2px;background:rgba(232,232,240,.3);transition:all .3s cubic-bezier(.34,1.56,.64,1);}
-.tgl.on::after{transform:translateX(26px);background:var(–g);box-shadow:0 0 10px var(–g);}
+.tgl::after{content:'';position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:2px;background:rgba(232,232,240,.3);transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+.tgl.on::after{transform:translateX(26px);background:var(--g);box-shadow:0 0 10px var(--g);}
 
 /* SLIDERS */
 .sl-wrap{display:flex;flex-direction:column;gap:9px;}
 .sl-hdr{display:flex;justify-content:space-between;align-items:center;}
 .sl-lbl{font-size:13px;font-weight:600;}
-.sl-val{font-family:‘Space Mono’,monospace;font-size:12px;color:var(–c);}
+.sl-val{font-family:'Space Mono',monospace;font-size:12px;color:var(--c);}
 input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:4px;background:var(–s1);border:2px solid var(–c);box-shadow:0 0 10px rgba(0,245,255,.5);cursor:pointer;transition:transform .1s;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:4px;background:var(--s1);border:2px solid var(--c);box-shadow:0 0 10px rgba(0,245,255,.5);cursor:pointer;transition:transform .1s;}
 input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
 #hue-sl{background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);}
-#bri-sl{background:linear-gradient(to right,#0d0d14,var(–text));}
-#spd-sl{background:linear-gradient(to right,#0d0d14,var(–c));}
+#bri-sl{background:linear-gradient(to right,#0d0d14,var(--text));}
+#spd-sl{background:linear-gradient(to right,#0d0d14,var(--c));}
 #r-sl{background:linear-gradient(to right,#0d0d14,#ff3366);}
 #g-sl{background:linear-gradient(to right,#0d0d14,#00ff88);}
 #b-sl{background:linear-gradient(to right,#0d0d14,#00f5ff);}
 
 /* COLOR PREVIEW */
-.color-prev{height:64px;border-radius:8px;border:1px solid var(–b);transition:background .2s,box-shadow .2s;position:relative;overflow:hidden;}
-.color-prev::after{content:’’;position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,transparent 40%,rgba(0,0,0,.2) 100%);}
+.color-prev{height:64px;border-radius:8px;border:1px solid var(--b);transition:background .2s,box-shadow .2s;position:relative;overflow:hidden;}
+.color-prev::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,transparent 40%,rgba(0,0,0,.2) 100%);}
 
 /* TABS */
-.tabs{display:flex;background:var(–s3);padding:3px;border-radius:8px;border:1px solid var(–b);gap:3px;}
-.tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;color:var(–muted);transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:‘Space Mono’,monospace;}
-.tab.active{background:var(–s1);color:var(–c);border:1px solid rgba(0,245,255,.2);text-shadow:0 0 10px var(–c);}
+.tabs{display:flex;background:var(--s3);padding:3px;border-radius:8px;border:1px solid var(--b);gap:3px;}
+.tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;color:var(--muted);transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:'Space Mono',monospace;}
+.tab.active{background:var(--s1);color:var(--c);border:1px solid rgba(0,245,255,.2);text-shadow:0 0 10px var(--c);}
 .tab-pane{display:none;flex-direction:column;gap:14px;}
 .tab-pane.active{display:flex;}
 
@@ -98,96 +97,95 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
 
 /* EFFECTS */
 .eff-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
-.eff-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:var(–s2);border:1px solid var(–b);border-radius:10px;cursor:pointer;color:var(–muted);font-size:9px;font-weight:600;text-align:center;padding:6px 3px;transition:all .2s;letter-spacing:.3px;text-transform:uppercase;font-family:‘Space Mono’,monospace;}
+.eff-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:var(--s2);border:1px solid var(--b);border-radius:10px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;text-align:center;padding:6px 3px;transition:all .2s;letter-spacing:.3px;text-transform:uppercase;font-family:'Space Mono',monospace;}
 .eff-btn .ico{font-size:20px;line-height:1;}
-.eff-btn.active{border-color:rgba(0,245,255,.5);color:var(–c);background:rgba(0,245,255,.06);box-shadow:0 0 16px rgba(0,245,255,.15),inset 0 0 16px rgba(0,245,255,.04);text-shadow:0 0 8px var(–c);}
+.eff-btn.active{border-color:rgba(0,245,255,.5);color:var(--c);background:rgba(0,245,255,.06);box-shadow:0 0 16px rgba(0,245,255,.15),inset 0 0 16px rgba(0,245,255,.04);text-shadow:0 0 8px var(--c);}
 
 /* BLINKER STATUS BADGE */
 .blink-status{display:flex;gap:8px;}
-.blink-badge{flex:1;padding:10px;border-radius:8px;text-align:center;border:1px solid var(–b);background:var(–s2);font-family:‘Space Mono’,monospace;font-size:10px;color:var(–muted);transition:all .3s;letter-spacing:1px;text-transform:uppercase;}
-.blink-badge.active-left{border-color:rgba(255,204,0,.5);color:var(–warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(–warn);}
-.blink-badge.active-right{border-color:rgba(255,204,0,.5);color:var(–warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(–warn);}
+.blink-badge{flex:1;padding:10px;border-radius:8px;text-align:center;border:1px solid var(--b);background:var(--s2);font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);transition:all .3s;letter-spacing:1px;text-transform:uppercase;}
+.blink-badge.active-left{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(--warn);}
+.blink-badge.active-right{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(--warn);}
 
 /* BLINKER CONFIG */
 .blink-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.blink-option{padding:11px;border-radius:8px;border:1px solid var(–b);background:var(–s2);cursor:pointer;text-align:center;transition:all .2s;font-size:12px;font-weight:600;}
-.blink-option.active{border-color:rgba(255,204,0,.5);color:var(–warn);background:rgba(255,204,0,.07);text-shadow:0 0 8px var(–warn);}
+.blink-option{padding:11px;border-radius:8px;border:1px solid var(--b);background:var(--s2);cursor:pointer;text-align:center;transition:all .2s;font-size:12px;font-weight:600;}
+.blink-option.active{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.07);text-shadow:0 0 8px var(--warn);}
 .blink-option:active{transform:scale(.97);}
 
 /* SETUP STRIPS */
-.strip-item{background:var(–s2);border:1px solid var(–b);border-radius:10px;padding:14px;margin-bottom:10px;transition:all .2s;}
+.strip-item{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;transition:all .2s;}
 .strip-item:last-child{margin-bottom:0;}
 .strip-item.active{border-color:rgba(0,245,255,.25);box-shadow:0 0 20px rgba(0,245,255,.05);}
 .strip-hdr{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
-.strip-num{width:30px;height:30px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:‘Space Mono’,monospace;font-size:13px;font-weight:700;background:var(–s3);border:1px solid rgba(0,245,255,.3);color:var(–c);box-shadow:0 0 10px rgba(0,245,255,.15);}
+.strip-num{width:30px;height:30px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;background:var(--s3);border:1px solid rgba(0,245,255,.3);color:var(--c);box-shadow:0 0 10px rgba(0,245,255,.15);}
 .strip-name{font-size:14px;font-weight:700;flex:1;}
-.strip-gpio{font-size:10px;color:var(–c);font-family:‘Space Mono’,monospace;margin-top:1px;opacity:.7;}
-.strip-tog{width:46px;height:26px;border-radius:4px;background:var(–s3);border:1px solid var(–b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
+.strip-gpio{font-size:10px;color:var(--c);font-family:'Space Mono',monospace;margin-top:1px;opacity:.7;}
+.strip-tog{width:46px;height:26px;border-radius:4px;background:var(--s3);border:1px solid var(--b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
 .strip-tog.on{background:rgba(0,245,255,.08);border-color:rgba(0,245,255,.4);box-shadow:0 0 12px rgba(0,245,255,.1);}
-.strip-tog::after{content:’’;position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:3px;background:rgba(232,232,240,.25);transition:all .28s cubic-bezier(.34,1.56,.64,1);}
-.strip-tog.on::after{transform:translateX(20px);background:var(–c);box-shadow:0 0 8px var(–c);}
+.strip-tog::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:3px;background:rgba(232,232,240,.25);transition:all .28s cubic-bezier(.34,1.56,.64,1);}
+.strip-tog.on::after{transform:translateX(20px);background:var(--c);box-shadow:0 0 8px var(--c);}
 
-.led-lbl{font-size:9px;color:var(–muted);font-family:‘Space Mono’,monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.led-lbl{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
 .led-row{display:flex;align-items:center;gap:6px;}
-.num-in{flex:1;padding:10px;background:var(–bg);border:1px solid var(–b);border-radius:8px;color:var(–text);font-family:‘Space Mono’,monospace;font-size:16px;font-weight:700;text-align:center;outline:none;min-width:0;transition:border-color .2s,box-shadow .2s;}
+.num-in{flex:1;padding:10px;background:var(--bg);border:1px solid var(--b);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:16px;font-weight:700;text-align:center;outline:none;min-width:0;transition:border-color .2s,box-shadow .2s;}
 .num-in:focus{border-color:rgba(0,245,255,.4);box-shadow:0 0 12px rgba(0,245,255,.1);}
-.num-btn{width:38px;height:38px;border-radius:8px;border:1px solid var(–b);background:var(–s2);color:var(–text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
-.num-btn:active{background:var(–c);border-color:var(–c);color:var(–bg);box-shadow:0 0 12px var(–c);}
+.num-btn{width:38px;height:38px;border-radius:8px;border:1px solid var(--b);background:var(--s2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.num-btn:active{background:var(--c);border-color:var(--c);color:var(--bg);box-shadow:0 0 12px var(--c);}
 
 /* CALC */
-.calc-box{background:var(–s3);border:1px solid var(–b);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
+.calc-box{background:var(--s3);border:1px solid var(--b);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
 .calc-row{display:flex;justify-content:space-between;font-size:12px;}
-.calc-row span:first-child{color:var(–muted);}
-.calc-row span:last-child{font-family:‘Space Mono’,monospace;color:var(–c);}
+.calc-row span:first-child{color:var(--muted);}
+.calc-row span:last-child{font-family:'Space Mono',monospace;color:var(--c);}
 
 /* SAVE BTN */
-.btn-save{width:100%;padding:15px;border-radius:8px;background:linear-gradient(135deg,rgba(0,245,255,.1),rgba(191,0,255,.1));border:1px solid rgba(0,245,255,.3);color:var(–c);font-family:‘Space Grotesk’,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;text-shadow:0 0 10px var(–c);}
+.btn-save{width:100%;padding:15px;border-radius:8px;background:linear-gradient(135deg,rgba(0,245,255,.1),rgba(191,0,255,.1));border:1px solid rgba(0,245,255,.3);color:var(--c);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;text-shadow:0 0 10px var(--c);}
 .btn-save:active{transform:scale(.98);box-shadow:0 0 20px rgba(0,245,255,.2);}
 
-.saved-hint{display:none;text-align:center;padding:10px;font-size:11px;color:var(–g);font-family:‘Space Mono’,monospace;letter-spacing:1px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:8px;text-shadow:0 0 8px var(–g);}
+.saved-hint{display:none;text-align:center;padding:10px;font-size:11px;color:var(--g);font-family:'Space Mono',monospace;letter-spacing:1px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:8px;text-shadow:0 0 8px var(--g);}
 .saved-hint.show{display:block;}
 
 /* INFO */
 .info-list{display:flex;flex-direction:column;}
-.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(–b);}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b);}
 .info-row:last-child{border-bottom:none;}
-.info-k{font-size:12px;color:var(–muted);}
-.info-v{font-family:‘Space Mono’,monospace;font-size:12px;color:var(–c);}
+.info-k{font-size:12px;color:var(--muted);}
+.info-v{font-family:'Space Mono',monospace;font-size:12px;color:var(--c);}
 
 /* DANGER */
 .btn-row{display:flex;gap:8px;}
-.btn-d{flex:1;padding:13px 8px;border-radius:8px;font-family:‘Space Grotesk’,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:.5px;text-transform:uppercase;}
+.btn-d{flex:1;padding:13px 8px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:.5px;text-transform:uppercase;}
 .btn-d:active{transform:scale(.95);}
-.btn-restart{background:rgba(255,107,0,.07);border:1px solid rgba(255,107,0,.25);color:var(–o);}
+.btn-restart{background:rgba(255,107,0,.07);border:1px solid rgba(255,107,0,.25);color:var(--o);}
 .btn-off{background:rgba(255,50,100,.07);border:1px solid rgba(255,50,100,.25);color:#ff3366;}
 .btn-wide{width:100%;flex-direction:row;gap:8px;padding:11px 14px;margin-top:7px;font-size:11px;}
 .btn-danger-full{background:rgba(255,50,100,.05);border:1px solid rgba(255,50,100,.15);color:rgba(255,51,102,.5);}
 
 /* PRESETS */
 .preset-list{display:flex;flex-direction:column;gap:8px;}
-.preset-item{display:flex;align-items:center;gap:14px;padding:13px 16px;background:var(–s2);border:1px solid var(–b);border-radius:10px;cursor:pointer;transition:all .2s;}
+.preset-item{display:flex;align-items:center;gap:14px;padding:13px 16px;background:var(--s2);border:1px solid var(--b);border-radius:10px;cursor:pointer;transition:all .2s;}
 .preset-item:active{transform:scale(.98);border-color:rgba(0,245,255,.2);}
 .preset-dot{width:38px;height:38px;border-radius:8px;flex-shrink:0;}
 .preset-name{font-size:14px;font-weight:700;}
-.preset-sub{font-size:10px;color:var(–muted);margin-top:2px;font-family:‘Space Mono’,monospace;}
-.preset-arrow{color:var(–muted);font-size:18px;margin-left:auto;}
+.preset-sub{font-size:10px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace;}
+.preset-arrow{color:var(--muted);font-size:18px;margin-left:auto;}
 
 /* INSTALL BANNER */
 .install-banner{display:none;align-items:center;gap:12px;padding:13px 16px;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.15);border-radius:10px;}
 .install-banner.show{display:flex;}
 
 /* NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;padding:10px 8px calc(var(–B) + 10px);background:rgba(5,5,8,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(0,245,255,.08);}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(–muted);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;font-family:‘Space Mono’,monospace;padding:5px 0;transition:all .2s;}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;padding:10px 8px calc(var(--B) + 10px);background:rgba(5,5,8,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(0,245,255,.08);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;font-family:'Space Mono',monospace;padding:5px 0;transition:all .2s;}
 .nav-btn .ni{font-size:20px;}
-.nav-btn.active{color:var(–c);}
-.nav-btn.active .ni{filter:drop-shadow(0 0 8px var(–c));}
+.nav-btn.active{color:var(--c);}
+.nav-btn.active .ni{filter:drop-shadow(0 0 8px var(--c));}
 
 /* TOAST */
-.toast{position:fixed;bottom:calc(var(–B) + 90px);left:50%;transform:translateX(-50%) translateY(12px);background:var(–s2);border:1px solid rgba(0,245,255,.25);color:var(–text);padding:10px 20px;border-radius:8px;font-size:11px;font-family:‘Space Mono’,monospace;letter-spacing:.5px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(0,245,255,.1);}
+.toast{position:fixed;bottom:calc(var(--B) + 90px);left:50%;transform:translateX(-50%) translateY(12px);background:var(--s2);border:1px solid rgba(0,245,255,.25);color:var(--text);padding:10px 20px;border-radius:8px;font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.5px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(0,245,255,.1);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
-
 </head>
 <body>
 
@@ -208,103 +206,99 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
   </div>
 
   <!-- ══ STEUERN ══ -->
-
   <div class="page active" id="page-ctrl">
 
-```
-<div class="power-row">
-  <div class="power-text"><h2>LEDs</h2><p id="pwrTxt">Online</p></div>
-  <div class="tgl on" id="pwrTog" onclick="togglePower()"></div>
-</div>
+    <div class="power-row">
+      <div class="power-text"><h2>LEDs</h2><p id="pwrTxt">Online</p></div>
+      <div class="tgl on" id="pwrTog" onclick="togglePower()"></div>
+    </div>
 
-<div class="card">
-  <div class="lbl">Helligkeit</div>
-  <div class="sl-wrap">
-    <div class="sl-hdr"><span class="sl-lbl">Intensität</span><span class="sl-val" id="briVal">50%</span></div>
-    <input type="range" id="bri-sl" min="1" max="255" value="128" oninput="onBri(this.value)" onchange="sendBri(this.value)">
-  </div>
-</div>
+    <div class="card">
+      <div class="lbl">Helligkeit</div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Intensität</span><span class="sl-val" id="briVal">50%</span></div>
+        <input type="range" id="bri-sl" min="1" max="255" value="128" oninput="onBri(this.value)" onchange="sendBri(this.value)">
+      </div>
+    </div>
 
-<div class="card">
-  <div class="lbl">Farbe</div>
-  <div class="color-prev" id="colorPrev"></div>
-  <div class="tabs">
-    <div class="tab active" onclick="cTab('hsv')">HSV</div>
-    <div class="tab" onclick="cTab('rgb')">RGB</div>
-    <div class="tab" onclick="cTab('pal')">Palette</div>
-  </div>
-  <div class="tab-pane active" id="tp-hsv">
-    <div class="sl-wrap">
-      <div class="sl-hdr"><span class="sl-lbl">Farbton</span><span class="sl-val" id="hueVal">0°</span></div>
-      <input type="range" id="hue-sl" min="0" max="255" value="0" oninput="onHSV()" onchange="sendHSV()">
+    <div class="card">
+      <div class="lbl">Farbe</div>
+      <div class="color-prev" id="colorPrev"></div>
+      <div class="tabs">
+        <div class="tab active" onclick="cTab('hsv')">HSV</div>
+        <div class="tab" onclick="cTab('rgb')">RGB</div>
+        <div class="tab" onclick="cTab('pal')">Palette</div>
+      </div>
+      <div class="tab-pane active" id="tp-hsv">
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Farbton</span><span class="sl-val" id="hueVal">0°</span></div>
+          <input type="range" id="hue-sl" min="0" max="255" value="0" oninput="onHSV()" onchange="sendHSV()">
+        </div>
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Sättigung</span><span class="sl-val" id="satVal">100%</span></div>
+          <input type="range" id="sat-sl" min="0" max="255" value="255" oninput="onHSV()" onchange="sendHSV()">
+        </div>
+      </div>
+      <div class="tab-pane" id="tp-rgb">
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Rot</span><span class="sl-val" id="rVal">255</span></div>
+          <input type="range" id="r-sl" min="0" max="255" value="255" oninput="onRGB()" onchange="sendRGB()">
+        </div>
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Grün</span><span class="sl-val" id="gVal">0</span></div>
+          <input type="range" id="g-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
+        </div>
+        <div class="sl-wrap">
+          <div class="sl-hdr"><span class="sl-lbl">Blau</span><span class="sl-val" id="bVal">0</span></div>
+          <input type="range" id="b-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
+        </div>
+      </div>
+      <div class="tab-pane" id="tp-pal">
+        <div class="palette">
+          <div class="swatch" style="background:#ff2244" onclick="pal(255,34,68)"></div>
+          <div class="swatch" style="background:#ff7700" onclick="pal(255,119,0)"></div>
+          <div class="swatch" style="background:#ffee00" onclick="pal(255,238,0)"></div>
+          <div class="swatch" style="background:#00ff88" onclick="pal(0,255,136)"></div>
+          <div class="swatch" style="background:#00f5ff" onclick="pal(0,245,255)"></div>
+          <div class="swatch" style="background:#bf00ff" onclick="pal(191,0,255)"></div>
+          <div class="swatch" style="background:#ff00aa" onclick="pal(255,0,170)"></div>
+          <div class="swatch" style="background:#00ffcc" onclick="pal(0,255,204)"></div>
+          <div class="swatch" style="background:#ffffff" onclick="pal(255,255,255)"></div>
+          <div class="swatch" style="background:#ff4488" onclick="pal(255,68,136)"></div>
+          <div class="swatch" style="background:#44ffbb" onclick="pal(68,255,187)"></div>
+          <div class="swatch" style="background:#ff6600" onclick="pal(255,102,0)"></div>
+        </div>
+      </div>
     </div>
-    <div class="sl-wrap">
-      <div class="sl-hdr"><span class="sl-lbl">Sättigung</span><span class="sl-val" id="satVal">100%</span></div>
-      <input type="range" id="sat-sl" min="0" max="255" value="255" oninput="onHSV()" onchange="sendHSV()">
-    </div>
-  </div>
-  <div class="tab-pane" id="tp-rgb">
-    <div class="sl-wrap">
-      <div class="sl-hdr"><span class="sl-lbl">Rot</span><span class="sl-val" id="rVal">255</span></div>
-      <input type="range" id="r-sl" min="0" max="255" value="255" oninput="onRGB()" onchange="sendRGB()">
-    </div>
-    <div class="sl-wrap">
-      <div class="sl-hdr"><span class="sl-lbl">Grün</span><span class="sl-val" id="gVal">0</span></div>
-      <input type="range" id="g-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
-    </div>
-    <div class="sl-wrap">
-      <div class="sl-hdr"><span class="sl-lbl">Blau</span><span class="sl-val" id="bVal">0</span></div>
-      <input type="range" id="b-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
-    </div>
-  </div>
-  <div class="tab-pane" id="tp-pal">
-    <div class="palette">
-      <div class="swatch" style="background:#ff2244" onclick="pal(255,34,68)"></div>
-      <div class="swatch" style="background:#ff7700" onclick="pal(255,119,0)"></div>
-      <div class="swatch" style="background:#ffee00" onclick="pal(255,238,0)"></div>
-      <div class="swatch" style="background:#00ff88" onclick="pal(0,255,136)"></div>
-      <div class="swatch" style="background:#00f5ff" onclick="pal(0,245,255)"></div>
-      <div class="swatch" style="background:#bf00ff" onclick="pal(191,0,255)"></div>
-      <div class="swatch" style="background:#ff00aa" onclick="pal(255,0,170)"></div>
-      <div class="swatch" style="background:#00ffcc" onclick="pal(0,255,204)"></div>
-      <div class="swatch" style="background:#ffffff" onclick="pal(255,255,255)"></div>
-      <div class="swatch" style="background:#ff4488" onclick="pal(255,68,136)"></div>
-      <div class="swatch" style="background:#44ffbb" onclick="pal(68,255,187)"></div>
-      <div class="swatch" style="background:#ff6600" onclick="pal(255,102,0)"></div>
-    </div>
-  </div>
-</div>
 
-<!-- Effekte -->
-<div class="card">
-  <div class="lbl">Effekt</div>
-  <div class="eff-grid">
-    <div class="eff-btn active" data-id="0" onclick="selEff(0)"><div class="ico">⬛</div>Solid</div>
-    <div class="eff-btn" data-id="1" onclick="selEff(1)"><div class="ico">🌈</div>Rainbow</div>
-  </div>
-  <div class="sl-wrap">
-    <div class="sl-hdr"><span class="sl-lbl">Speed</span><span class="sl-val" id="spdVal">50%</span></div>
-    <input type="range" id="spd-sl" min="1" max="255" value="128" oninput="onSpd(this.value)" onchange="sendEff()">
-  </div>
-</div>
+    <!-- Effekte -->
+    <div class="card">
+      <div class="lbl">Effekt</div>
+      <div class="eff-grid">
+        <div class="eff-btn active" data-id="0" onclick="selEff(0)"><div class="ico">⬛</div>Solid</div>
+        <div class="eff-btn" data-id="1" onclick="selEff(1)"><div class="ico">🌈</div>Rainbow</div>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Speed</span><span class="sl-val" id="spdVal">50%</span></div>
+        <input type="range" id="spd-sl" min="1" max="255" value="128" oninput="onSpd(this.value)" onchange="sendEff()">
+      </div>
+    </div>
 
-<!-- Blinker Status -->
-<div class="card">
-  <div class="lbl">Blinker Status (GPIO 8/9)</div>
-  <div class="blink-status">
-    <div class="blink-badge" id="blinkL">◄ Links</div>
-    <div class="blink-badge" id="blinkR">Rechts ►</div>
-  </div>
-  <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;text-align:center;letter-spacing:.5px">
-    Optokoppler — wird vom Fahrzeug gesteuert
-  </div>
-</div>
-```
+    <!-- Blinker Status -->
+    <div class="card">
+      <div class="lbl">Blinker Status (GPIO 8/9)</div>
+      <div class="blink-status">
+        <div class="blink-badge" id="blinkL">◄ Links</div>
+        <div class="blink-badge" id="blinkR">Rechts ►</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;text-align:center;letter-spacing:.5px">
+        Optokoppler — wird vom Fahrzeug gesteuert
+      </div>
+    </div>
 
   </div>
 
   <!-- ══ BLINKER ══ -->
-
   <div class="page" id="page-blink">
     <div class="card">
       <div class="lbl">Blinker Konfiguration</div>
@@ -313,91 +307,87 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
       </div>
     </div>
 
-```
-<div class="card">
-  <div class="lbl">Blinker Länge</div>
-  <div class="sl-wrap">
-    <div class="sl-hdr"><span class="sl-lbl">Länge in LEDs</span><span class="sl-val" id="blinkLenVal">6</span></div>
-    <input type="range" id="blink-len-sl" min="1" max="50" value="6" oninput="onBlinkLen(this.value)">
-  </div>
-  <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">ca. 1 LED = 1,5–2 cm</div>
-</div>
-
-<div class="card">
-  <div class="lbl">Blinker Band</div>
-  <div class="blink-grid">
-    <div class="blink-option active" id="bb0" onclick="setBlinkBand(0)">Alle Bänder</div>
-    <div class="blink-option" id="bb1" onclick="setBlinkBand(1)">Nur Band 1</div>
-    <div class="blink-option" id="bb2" onclick="setBlinkBand(2)">Nur Band 2</div>
-    <div class="blink-option" id="bb3" onclick="setBlinkBand(3)">Nur Band 3</div>
-    <div class="blink-option" id="bb4" onclick="setBlinkBand(4)">Nur Band 4</div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="lbl">Blinker Modus</div>
-  <div class="blink-grid">
-    <div class="blink-option active" id="bm0" onclick="setBlinkMode(0)">
-      <div style="font-size:18px;margin-bottom:4px">⚡</div>Normal
+    <div class="card">
+      <div class="lbl">Blinker Länge</div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Länge in LEDs</span><span class="sl-val" id="blinkLenVal">6</span></div>
+        <input type="range" id="blink-len-sl" min="1" max="50" value="6" oninput="onBlinkLen(this.value)">
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">ca. 1 LED = 1,5–2 cm</div>
     </div>
-    <div class="blink-option" id="bm1" onclick="setBlinkMode(1)">
-      <div style="font-size:18px;margin-bottom:4px">➡</div>Lauflicht
+
+    <div class="card">
+      <div class="lbl">Blinker Band</div>
+      <div class="blink-grid">
+        <div class="blink-option active" id="bb0" onclick="setBlinkBand(0)">Alle Bänder</div>
+        <div class="blink-option" id="bb1" onclick="setBlinkBand(1)">Nur Band 1</div>
+        <div class="blink-option" id="bb2" onclick="setBlinkBand(2)">Nur Band 2</div>
+        <div class="blink-option" id="bb3" onclick="setBlinkBand(3)">Nur Band 3</div>
+        <div class="blink-option" id="bb4" onclick="setBlinkBand(4)">Nur Band 4</div>
+      </div>
     </div>
-  </div>
-</div>
 
-<div class="card">
-  <div class="lbl">Blinker Farbe (unabhängig vom Effekt)</div>
-  <div class="color-prev" id="blinkColorPrev" style="height:50px"></div>
-  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px">
-    <div class="swatch" style="background:#ff8c00" title="Orange" onclick="setBlinkColor(255,140,0)"></div>
-    <div class="swatch" style="background:#ffee00" title="Gelb"   onclick="setBlinkColor(255,238,0)"></div>
-    <div class="swatch" style="background:#ff2244" title="Rot"    onclick="setBlinkColor(255,34,68)"></div>
-    <div class="swatch" style="background:#ffffff" title="Weiß"   onclick="setBlinkColor(255,255,255)"></div>
-    <div class="swatch" style="background:#0088ff" title="Blau"   onclick="setBlinkColor(0,136,255)"></div>
-    <div class="swatch" style="background:#00ff88" title="Grün"   onclick="setBlinkColor(0,255,136)"></div>
-  </div>
-  <div class="sl-wrap">
-    <div class="sl-hdr"><span class="sl-lbl">Rot</span><span class="sl-val" id="bRVal">255</span></div>
-    <input type="range" id="bR-sl" min="0" max="255" value="255" style="background:linear-gradient(to right,var(--s1),#ff3366)" oninput="onBlinkColor()">
-  </div>
-  <div class="sl-wrap">
-    <div class="sl-hdr"><span class="sl-lbl">Grün</span><span class="sl-val" id="bGVal">140</span></div>
-    <input type="range" id="bG-sl" min="0" max="255" value="140" style="background:linear-gradient(to right,var(--s1),#00ff88)" oninput="onBlinkColor()">
-  </div>
-  <div class="sl-wrap">
-    <div class="sl-hdr"><span class="sl-lbl">Blau</span><span class="sl-val" id="bBVal">0</span></div>
-    <input type="range" id="bB-sl" min="0" max="255" value="0" style="background:linear-gradient(to right,var(--s1),#00f5ff)" oninput="onBlinkColor()">
-  </div>
-</div>
+    <div class="card">
+      <div class="lbl">Blinker Modus</div>
+      <div class="blink-grid">
+        <div class="blink-option active" id="bm0" onclick="setBlinkMode(0)">
+          <div style="font-size:18px;margin-bottom:4px">⚡</div>Normal
+        </div>
+        <div class="blink-option" id="bm1" onclick="setBlinkMode(1)">
+          <div style="font-size:18px;margin-bottom:4px">➡</div>Lauflicht
+        </div>
+      </div>
+    </div>
 
-<button class="btn-save" onclick="sendBlinkConfig()">▶ Blinker Einstellungen speichern</button>
+    <div class="card">
+      <div class="lbl">Blinker Farbe (unabhängig vom Effekt)</div>
+      <div class="color-prev" id="blinkColorPrev" style="height:50px"></div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px">
+        <div class="swatch" style="background:#ff8c00" title="Orange" onclick="setBlinkColor(255,140,0)"></div>
+        <div class="swatch" style="background:#ffee00" title="Gelb"   onclick="setBlinkColor(255,238,0)"></div>
+        <div class="swatch" style="background:#ff2244" title="Rot"    onclick="setBlinkColor(255,34,68)"></div>
+        <div class="swatch" style="background:#ffffff" title="Weiß"   onclick="setBlinkColor(255,255,255)"></div>
+        <div class="swatch" style="background:#0088ff" title="Blau"   onclick="setBlinkColor(0,136,255)"></div>
+        <div class="swatch" style="background:#00ff88" title="Grün"   onclick="setBlinkColor(0,255,136)"></div>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Rot</span><span class="sl-val" id="bRVal">255</span></div>
+        <input type="range" id="bR-sl" min="0" max="255" value="255" style="background:linear-gradient(to right,var(--s1),#ff3366)" oninput="onBlinkColor()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Grün</span><span class="sl-val" id="bGVal">140</span></div>
+        <input type="range" id="bG-sl" min="0" max="255" value="140" style="background:linear-gradient(to right,var(--s1),#00ff88)" oninput="onBlinkColor()">
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Blau</span><span class="sl-val" id="bBVal">0</span></div>
+        <input type="range" id="bB-sl" min="0" max="255" value="0" style="background:linear-gradient(to right,var(--s1),#00f5ff)" oninput="onBlinkColor()">
+      </div>
+    </div>
 
-<div class="card">
-  <div class="lbl">Blinker Test</div>
-  <div style="font-size:12px;color:var(--muted);line-height:1.6">Simuliert den Blinker für 5 Sekunden — ohne echtes Fahrzeugsignal.</div>
-  <div style="display:flex;gap:8px">
-    <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('left')">
-      ◄ Links testen
-    </button>
-    <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('right')">
-      Rechts ► testen
-    </button>
-  </div>
-  <button class="btn-d btn-wide" style="background:rgba(255,204,0,.05);border:1px solid rgba(255,204,0,.2);color:var(--warn);flex-direction:row;gap:8px;font-size:12px;opacity:.7" onclick="blinkTest('both')">
-    ◄► Beide testen (Warnblinker)
-  </button>
-  <button class="btn-d btn-wide btn-danger-full" onclick="blinkTestStop()" id="blinkStopBtn" style="display:none">
-    ■ Test stoppen
-  </button>
-  <div id="blinkTestTimer" style="display:none;text-align:center;font-family:'Space Mono',monospace;font-size:13px;color:var(--warn);text-shadow:0 0 8px var(--warn)"></div>
-</div>
-```
+    <button class="btn-save" onclick="sendBlinkConfig()">▶ Blinker Einstellungen speichern</button>
 
+    <div class="card">
+      <div class="lbl">Blinker Test</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">Simuliert den Blinker für 5 Sekunden — ohne echtes Fahrzeugsignal.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('left')">
+          ◄ Links testen
+        </button>
+        <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('right')">
+          Rechts ► testen
+        </button>
+      </div>
+      <button class="btn-d btn-wide" style="background:rgba(255,204,0,.05);border:1px solid rgba(255,204,0,.2);color:var(--warn);flex-direction:row;gap:8px;font-size:12px;opacity:.7" onclick="blinkTest('both')">
+        ◄► Beide testen (Warnblinker)
+      </button>
+      <button class="btn-d btn-wide btn-danger-full" onclick="blinkTestStop()" id="blinkStopBtn" style="display:none">
+        ■ Test stoppen
+      </button>
+      <div id="blinkTestTimer" style="display:none;text-align:center;font-family:'Space Mono',monospace;font-size:13px;color:var(--warn);text-shadow:0 0 8px var(--warn)"></div>
+    </div>
   </div>
 
   <!-- ══ PRESETS ══ -->
-
   <div class="page" id="page-pre">
     <div class="card">
       <div class="lbl">Schnell-Presets</div>
@@ -415,66 +405,62 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
   </div>
 
   <!-- ══ SETUP ══ -->
-
   <div class="page" id="page-setup">
 
-```
-<div class="card">
-  <div class="lbl">LED Bänder</div>
-  <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;line-height:2;letter-spacing:.5px">
-    BAND 1 → GPIO 4 &nbsp;·&nbsp; BAND 2 → GPIO 5<br>
-    BAND 3 → GPIO 6 &nbsp;·&nbsp; BAND 4 → GPIO 7
-  </div>
-  <div id="stripList"></div>
-  <button class="btn-save" onclick="saveStrips()">▶ Speichern & senden</button>
-  <div class="saved-hint" id="savedHint">✓ GESPEICHERT</div>
-</div>
+    <div class="card">
+      <div class="lbl">LED Bänder</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;line-height:2;letter-spacing:.5px">
+        BAND 1 → GPIO 4 &nbsp;·&nbsp; BAND 2 → GPIO 5<br>
+        BAND 3 → GPIO 6 &nbsp;·&nbsp; BAND 4 → GPIO 7
+      </div>
+      <div id="stripList"></div>
+      <button class="btn-save" onclick="saveStrips()">▶ Speichern & senden</button>
+      <div class="saved-hint" id="savedHint">✓ GESPEICHERT</div>
+    </div>
 
-<div class="card">
-  <div class="lbl">Stromrechner</div>
-  <div class="calc-box">
-    <div class="calc-row"><span>Aktive Bänder</span><span id="calcS">—</span></div>
-    <div class="calc-row"><span>LEDs gesamt</span><span id="calcL">—</span></div>
-    <div class="calc-row"><span>Max. Strom (60mA/LED)</span><span id="calcP">—</span></div>
-    <div class="calc-row"><span>Netzteil mindestens</span><span id="calcN">—</span></div>
-  </div>
-</div>
+    <div class="card">
+      <div class="lbl">Stromrechner</div>
+      <div class="calc-box">
+        <div class="calc-row"><span>Aktive Bänder</span><span id="calcS">—</span></div>
+        <div class="calc-row"><span>LEDs gesamt</span><span id="calcL">—</span></div>
+        <div class="calc-row"><span>Max. Strom (60mA/LED)</span><span id="calcP">—</span></div>
+        <div class="calc-row"><span>Netzteil mindestens</span><span id="calcN">—</span></div>
+      </div>
+    </div>
 
-<div class="card">
-  <div class="lbl">Max. Helligkeit</div>
-  <div class="sl-wrap">
-    <div class="sl-hdr"><span class="sl-lbl">Limit</span><span class="sl-val" id="maxBriVal">100%</span></div>
-    <input type="range" id="maxbri-sl" min="1" max="255" value="255"
-      style="background:linear-gradient(to right,var(--s1),var(--c))"
-      oninput="cfg.maxBri=+this.value;document.getElementById('maxBriVal').textContent=Math.round(+this.value/2.55)+'%'">
-  </div>
-</div>
+    <div class="card">
+      <div class="lbl">Max. Helligkeit</div>
+      <div class="sl-wrap">
+        <div class="sl-hdr"><span class="sl-lbl">Limit</span><span class="sl-val" id="maxBriVal">100%</span></div>
+        <input type="range" id="maxbri-sl" min="1" max="255" value="255"
+          style="background:linear-gradient(to right,var(--s1),var(--c))"
+          oninput="cfg.maxBri=+this.value;document.getElementById('maxBriVal').textContent=Math.round(+this.value/2.55)+'%'">
+      </div>
+    </div>
 
-<div class="card">
-  <div class="lbl">System</div>
-  <div class="info-list">
-    <div class="info-row"><span class="info-k">Gerät</span><span class="info-v" id="iDev">—</span></div>
-    <div class="info-row"><span class="info-k">Status</span><span class="info-v" id="iSts">Offline</span></div>
-    <div class="info-row"><span class="info-k">Aktive Bänder</span><span class="info-v" id="iStr">—</span></div>
-    <div class="info-row"><span class="info-k">ESP Strom Limit</span><span class="info-v">5V / 30A</span></div>
-  </div>
-</div>
+    <div class="card">
+      <div class="lbl">System</div>
+      <div class="info-list">
+        <div class="info-row"><span class="info-k">Gerät</span><span class="info-v" id="iDev">—</span></div>
+        <div class="info-row"><span class="info-k">Status</span><span class="info-v" id="iSts">Offline</span></div>
+        <div class="info-row"><span class="info-k">Aktive Bänder</span><span class="info-v" id="iStr">—</span></div>
+        <div class="info-row"><span class="info-k">ESP Strom Limit</span><span class="info-v">5V / 30A</span></div>
+      </div>
+    </div>
 
-<div class="card">
-  <div class="lbl">Gerät</div>
-  <div class="btn-row">
-    <button class="btn-d btn-restart" onclick="doRestart()"><span style="font-size:18px">🔄</span>Neustart</button>
-    <button class="btn-d btn-off" onclick="doOff()"><span style="font-size:18px">💤</span>Off</button>
-  </div>
-  <button class="btn-d btn-wide btn-danger-full" onclick="resetApp()">⚠ App-Daten zurücksetzen</button>
-</div>
-```
+    <div class="card">
+      <div class="lbl">Gerät</div>
+      <div class="btn-row">
+        <button class="btn-d btn-restart" onclick="doRestart()"><span style="font-size:18px">🔄</span>Neustart</button>
+        <button class="btn-d btn-off" onclick="doOff()"><span style="font-size:18px">💤</span>Off</button>
+      </div>
+      <button class="btn-d btn-wide btn-danger-full" onclick="resetApp()">⚠ App-Daten zurücksetzen</button>
+    </div>
 
   </div>
 </div>
 
 <!-- Nav -->
-
 <div class="nav">
   <div class="nav-btn active" onclick="goPage('ctrl',this)"><span class="ni">🎛</span>Steuern</div>
   <div class="nav-btn" onclick="goPage('blink',this)"><span class="ni">🚦</span>Blinker</div>
@@ -960,6 +946,5 @@ document.getElementById('maxbri-sl').value=cfg.maxBri;
 document.getElementById('maxBriVal').textContent=Math.round(cfg.maxBri/2.55)+'%';
 buildStrips();
 </script>
-
 </body>
 </html>
