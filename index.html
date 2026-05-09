@@ -2,977 +2,456 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="LumaControl">
-<meta name="theme-color" content="#050508">
-<title>LumaControl</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>LumaControl v4</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg:    #050508;
-  --s1:    #0d0d14;
-  --s2:    #13131e;
-  --s3:    #191926;
-  --b:     rgba(255,255,255,0.05);
-  --c:     #00f5ff;
-  --m:     #bf00ff;
-  --g:     #00ff88;
-  --o:     #ff6b00;
-  --warn:  #ffcc00;
-  --text:  #e8e8f0;
-  --muted: rgba(232,232,240,0.32);
-  --T: env(safe-area-inset-top,0px);
-  --B: env(safe-area-inset-bottom,0px);
+  --bg:      #080808;
+  --bg2:     #0d0d0d;
+  --panel:   #101010;
+  --panel2:  #141414;
+  --border:  #1c1c1c;
+  --border2: #242424;
+  --accent:  #e8ff00;
+  --orange:  #ff4d00;
+  --blue:    #00c8ff;
+  --green:   #00ff88;
+  --purple:  #b060ff;
+  --dim:     #333;
+  --text:    #d0d0d0;
+  --text2:   #555;
+  --r:       6px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;padding-bottom:calc(var(--B) + 80px);user-select:none;-webkit-user-select:none;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(0,245,255,.06) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 90%,rgba(191,0,255,.07) 0%,transparent 60%);}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:999}
 
-/* HEADER */
-.hdr{position:sticky;top:0;z-index:100;padding:calc(var(--T) + 14px) 18px 14px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,8,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,245,255,.1);}
-.logo{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
-.logo span{color:var(--c);text-shadow:0 0 16px var(--c);}
+/* ── Header ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:50}
+.logo{font-size:1.3rem;font-weight:700;letter-spacing:.14em;color:var(--accent);text-shadow:0 0 18px rgba(232,255,0,.25)}
+.logo span{color:var(--text2);font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:9px;cursor:pointer}
+.ble-lbl{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--text2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dim);transition:all .4s}
+.dot.on{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 6px var(--green)}50%{box-shadow:0 0 16px var(--green),0 0 32px rgba(0,255,136,.15)}}
 
-.ble-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:6px;border:1px solid rgba(0,245,255,.2);background:rgba(0,245,255,.05);color:var(--muted);font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;transition:all .25s;letter-spacing:1px;text-transform:uppercase;}
-.ble-btn.on{border-color:rgba(0,255,136,.5);color:var(--g);background:rgba(0,255,136,.08);box-shadow:0 0 16px rgba(0,255,136,.12);}
-.ble-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
-.ble-btn.on .ble-dot{animation:nblink 2s infinite;}
-@keyframes nblink{0%,100%{opacity:1;box-shadow:0 0 6px currentColor;}50%{opacity:.2;box-shadow:none;}}
+/* ── Layout ── */
+main{padding:14px 18px 90px;max-width:480px;margin:0 auto}
+.sec{font-family:'Share Tech Mono',monospace;font-size:.63rem;letter-spacing:.2em;color:var(--text2);text-transform:uppercase;margin:22px 0 8px}
 
-/* CONTENT */
-.content{position:relative;z-index:1;padding:14px;display:flex;flex-direction:column;gap:12px;}
-.page{display:none;flex-direction:column;gap:12px;}
-.page.active{display:flex;}
+/* ── CAN bar ── */
+.can-bar{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:9px 14px;display:flex;align-items:center;gap:9px;font-family:'Share Tech Mono',monospace;font-size:.7rem}
+.can-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.can-dot.ok{background:var(--green);box-shadow:0 0 5px var(--green)}
+.can-dot.err{background:var(--orange)}
+.can-txt{color:var(--text2)}
+.can-key{margin-left:auto;color:var(--accent)}
 
-/* CARD */
-.card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,245,255,.4),rgba(191,0,255,.4),transparent);}
-.lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--c);opacity:.65;}
+/* ── Key selector ── */
+.key-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.key-btn{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:13px 12px;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
+.key-btn.active{border-color:var(--accent);background:rgba(232,255,0,.04)}
+.key-ind{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--dim)}
+.key-btn.active .key-ind{background:var(--accent);box-shadow:0 0 5px var(--accent)}
+.key-ico{font-size:1.3rem;line-height:1;margin-bottom:4px}
+.key-nm{font-weight:700;font-size:.9rem;letter-spacing:.04em}
+.key-sub{font-size:.72rem;color:var(--text2);font-family:'Share Tech Mono',monospace;margin-top:2px}
 
-/* POWER */
-.power-row{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-radius:12px;background:var(--s1);border:1px solid var(--b);position:relative;overflow:hidden;}
-.power-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,136,.5),transparent);}
-.power-text h2{font-size:20px;font-weight:700;}
-.power-text p{font-size:11px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace;}
+/* ── Mode tabs ── */
+.mode-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.mode-tab{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:9px 6px;text-align:center;cursor:pointer;transition:all .2s;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.82rem;letter-spacing:.07em;color:var(--text2)}
+.mode-tab .mi{font-size:1.15rem;display:block;margin-bottom:2px}
+.mode-tab.active{border-color:var(--blue);color:var(--blue);background:rgba(0,200,255,.05)}
 
-.tgl{width:56px;height:30px;border-radius:4px;background:var(--s3);border:1px solid var(--b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
-.tgl.on{background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.4);box-shadow:0 0 16px rgba(0,255,136,.15);}
-.tgl::after{content:'';position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:2px;background:rgba(232,232,240,.3);transition:all .3s cubic-bezier(.34,1.56,.64,1);}
-.tgl.on::after{transform:translateX(26px);background:var(--g);box-shadow:0 0 10px var(--g);}
+/* ── Card ── */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px}
+.card-head{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-weight:700;font-size:.88rem;letter-spacing:.06em;color:var(--text)}
+.card-sub{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--text2)}
+.card-body{padding:14px}
 
-/* SLIDERS */
-.sl-wrap{display:flex;flex-direction:column;gap:9px;}
-.sl-hdr{display:flex;justify-content:space-between;align-items:center;}
-.sl-lbl{font-size:13px;font-weight:600;}
-.sl-val{font-family:'Space Mono',monospace;font-size:12px;color:var(--c);}
-input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:4px;background:var(--s1);border:2px solid var(--c);box-shadow:0 0 10px rgba(0,245,255,.5);cursor:pointer;transition:transform .1s;}
-input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2);}
-#hue-sl{background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);}
-#bri-sl{background:linear-gradient(to right,#0d0d14,var(--text));}
-#spd-sl{background:linear-gradient(to right,#0d0d14,var(--c));}
-#r-sl{background:linear-gradient(to right,#0d0d14,#ff3366);}
-#g-sl{background:linear-gradient(to right,#0d0d14,#00ff88);}
-#b-sl{background:linear-gradient(to right,#0d0d14,#00f5ff);}
+/* ── Color preview ── */
+.color-prev{height:64px;transition:background .3s;display:flex;align-items:center;justify-content:center}
+.color-prev-lbl{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.3);letter-spacing:.1em}
 
-/* COLOR PREVIEW */
-.color-prev{height:64px;border-radius:8px;border:1px solid var(--b);transition:background .2s,box-shadow .2s;position:relative;overflow:hidden;}
-.color-prev::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,transparent 40%,rgba(0,0,0,.2) 100%);}
+/* ── Sliders ── */
+.sl-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.sl-row:last-child{margin-bottom:0}
+.sl-hdr{display:flex;justify-content:space-between;align-items:center}
+.sl-lbl{font-family:'Share Tech Mono',monospace;font-size:.66rem;letter-spacing:.1em;color:var(--text2)}
+.sl-val{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--text);min-width:34px;text-align:right}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;outline:none;cursor:pointer}
+input[type=range].r {background:linear-gradient(to right,#1a0000,#ff3333)}
+input[type=range].g {background:linear-gradient(to right,#001a00,#33ff33)}
+input[type=range].b {background:linear-gradient(to right,#00001a,#3333ff)}
+input[type=range].w {background:linear-gradient(to right,#111,#fff)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.3);box-shadow:0 0 5px rgba(0,0,0,.5)}
+.divider{height:1px;background:var(--border);margin:12px 0}
 
-/* TABS */
-.tabs{display:flex;background:var(--s3);padding:3px;border-radius:8px;border:1px solid var(--b);gap:3px;}
-.tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;color:var(--muted);transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:'Space Mono',monospace;}
-.tab.active{background:var(--s1);color:var(--c);border:1px solid rgba(0,245,255,.2);text-shadow:0 0 10px var(--c);}
-.tab-pane{display:none;flex-direction:column;gap:14px;}
-.tab-pane.active{display:flex;}
+/* ── Strip toggles ── */
+.strip-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.strip-card{background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:10px 11px;display:flex;flex-direction:column;gap:8px}
+.strip-header{display:flex;align-items:center;justify-content:space-between}
+.strip-name{font-weight:700;font-size:.82rem;letter-spacing:.05em}
+.strip-gpio{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text2)}
 
-/* PALETTE */
-.palette{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
-.swatch{aspect-ratio:1;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,.08);transition:all .15s;}
-.swatch:active{transform:scale(.8);}
+/* Toggle */
+.tog{width:40px;height:22px;background:var(--border2);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:1px solid var(--border2)}
+.tog.on{background:var(--green);border-color:var(--green)}
+.tog::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.tog.on::after{transform:translateX(18px)}
 
-/* EFFECTS */
-.eff-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
-.eff-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:var(--s2);border:1px solid var(--b);border-radius:10px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;text-align:center;padding:6px 3px;transition:all .2s;letter-spacing:.3px;text-transform:uppercase;font-family:'Space Mono',monospace;}
-.eff-btn .ico{font-size:20px;line-height:1;}
-.eff-btn.active{border-color:rgba(0,245,255,.5);color:var(--c);background:rgba(0,245,255,.06);box-shadow:0 0 16px rgba(0,245,255,.15),inset 0 0 16px rgba(0,245,255,.04);text-shadow:0 0 8px var(--c);}
+/* Strip length input */
+.len-row{display:flex;align-items:center;gap:7px}
+.len-lbl{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text2);white-space:nowrap}
+.len-input{background:var(--bg);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.8rem;padding:4px 7px;width:52px;text-align:center;outline:none}
+.len-input:focus{border-color:var(--accent)}
+.len-leds{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text2)}
 
-/* BLINKER STATUS BADGE */
-.blink-status{display:flex;gap:8px;}
-.blink-badge{flex:1;padding:10px;border-radius:8px;text-align:center;border:1px solid var(--b);background:var(--s2);font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);transition:all .3s;letter-spacing:1px;text-transform:uppercase;}
-.blink-badge.active-left{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(--warn);}
-.blink-badge.active-right{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.08);box-shadow:0 0 16px rgba(255,204,0,.15);text-shadow:0 0 8px var(--warn);}
+/* ── Blinker card ── */
+.blink-prev{display:flex;gap:7px;margin-bottom:12px}
+.blink-ind{flex:1;height:28px;border-radius:4px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-family:'Share Tech Mono',monospace;color:var(--text2);transition:all .2s}
+.blink-ind.active{animation:blink 600ms infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 
-/* BLINKER CONFIG */
-.blink-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.blink-option{padding:11px;border-radius:8px;border:1px solid var(--b);background:var(--s2);cursor:pointer;text-align:center;transition:all .2s;font-size:12px;font-weight:600;}
-.blink-option.active{border-color:rgba(255,204,0,.5);color:var(--warn);background:rgba(255,204,0,.07);text-shadow:0 0 8px var(--warn);}
-.blink-option:active{transform:scale(.97);}
+/* Toggle row */
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:2px 0}
+.tog-info .tog-lbl{font-weight:600;font-size:.88rem}
+.tog-info .tog-sub{font-size:.72rem;color:var(--text2);margin-top:1px}
 
-/* SETUP STRIPS */
-.strip-item{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;transition:all .2s;}
-.strip-item:last-child{margin-bottom:0;}
-.strip-item.active{border-color:rgba(0,245,255,.25);box-shadow:0 0 20px rgba(0,245,255,.05);}
-.strip-hdr{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
-.strip-num{width:30px;height:30px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;background:var(--s3);border:1px solid rgba(0,245,255,.3);color:var(--c);box-shadow:0 0 10px rgba(0,245,255,.15);}
-.strip-name{font-size:14px;font-weight:700;flex:1;}
-.strip-gpio{font-size:10px;color:var(--c);font-family:'Space Mono',monospace;margin-top:1px;opacity:.7;}
-.strip-tog{width:46px;height:26px;border-radius:4px;background:var(--s3);border:1px solid var(--b);position:relative;cursor:pointer;transition:all .3s;flex-shrink:0;}
-.strip-tog.on{background:rgba(0,245,255,.08);border-color:rgba(0,245,255,.4);box-shadow:0 0 12px rgba(0,245,255,.1);}
-.strip-tog::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:3px;background:rgba(232,232,240,.25);transition:all .28s cubic-bezier(.34,1.56,.64,1);}
-.strip-tog.on::after{transform:translateX(20px);background:var(--c);box-shadow:0 0 8px var(--c);}
+/* ── Save ── */
+.save-btn{width:100%;padding:13px;background:var(--accent);border:none;border-radius:var(--r);color:#000;font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:.14em;cursor:pointer;transition:all .15s;text-transform:uppercase;margin-top:6px}
+.save-btn:active{transform:scale(.98);background:#ccdf00}
 
-.led-lbl{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-.led-row{display:flex;align-items:center;gap:6px;}
-.num-in{flex:1;padding:10px;background:var(--bg);border:1px solid var(--b);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:16px;font-weight:700;text-align:center;outline:none;min-width:0;transition:border-color .2s,box-shadow .2s;}
-.num-in:focus{border-color:rgba(0,245,255,.4);box-shadow:0 0 12px rgba(0,245,255,.1);}
-.num-btn{width:38px;height:38px;border-radius:8px;border:1px solid var(--b);background:var(--s2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
-.num-btn:active{background:var(--c);border-color:var(--c);color:var(--bg);box-shadow:0 0 12px var(--c);}
-
-/* CALC */
-.calc-box{background:var(--s3);border:1px solid var(--b);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
-.calc-row{display:flex;justify-content:space-between;font-size:12px;}
-.calc-row span:first-child{color:var(--muted);}
-.calc-row span:last-child{font-family:'Space Mono',monospace;color:var(--c);}
-
-/* SAVE BTN */
-.btn-save{width:100%;padding:15px;border-radius:8px;background:linear-gradient(135deg,rgba(0,245,255,.1),rgba(191,0,255,.1));border:1px solid rgba(0,245,255,.3);color:var(--c);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;text-shadow:0 0 10px var(--c);}
-.btn-save:active{transform:scale(.98);box-shadow:0 0 20px rgba(0,245,255,.2);}
-
-.saved-hint{display:none;text-align:center;padding:10px;font-size:11px;color:var(--g);font-family:'Space Mono',monospace;letter-spacing:1px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:8px;text-shadow:0 0 8px var(--g);}
-.saved-hint.show{display:block;}
-
-/* INFO */
-.info-list{display:flex;flex-direction:column;}
-.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b);}
-.info-row:last-child{border-bottom:none;}
-.info-k{font-size:12px;color:var(--muted);}
-.info-v{font-family:'Space Mono',monospace;font-size:12px;color:var(--c);}
-
-/* DANGER */
-.btn-row{display:flex;gap:8px;}
-.btn-d{flex:1;padding:13px 8px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:.5px;text-transform:uppercase;}
-.btn-d:active{transform:scale(.95);}
-.btn-restart{background:rgba(255,107,0,.07);border:1px solid rgba(255,107,0,.25);color:var(--o);}
-.btn-off{background:rgba(255,50,100,.07);border:1px solid rgba(255,50,100,.25);color:#ff3366;}
-.btn-wide{width:100%;flex-direction:row;gap:8px;padding:11px 14px;margin-top:7px;font-size:11px;}
-.btn-danger-full{background:rgba(255,50,100,.05);border:1px solid rgba(255,50,100,.15);color:rgba(255,51,102,.5);}
-
-/* PRESETS */
-.preset-list{display:flex;flex-direction:column;gap:8px;}
-.preset-item{display:flex;align-items:center;gap:14px;padding:13px 16px;background:var(--s2);border:1px solid var(--b);border-radius:10px;cursor:pointer;transition:all .2s;}
-.preset-item:active{transform:scale(.98);border-color:rgba(0,245,255,.2);}
-.preset-dot{width:38px;height:38px;border-radius:8px;flex-shrink:0;}
-.preset-name{font-size:14px;font-weight:700;}
-.preset-sub{font-size:10px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace;}
-.preset-arrow{color:var(--muted);font-size:18px;margin-left:auto;}
-
-/* INSTALL BANNER */
-.install-banner{display:none;align-items:center;gap:12px;padding:13px 16px;background:rgba(0,245,255,.04);border:1px solid rgba(0,245,255,.15);border-radius:10px;}
-.install-banner.show{display:flex;}
-
-/* NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;padding:10px 8px calc(var(--B) + 10px);background:rgba(5,5,8,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(0,245,255,.08);}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;font-family:'Space Mono',monospace;padding:5px 0;transition:all .2s;}
-.nav-btn .ni{font-size:20px;}
-.nav-btn.active{color:var(--c);}
-.nav-btn.active .ni{filter:drop-shadow(0 0 8px var(--c));}
-
-/* TOAST */
-.toast{position:fixed;bottom:calc(var(--B) + 90px);left:50%;transform:translateX(-50%) translateY(12px);background:var(--s2);border:1px solid rgba(0,245,255,.25);color:var(--text);padding:10px 20px;border-radius:8px;font-size:11px;font-family:'Space Mono',monospace;letter-spacing:.5px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(0,245,255,.1);}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* ── Toast ── */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#161616;border:1px solid var(--border2);border-radius:20px;padding:9px 20px;font-size:.82rem;font-family:'Share Tech Mono',monospace;color:var(--green);transition:transform .28s cubic-bezier(.34,1.56,.64,1);z-index:200;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+.toast.show{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<div class="hdr">
-  <div class="logo">LUMA<span>CTRL</span></div>
-  <button class="ble-btn" id="bleBtn" onclick="toggleBLE()">
-    <div class="ble-dot"></div>
-    <span id="bleText">Connect</span>
-  </button>
-</div>
+<header>
+  <div class="logo">LUMA<span>CTRL</span> <span style="font-size:.7rem;color:var(--text2);letter-spacing:.05em">v4</span></div>
+  <div class="hdr-right" onclick="connectBLE()">
+    <span class="ble-lbl" id="bleLbl">GETRENNT</span>
+    <div class="dot" id="dot"></div>
+  </div>
+</header>
 
-<div class="content">
+<main>
 
-  <div class="install-banner" id="ib">
-    <div style="font-size:22px">📲</div>
-    <div style="flex:1"><div style="font-size:13px;font-weight:600">Als App speichern</div><div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'Space Mono',monospace">Teilen → Zum Home-Bildschirm</div></div>
-    <div style="color:var(--muted);cursor:pointer;font-size:18px;padding:4px" onclick="dismissIB()">×</div>
+  <!-- System -->
+  <div class="sec">System</div>
+  <div class="can-bar">
+    <div class="can-dot err" id="canDot"></div>
+    <span class="can-txt" id="canTxt">CAN Bus — nicht verbunden</span>
+    <span class="can-key" id="canKey"></span>
   </div>
 
-  <!-- ══ STEUERN ══ -->
-  <div class="page active" id="page-ctrl">
-
-    <div class="power-row">
-      <div class="power-text"><h2>LEDs</h2><p id="pwrTxt">Online</p></div>
-      <div class="tgl on" id="pwrTog" onclick="togglePower()"></div>
+  <!-- Profile -->
+  <div class="sec">Aktives Profil</div>
+  <div class="key-grid">
+    <div class="key-btn active" id="kb0" onclick="selKey(0)">
+      <div class="key-ind"></div>
+      <div class="key-ico">🗝</div>
+      <div class="key-nm" id="kn0">Schlüssel 1</div>
+      <div class="key-sub">PROFIL 01</div>
     </div>
-
-    <div class="card">
-      <div class="lbl">Helligkeit</div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Intensität</span><span class="sl-val" id="briVal">50%</span></div>
-        <input type="range" id="bri-sl" min="1" max="255" value="128" oninput="onBri(this.value)" onchange="sendBri(this.value)">
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Farbe</div>
-      <div class="color-prev" id="colorPrev"></div>
-      <div class="tabs">
-        <div class="tab active" onclick="cTab('hsv')">HSV</div>
-        <div class="tab" onclick="cTab('rgb')">RGB</div>
-        <div class="tab" onclick="cTab('pal')">Palette</div>
-      </div>
-      <div class="tab-pane active" id="tp-hsv">
-        <div class="sl-wrap">
-          <div class="sl-hdr"><span class="sl-lbl">Farbton</span><span class="sl-val" id="hueVal">0°</span></div>
-          <input type="range" id="hue-sl" min="0" max="255" value="0" oninput="onHSV()" onchange="sendHSV()">
-        </div>
-        <div class="sl-wrap">
-          <div class="sl-hdr"><span class="sl-lbl">Sättigung</span><span class="sl-val" id="satVal">100%</span></div>
-          <input type="range" id="sat-sl" min="0" max="255" value="255" oninput="onHSV()" onchange="sendHSV()">
-        </div>
-      </div>
-      <div class="tab-pane" id="tp-rgb">
-        <div class="sl-wrap">
-          <div class="sl-hdr"><span class="sl-lbl">Rot</span><span class="sl-val" id="rVal">255</span></div>
-          <input type="range" id="r-sl" min="0" max="255" value="255" oninput="onRGB()" onchange="sendRGB()">
-        </div>
-        <div class="sl-wrap">
-          <div class="sl-hdr"><span class="sl-lbl">Grün</span><span class="sl-val" id="gVal">0</span></div>
-          <input type="range" id="g-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
-        </div>
-        <div class="sl-wrap">
-          <div class="sl-hdr"><span class="sl-lbl">Blau</span><span class="sl-val" id="bVal">0</span></div>
-          <input type="range" id="b-sl" min="0" max="255" value="0" oninput="onRGB()" onchange="sendRGB()">
-        </div>
-      </div>
-      <div class="tab-pane" id="tp-pal">
-        <div class="palette">
-          <div class="swatch" style="background:#ff2244" onclick="pal(255,34,68)"></div>
-          <div class="swatch" style="background:#ff7700" onclick="pal(255,119,0)"></div>
-          <div class="swatch" style="background:#ffee00" onclick="pal(255,238,0)"></div>
-          <div class="swatch" style="background:#00ff88" onclick="pal(0,255,136)"></div>
-          <div class="swatch" style="background:#00f5ff" onclick="pal(0,245,255)"></div>
-          <div class="swatch" style="background:#bf00ff" onclick="pal(191,0,255)"></div>
-          <div class="swatch" style="background:#ff00aa" onclick="pal(255,0,170)"></div>
-          <div class="swatch" style="background:#00ffcc" onclick="pal(0,255,204)"></div>
-          <div class="swatch" style="background:#ffffff" onclick="pal(255,255,255)"></div>
-          <div class="swatch" style="background:#ff4488" onclick="pal(255,68,136)"></div>
-          <div class="swatch" style="background:#44ffbb" onclick="pal(68,255,187)"></div>
-          <div class="swatch" style="background:#ff6600" onclick="pal(255,102,0)"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Effekte -->
-    <div class="card">
-      <div class="lbl">Effekt</div>
-      <div class="eff-grid">
-        <div class="eff-btn active" data-id="0" onclick="selEff(0)"><div class="ico">⬛</div>Solid</div>
-        <div class="eff-btn" data-id="1" onclick="selEff(1)"><div class="ico">🌈</div>Rainbow</div>
-      </div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Speed</span><span class="sl-val" id="spdVal">50%</span></div>
-        <input type="range" id="spd-sl" min="1" max="255" value="128" oninput="onSpd(this.value)" onchange="sendEff()">
-      </div>
-    </div>
-
-    <!-- Blinker Status -->
-    <div class="card">
-      <div class="lbl">Blinker Status (GPIO 8/9)</div>
-      <div class="blink-status">
-        <div class="blink-badge" id="blinkL">◄ Links</div>
-        <div class="blink-badge" id="blinkR">Rechts ►</div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;text-align:center;letter-spacing:.5px">
-        Optokoppler — wird vom Fahrzeug gesteuert
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ══ BLINKER ══ -->
-  <div class="page" id="page-blink">
-    <div class="card">
-      <div class="lbl">Blinker Konfiguration</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6">
-        Der Blinker wird automatisch über die Optokoppler an GPIO 8 (Links) und GPIO 9 (Rechts) erkannt und überlagert den aktuellen Effekt.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Blinker Länge</div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Länge in LEDs</span><span class="sl-val" id="blinkLenVal">6</span></div>
-        <input type="range" id="blink-len-sl" min="1" max="50" value="6" oninput="onBlinkLen(this.value)">
-      </div>
-      <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">ca. 1 LED = 1,5–2 cm</div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Blinker Band</div>
-      <div class="blink-grid">
-        <div class="blink-option active" id="bb0" onclick="setBlinkBand(0)">Alle Bänder</div>
-        <div class="blink-option" id="bb1" onclick="setBlinkBand(1)">Nur Band 1</div>
-        <div class="blink-option" id="bb2" onclick="setBlinkBand(2)">Nur Band 2</div>
-        <div class="blink-option" id="bb3" onclick="setBlinkBand(3)">Nur Band 3</div>
-        <div class="blink-option" id="bb4" onclick="setBlinkBand(4)">Nur Band 4</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Blinker Modus</div>
-      <div class="blink-grid">
-        <div class="blink-option active" id="bm0" onclick="setBlinkMode(0)">
-          <div style="font-size:18px;margin-bottom:4px">⚡</div>Normal
-        </div>
-        <div class="blink-option" id="bm1" onclick="setBlinkMode(1)">
-          <div style="font-size:18px;margin-bottom:4px">➡</div>Lauflicht
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Hintergrund-Dimmen</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6">Wie stark die aktuelle Effektfarbe beim Blinken gedimmt wird.</div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Dim-Faktor</span><span class="sl-val" id="blinkDimVal">16%</span></div>
-        <input type="range" id="blink-dim-sl" min="0" max="255" value="40"
-          style="background:linear-gradient(to right,var(--s1),var(--warn))"
-          oninput="onBlinkDim(this.value)">
-      </div>
-      <div style="display:flex;gap:8px;margin-top:4px">
-        <button class="blink-option" onclick="setBlinkDim(0)"   style="flex:1;font-size:11px">Aus (0%)</button>
-        <button class="blink-option" onclick="setBlinkDim(40)"  style="flex:1;font-size:11px">Schwach</button>
-        <button class="blink-option" onclick="setBlinkDim(100)" style="flex:1;font-size:11px">Mittel</button>
-        <button class="blink-option" onclick="setBlinkDim(180)" style="flex:1;font-size:11px">Hell</button>
-      </div>
-    </div>
-      <div class="color-prev" id="blinkColorPrev" style="height:50px"></div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px">
-        <div class="swatch" style="background:#ff8c00" title="Orange" onclick="setBlinkColor(255,140,0)"></div>
-        <div class="swatch" style="background:#ffee00" title="Gelb"   onclick="setBlinkColor(255,238,0)"></div>
-        <div class="swatch" style="background:#ff2244" title="Rot"    onclick="setBlinkColor(255,34,68)"></div>
-        <div class="swatch" style="background:#ffffff" title="Weiß"   onclick="setBlinkColor(255,255,255)"></div>
-        <div class="swatch" style="background:#0088ff" title="Blau"   onclick="setBlinkColor(0,136,255)"></div>
-        <div class="swatch" style="background:#00ff88" title="Grün"   onclick="setBlinkColor(0,255,136)"></div>
-      </div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Rot</span><span class="sl-val" id="bRVal">255</span></div>
-        <input type="range" id="bR-sl" min="0" max="255" value="255" style="background:linear-gradient(to right,var(--s1),#ff3366)" oninput="onBlinkColor()">
-      </div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Grün</span><span class="sl-val" id="bGVal">140</span></div>
-        <input type="range" id="bG-sl" min="0" max="255" value="140" style="background:linear-gradient(to right,var(--s1),#00ff88)" oninput="onBlinkColor()">
-      </div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Blau</span><span class="sl-val" id="bBVal">0</span></div>
-        <input type="range" id="bB-sl" min="0" max="255" value="0" style="background:linear-gradient(to right,var(--s1),#00f5ff)" oninput="onBlinkColor()">
-      </div>
-    </div>
-
-    <button class="btn-save" onclick="sendBlinkConfig()">▶ Blinker Einstellungen speichern</button>
-
-    <div class="card">
-      <div class="lbl">Blinker Test</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.6">Simuliert den Blinker für 5 Sekunden — ohne echtes Fahrzeugsignal.</div>
-      <div style="display:flex;gap:8px">
-        <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('left')">
-          ◄ Links testen
-        </button>
-        <button class="btn-d btn-wide" style="flex:1;background:rgba(255,204,0,.08);border:1px solid rgba(255,204,0,.3);color:var(--warn);flex-direction:row;gap:8px;font-size:13px;padding:14px" onclick="blinkTest('right')">
-          Rechts ► testen
-        </button>
-      </div>
-      <button class="btn-d btn-wide" style="background:rgba(255,204,0,.05);border:1px solid rgba(255,204,0,.2);color:var(--warn);flex-direction:row;gap:8px;font-size:12px;opacity:.7" onclick="blinkTest('both')">
-        ◄► Beide testen (Warnblinker)
-      </button>
-      <button class="btn-d btn-wide btn-danger-full" onclick="blinkTestStop()" id="blinkStopBtn" style="display:none">
-        ■ Test stoppen
-      </button>
-      <div id="blinkTestTimer" style="display:none;text-align:center;font-family:'Space Mono',monospace;font-size:13px;color:var(--warn);text-shadow:0 0 8px var(--warn)"></div>
+    <div class="key-btn" id="kb1" onclick="selKey(1)">
+      <div class="key-ind"></div>
+      <div class="key-ico">🔑</div>
+      <div class="key-nm" id="kn1">Schlüssel 2</div>
+      <div class="key-sub">PROFIL 02</div>
     </div>
   </div>
 
-  <!-- ══ PRESETS ══ -->
-  <div class="page" id="page-pre">
-    <div class="card">
-      <div class="lbl">Schnell-Presets</div>
-      <div class="preset-list">
-        <div class="preset-item" onclick="applyPre('sunset')"><div class="preset-dot" style="background:linear-gradient(135deg,#ff6b35,#f7c948)"></div><div><div class="preset-name">Sunset Lounge</div><div class="preset-sub">warm orange · solid</div></div><div class="preset-arrow">›</div></div>
-        <div class="preset-item" onclick="applyPre('ocean')"><div class="preset-dot" style="background:linear-gradient(135deg,#00f5ff,#0033ff)"></div><div><div class="preset-name">Deep Ocean</div><div class="preset-sub">cyan solid</div></div><div class="preset-arrow">›</div></div>
-        <div class="preset-item" onclick="applyPre('party')"><div class="preset-dot" style="background:linear-gradient(135deg,#bf00ff,#00f5ff)"></div><div><div class="preset-name">Party Mode</div><div class="preset-sub">rainbow · fast</div></div><div class="preset-arrow">›</div></div>
-        <div class="preset-item" onclick="applyPre('forest')"><div class="preset-dot" style="background:linear-gradient(135deg,#00ff88,#009966)"></div><div><div class="preset-name">Forest Night</div><div class="preset-sub">green solid · dim</div></div><div class="preset-arrow">›</div></div>
-        <div class="preset-item" onclick="applyPre('white')"><div class="preset-dot" style="background:#e8e8f0;border:1px solid rgba(255,255,255,.2)"></div><div><div class="preset-name">Daylight</div><div class="preset-sub">pure white · full</div></div><div class="preset-arrow">›</div></div>
-        <div class="preset-item" onclick="applyPre('amber')"><div class="preset-dot" style="background:linear-gradient(135deg,#ff8800,#ffcc00)"></div><div><div class="preset-name">Amber Warning</div><div class="preset-sub">orange solid — Blinkerfarbe</div></div><div class="preset-arrow">›</div></div>
-        <div class="preset-item" onclick="applyPre('red')"><div class="preset-dot" style="background:linear-gradient(135deg,#ff0022,#ff6600)"></div><div><div class="preset-name">Brake Red</div><div class="preset-sub">rot solid</div></div><div class="preset-arrow">›</div></div>
-        <div class="preset-item" onclick="applyPre('rainbow')"><div class="preset-dot" style="background:linear-gradient(135deg,#bf00ff,#ff00aa,#00f5ff)"></div><div><div class="preset-name">Rainbow Flow</div><div class="preset-sub">rainbow · normal speed</div></div><div class="preset-arrow">›</div></div>
+  <!-- Modi -->
+  <div class="sec">Modus</div>
+  <div class="mode-row">
+    <div class="mode-tab active" id="mt0" onclick="selMode(0)"><span class="mi">🌤</span>COMFORT</div>
+    <div class="mode-tab"        id="mt1" onclick="selMode(1)"><span class="mi">⚡</span>SPORT</div>
+    <div class="mode-tab"        id="mt2" onclick="selMode(2)"><span class="mi">🌙</span>NIGHT</div>
+  </div>
+
+  <!-- Farbe -->
+  <div class="sec">Farbe & Helligkeit</div>
+  <div class="card">
+    <div class="color-prev" id="colorPrev"><span class="color-prev-lbl">VORSCHAU</span></div>
+    <div class="card-body">
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">ROT</span><span class="sl-val" id="vR">255</span></div>
+        <input type="range" class="r" id="sR" min="0" max="255" value="255" oninput="onColor()">
+      </div>
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">GRÜN</span><span class="sl-val" id="vG">200</span></div>
+        <input type="range" class="g" id="sG" min="0" max="255" value="200" oninput="onColor()">
+      </div>
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">BLAU</span><span class="sl-val" id="vB">100</span></div>
+        <input type="range" class="b" id="sB" min="0" max="255" value="100" oninput="onColor()">
+      </div>
+      <div class="divider"></div>
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">HELLIGKEIT</span><span class="sl-val" id="vBri">70%</span></div>
+        <input type="range" class="w" id="sBri" min="0" max="100" value="70" oninput="onColor()">
       </div>
     </div>
   </div>
 
-  <!-- ══ SETUP ══ -->
-  <div class="page" id="page-setup">
-
-    <div class="card">
-      <div class="lbl">LED Bänder</div>
-      <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;line-height:2;letter-spacing:.5px">
-        BAND 1 → GPIO 4 &nbsp;·&nbsp; BAND 2 → GPIO 5<br>
-        BAND 3 → GPIO 6 &nbsp;·&nbsp; BAND 4 → GPIO 7
-      </div>
-      <div id="stripList"></div>
-      <button class="btn-save" onclick="saveStrips()">▶ Speichern & senden</button>
-      <div class="saved-hint" id="savedHint">✓ GESPEICHERT</div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Stromrechner</div>
-      <div class="calc-box">
-        <div class="calc-row"><span>Aktive Bänder</span><span id="calcS">—</span></div>
-        <div class="calc-row"><span>LEDs gesamt</span><span id="calcL">—</span></div>
-        <div class="calc-row"><span>Max. Strom (60mA/LED)</span><span id="calcP">—</span></div>
-        <div class="calc-row"><span>Netzteil mindestens</span><span id="calcN">—</span></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Max. Helligkeit</div>
-      <div class="sl-wrap">
-        <div class="sl-hdr"><span class="sl-lbl">Limit</span><span class="sl-val" id="maxBriVal">100%</span></div>
-        <input type="range" id="maxbri-sl" min="1" max="255" value="255"
-          style="background:linear-gradient(to right,var(--s1),var(--c))"
-          oninput="cfg.maxBri=+this.value;document.getElementById('maxBriVal').textContent=Math.round(+this.value/2.55)+'%'">
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">System</div>
-      <div class="info-list">
-        <div class="info-row"><span class="info-k">Gerät</span><span class="info-v" id="iDev">—</span></div>
-        <div class="info-row"><span class="info-k">Status</span><span class="info-v" id="iSts">Offline</span></div>
-        <div class="info-row"><span class="info-k">Aktive Bänder</span><span class="info-v" id="iStr">—</span></div>
-        <div class="info-row"><span class="info-k">ESP Strom Limit</span><span class="info-v">5V / 30A</span></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">Gerät</div>
-      <div class="btn-row">
-        <button class="btn-d btn-restart" onclick="doRestart()"><span style="font-size:18px">🔄</span>Neustart</button>
-        <button class="btn-d btn-off" onclick="doOff()"><span style="font-size:18px">💤</span>Off</button>
-      </div>
-      <button class="btn-d btn-wide btn-danger-full" onclick="resetApp()">⚠ App-Daten zurücksetzen</button>
-    </div>
-
+  <!-- LED Bänder -->
+  <div class="sec">LED Bänder — Modus <span id="modeLbl">COMFORT</span></div>
+  <div class="strip-grid" id="stripGrid">
+    <!-- generated -->
   </div>
-</div>
 
-<!-- Nav -->
-<div class="nav">
-  <div class="nav-btn active" onclick="goPage('ctrl',this)"><span class="ni">🎛</span>Steuern</div>
-  <div class="nav-btn" onclick="goPage('blink',this)"><span class="ni">🚦</span>Blinker</div>
-  <div class="nav-btn" onclick="goPage('pre',this)"><span class="ni">⭐</span>Presets</div>
-  <div class="nav-btn" onclick="goPage('setup',this)"><span class="ni">⚙</span>Setup</div>
-</div>
+  <!-- Blinker -->
+  <div class="sec">Blinker — Profil <span id="bProfLbl">1</span></div>
+  <div class="card">
+    <div class="card-body">
+      <div class="blink-prev">
+        <div class="blink-ind" id="bindL">◄ LINKS</div>
+        <div class="blink-ind" id="bindR">RECHTS ►</div>
+      </div>
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">BLINKER ROT</span><span class="sl-val" id="vBR">255</span></div>
+        <input type="range" class="r" id="sBR" min="0" max="255" value="255" oninput="onBlink()">
+      </div>
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">BLINKER GRÜN</span><span class="sl-val" id="vBG">100</span></div>
+        <input type="range" class="g" id="sBG" min="0" max="255" value="100" oninput="onBlink()">
+      </div>
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">BLINKER BLAU</span><span class="sl-val" id="vBB">0</span></div>
+        <input type="range" class="b" id="sBB" min="0" max="255" value="0" oninput="onBlink()">
+      </div>
+      <div class="divider"></div>
+      <div class="sl-row">
+        <div class="sl-hdr"><span class="sl-lbl">DIM-FAKTOR</span><span class="sl-val" id="vDim">30%</span></div>
+        <input type="range" class="w" id="sDim" min="0" max="100" value="30" oninput="onBlink()">
+      </div>
+      <div class="divider"></div>
+      <div class="tog-row">
+        <div class="tog-info">
+          <div class="tog-lbl">Laufblinker</div>
+          <div class="tog-sub">Knight Rider Effekt</div>
+        </div>
+        <div class="tog" id="togRun" onclick="toggleRun()"></div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Speichern -->
+  <button class="save-btn" onclick="sendAll()">SPEICHERN & SENDEN</button>
+
+</main>
 <div class="toast" id="toast"></div>
 
 <script>
-'use strict';
+// ── State ────────────────────────────────────────────────────
+const modeNames = ['COMFORT','SPORT','NIGHT'];
+const stripLabels = ['BAND 1','BAND 2','BAND 3','BAND 4'];
+const stripGPIOs  = ['GPIO 4','GPIO 5','GPIO 6','GPIO 7'];
 
-if ('serviceWorker' in navigator && location.protocol !== 'file:')
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-
-window.addEventListener('load', () => {
-  if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone && !localStorage.getItem('ib_ok'))
-    document.getElementById('ib').classList.add('show');
-});
-function dismissIB() { document.getElementById('ib').classList.remove('show'); localStorage.setItem('ib_ok','1'); }
-
-// ── BLE ────────────────────────────────────────────
-const UUID_SVC  = '12345678-1234-1234-1234-123456789abc';
-const UUID_CTRL = '12345678-1234-1234-1234-123456789001';
-const UUID_INFO = '12345678-1234-1234-1234-123456789002';
-
-let bleDevice=null, writeChar=null, connected=false, autoRC=false;
-let lastSent=0, msgQueue=[], draining=false;
-
-async function connectToDevice(device) {
-  const server  = await device.gatt.connect();
-  const service = await server.getPrimaryService(UUID_SVC);
-  writeChar = await service.getCharacteristic(UUID_CTRL);
-  try {
-    const ic = await service.getCharacteristic(UUID_INFO);
-    await ic.startNotifications();
-    ic.addEventListener('characteristicvaluechanged', e => {
-      try { const d=JSON.parse(new TextDecoder().decode(e.target.value)); handleESPInfo(d); } catch(e) {}
-    });
-    try { const d=JSON.parse(new TextDecoder().decode(await ic.readValue())); handleESPInfo(d); } catch(e) {}
-  } catch(e) {}
-}
-
-async function toggleBLE() {
-  if (connected) { bleDevice?.gatt.disconnect(); return; }
-  if (!navigator.bluetooth) { toast('⚠ Bluefy Browser nötig'); return; }
-  try {
-    toast('Suche Geräte…');
-    bleDevice = await navigator.bluetooth.requestDevice({ acceptAllDevices:true, optionalServices:[UUID_SVC] });
-    bleDevice.addEventListener('gattserverdisconnected', () => { setConn(false); toast('Verbindung getrennt'); });
-    await connectToDevice(bleDevice);
-    setConn(true);
-    toast('✓ ' + (bleDevice.name || bleDevice.id));
-    updateInfo();
-  } catch(e) { toast('✕ ' + (e.message||'Fehler')); }
-}
-
-function setConn(v) {
-  connected = v;
-  document.getElementById('bleBtn').classList.toggle('on', v);
-  document.getElementById('bleText').textContent = v ? 'Online' : 'Connect';
-  document.getElementById('iSts').textContent = v ? 'Online' : 'Offline';
-  if (!v && autoRC && bleDevice) {
-    autoRC = false;
-    toast('Reconnect in 6s…');
-    setTimeout(async () => {
-      if (connected) return;
-      try { await connectToDevice(bleDevice); setConn(true); toast('✓ Reconnect OK'); updateInfo(); }
-      catch(e) { toast('✕ Reconnect fehlgeschlagen'); }
-    }, 6000);
-  }
-}
-
-// Handle Infos vom ESP (blink status etc.)
-function handleESPInfo(data) {
-  if (!data) return;
-  // Blinker Status
-  if (data.type === 'blink') {
-    document.getElementById('blinkL').classList.toggle('active-left',  !!data.left);
-    document.getElementById('blinkR').classList.toggle('active-right', !!data.right);
-  }
-  // Strip Config
-  if (data.type === 'config' && data.strips) {
-    data.strips.forEach(s => {
-      if (s.id >= 0 && s.id < 4) {
-        cfg.strips[s.id].leds = s.leds;
-        cfg.strips[s.id].on   = s.on;
-      }
-    });
-    buildStrips();
-    const act = cfg.strips.filter(s=>s.on&&s.leds>0).length;
-    document.getElementById('iStr').textContent = act + ' aktiv';
-  }
-}
-
-async function send(json) {
-  if (!connected || !writeChar) return;
-  const now = Date.now();
-  if (now - lastSent < 50) { msgQueue=[json]; if(!draining) drainQ(); return; }
-  lastSent = now;
-  try { await writeChar.writeValueWithoutResponse(new TextEncoder().encode(json)); } catch(e) {}
-}
-async function drainQ() {
-  draining=true;
-  while(msgQueue.length) { await send(msgQueue.shift()); await new Promise(r=>setTimeout(r,60)); }
-  draining=false;
-}
-
-// ── State ──────────────────────────────────────────
-let S = { pwr:true, bri:128, h:0, s:255, r:255, g:0, b:0, eid:0, spd:128 };
-let blinkCfg = {
-  length: parseInt(localStorage.getItem('blinkLen')||'6'),
-  band:   parseInt(localStorage.getItem('blinkBand')||'0'),
-  mode:   parseInt(localStorage.getItem('blinkMode')||'0'),
+let S = {
+  ap: 0, am: 0, can: false,
+  p: [
+    {
+      name:'Schluessel 1', br:255,bg:100,bb:0, dim:30, run:false,
+      sl:[30,30,30,30],
+      m:[
+        {r:255,g:200,b:100,bri:70,  en:[true,true,true,true]},
+        {r:255,g:30, b:30, bri:100, en:[true,true,true,true]},
+        {r:0,  g:0,  b:80, bri:20,  en:[true,false,true,false]}
+      ]
+    },
+    {
+      name:'Schluessel 2', br:255,bg:120,bb:0, dim:30, run:false,
+      sl:[30,30,30,30],
+      m:[
+        {r:100,g:200,b:255,bri:70,  en:[true,true,true,true]},
+        {r:0,  g:255,b:100,bri:100, en:[true,true,true,true]},
+        {r:80, g:0,  b:80, bri:15,  en:[true,false,true,false]}
+      ]
+    }
+  ]
 };
 
-function togglePower() {
-  S.pwr = !S.pwr;
-  document.getElementById('pwrTog').classList.toggle('on', S.pwr);
-  document.getElementById('pwrTxt').textContent = S.pwr ? 'Online' : 'Offline';
-  send(JSON.stringify({ cmd:'power', val:S.pwr?1:0 }));
+let bleChar = null, bleConn = false;
+
+// ── BLE ─────────────────────────────────────────────────────
+async function connectBLE() {
+  try {
+    const dev  = await navigator.bluetooth.requestDevice({filters:[{name:'LumaControl'}],optionalServices:['12345678-1234-1234-1234-123456789abc']});
+    const srv  = await dev.gatt.connect();
+    const svc  = await srv.getPrimaryService('12345678-1234-1234-1234-123456789abc');
+    bleChar    = await svc.getCharacteristic('12345678-1234-1234-1234-123456789ab1');
+    const stCh = await svc.getCharacteristic('12345678-1234-1234-1234-123456789ab2');
+    await stCh.startNotifications();
+    stCh.addEventListener('characteristicvaluechanged', e => {
+      try { applyState(JSON.parse(new TextDecoder().decode(e.target.value))); } catch(x){}
+    });
+    await sendCmd({cmd:'sync'});
+    bleConn = true;
+    document.getElementById('dot').classList.add('on');
+    document.getElementById('bleLbl').textContent = 'VERBUNDEN';
+    toast('🔗 BLE verbunden');
+    dev.addEventListener('gattserverdisconnected', () => {
+      bleConn = false; bleChar = null;
+      document.getElementById('dot').classList.remove('on');
+      document.getElementById('bleLbl').textContent = 'GETRENNT';
+      toast('🔌 Getrennt');
+    });
+  } catch(e) { toast('⚠ ' + e.message); }
 }
 
-function onBri(v)   { S.bri=+v; document.getElementById('briVal').textContent=Math.round(v/2.55)+'%'; }
-function sendBri(v) { send(JSON.stringify({ cmd:'bri', val:+v })); }
+async function sendCmd(obj) {
+  if (!bleChar) return;
+  await bleChar.writeValue(new TextEncoder().encode(JSON.stringify(obj)));
+}
+
+function applyState(data) {
+  if (data.p)   S.p  = data.p;
+  if (data.ap !== undefined) S.ap  = data.ap;
+  if (data.am !== undefined) S.am  = data.am;
+  if (data.can !== undefined) S.can = data.can;
+  render(); toast('↓ Synchronisiert');
+}
+
+// ── Render ───────────────────────────────────────────────────
+function render() {
+  // Keys
+  [0,1].forEach(i => {
+    document.getElementById('kb'+i).classList.toggle('active', i===S.ap);
+    document.getElementById('kn'+i).textContent = S.p[i].name;
+  });
+  // Modes
+  [0,1,2].forEach(i => {
+    document.getElementById('mt'+i).classList.toggle('active', i===S.am);
+  });
+  document.getElementById('modeLbl').textContent = modeNames[S.am];
+
+  // Color
+  const m = S.p[S.ap].m[S.am];
+  setSlider('sR',m.r,'vR',m.r); setSlider('sG',m.g,'vG',m.g);
+  setSlider('sB',m.b,'vB',m.b); setSlider('sBri',m.bri,'vBri',m.bri+'%');
+  updatePreview();
+
+  // Strips
+  renderStrips();
+
+  // Blinker
+  const p = S.p[S.ap];
+  setSlider('sBR',p.br,'vBR',p.br); setSlider('sBG',p.bg,'vBG',p.bg);
+  setSlider('sBB',p.bb,'vBB',p.bb); setSlider('sDim',p.dim,'vDim',p.dim+'%');
+  document.getElementById('togRun').classList.toggle('on', p.run);
+  document.getElementById('bProfLbl').textContent = S.ap+1;
+
+  // CAN
+  const ok = S.can;
+  document.getElementById('canDot').className = 'can-dot ' + (ok?'ok':'err');
+  document.getElementById('canTxt').textContent = ok ? 'CAN Bus — aktiv' : 'CAN Bus — nicht verbunden';
+  document.getElementById('canKey').textContent = ok ? 'KEY '+(S.ap+1) : '';
+}
+
+function setSlider(id, val, valId, display) {
+  document.getElementById(id).value = val;
+  document.getElementById(valId).textContent = display;
+}
 
 function updatePreview() {
-  const el = document.getElementById('colorPrev');
-  el.style.background = `rgb(${S.r},${S.g},${S.b})`;
-  el.style.boxShadow  = `0 0 20px rgba(${S.r},${S.g},${S.b},0.35)`;
-  const bp = document.getElementById('blinkColorPrev');
-  if (bp) { bp.style.background = `rgb(${S.r},${S.g},${S.b})`; bp.style.boxShadow = `0 0 16px rgba(${S.r},${S.g},${S.b},0.3)`; }
+  const m = S.p[S.ap].m[S.am];
+  const f = m.bri/100;
+  const r=Math.round(m.r*f), g=Math.round(m.g*f), b=Math.round(m.b*f);
+  document.getElementById('colorPrev').style.background =
+    `linear-gradient(135deg,rgb(${r},${g},${b}),rgb(${Math.round(r*.55)},${Math.round(g*.55)},${Math.round(b*.55)}))`;
 }
 
-function onHSV() {
-  S.h=+document.getElementById('hue-sl').value;
-  S.s=+document.getElementById('sat-sl').value;
-  document.getElementById('hueVal').textContent=Math.round(S.h/255*360)+'°';
-  document.getElementById('satVal').textContent=Math.round(S.s/255*100)+'%';
-  document.getElementById('sat-sl').style.background=`linear-gradient(to right,hsl(${Math.round(S.h/255*360)},0%,50%),hsl(${Math.round(S.h/255*360)},100%,50%))`;
-  const [r,g,b]=hsv2rgb(S.h/255,S.s/255,1); S.r=r;S.g=g;S.b=b; updatePreview();
-}
-function sendHSV() { send(JSON.stringify({cmd:'hsv',h:S.h,s:S.s})); }
-
-function onRGB() {
-  S.r=+document.getElementById('r-sl').value;
-  S.g=+document.getElementById('g-sl').value;
-  S.b=+document.getElementById('b-sl').value;
-  document.getElementById('rVal').textContent=S.r;
-  document.getElementById('gVal').textContent=S.g;
-  document.getElementById('bVal').textContent=S.b;
-  updatePreview();
-}
-function sendRGB() { send(JSON.stringify({cmd:'color',r:S.r,g:S.g,b:S.b})); }
-
-function pal(r,g,b) {
-  S.r=r;S.g=g;S.b=b;
-  document.getElementById('r-sl').value=r;
-  document.getElementById('g-sl').value=g;
-  document.getElementById('b-sl').value=b;
-  updatePreview();
-  send(JSON.stringify({cmd:'color',r,g,b}));
-}
-
-function selEff(id) {
-  S.eid=id;
-  document.querySelectorAll('.eff-btn').forEach(el=>el.classList.toggle('active',+el.dataset.id===id));
-  send(JSON.stringify({cmd:'effect',id,spd:S.spd}));
-}
-function onSpd(v)  { S.spd=+v; document.getElementById('spdVal').textContent=Math.round(v/255*100)+'%'; }
-function sendEff() { send(JSON.stringify({cmd:'effect',id:S.eid,spd:S.spd})); }
-
-// ── Blinker Config ─────────────────────────────────
-function onBlinkLen(v) {
-  blinkCfg.length = +v;
-  document.getElementById('blinkLenVal').textContent = v;
-}
-
-function setBlinkBand(n) {
-  blinkCfg.band = n;
-  for(let i=0;i<=4;i++) {
-    const el = document.getElementById('bb'+i);
-    if(el) el.classList.toggle('active', i===n);
+function renderStrips() {
+  const grid = document.getElementById('stripGrid');
+  grid.innerHTML = '';
+  const p = S.p[S.ap];
+  const m = S.p[S.ap].m[S.am];
+  for (let s = 0; s < 4; s++) {
+    const en = m.en[s];
+    const len = p.sl[s];
+    const div = document.createElement('div');
+    div.className = 'strip-card';
+    div.innerHTML = `
+      <div class="strip-header">
+        <div>
+          <div class="strip-name">${stripLabels[s]}</div>
+          <div class="strip-gpio">${stripGPIOs[s]}</div>
+        </div>
+        <div class="tog ${en?'on':''}" id="stog${s}" onclick="toggleStrip(${s})"></div>
+      </div>
+      <div class="len-row">
+        <span class="len-lbl">LEDs</span>
+        <input class="len-input" type="number" min="1" max="144" value="${len}" id="slen${s}" oninput="onLenChange(${s},this.value)">
+        <span class="len-leds">/ 144</span>
+      </div>`;
+    grid.appendChild(div);
   }
 }
 
-function setBlinkMode(n) {
-  blinkCfg.mode = n;
-  document.getElementById('bm0').classList.toggle('active', n===0);
-  document.getElementById('bm1').classList.toggle('active', n===1);
+// ── Interactions ─────────────────────────────────────────────
+function selKey(i) {
+  S.ap = i; render();
+  if (bleConn) sendCmd({cmd:'setProfile',profile:i});
 }
-
-let blinkTestInterval = null;
-
-function blinkTest(side) {
-  if (!connected) { toast('Nicht verbunden'); return; }
-  const duration = 5000;
-  const left  = side === 'left'  || side === 'both' ? 1 : 0;
-  const right = side === 'right' || side === 'both' ? 1 : 0;
-
-  send(JSON.stringify({ cmd:'blinktest', left, right, duration }));
-
-  // UI
-  document.getElementById('blinkStopBtn').style.display = '';
-  document.getElementById('blinkTestTimer').style.display = '';
-
-  const label = side === 'both' ? '◄► Warnblinker' : side === 'left' ? '◄ Links' : 'Rechts ►';
-  toast('🟡 Test: ' + label + ' — 5s');
-
-  // Countdown
-  let remaining = duration / 1000;
-  clearInterval(blinkTestInterval);
-  const timerEl = document.getElementById('blinkTestTimer');
-  timerEl.textContent = '⏱ Test läuft: ' + remaining + 's';
-  blinkTestInterval = setInterval(() => {
-    remaining--;
-    if (remaining <= 0) {
-      clearInterval(blinkTestInterval);
-      document.getElementById('blinkStopBtn').style.display = 'none';
-      timerEl.style.display = 'none';
-      timerEl.textContent = '';
-      // Blinker-Status Badges zurücksetzen
-      document.getElementById('blinkL').classList.remove('active-left');
-      document.getElementById('blinkR').classList.remove('active-right');
-    } else {
-      timerEl.textContent = '⏱ Test läuft: ' + remaining + 's';
-    }
-  }, 1000);
-
-  // Badges live anzeigen
-  if (left)  document.getElementById('blinkL').classList.add('active-left');
-  if (right) document.getElementById('blinkR').classList.add('active-right');
+function selMode(i) {
+  S.am = i; render();
+  if (bleConn) sendCmd({cmd:'setMode',mode:i});
 }
-
-function blinkTestStop() {
-  send(JSON.stringify({ cmd:'blinktestoff' }));
-  clearInterval(blinkTestInterval);
-  document.getElementById('blinkStopBtn').style.display = 'none';
-  document.getElementById('blinkTestTimer').style.display = 'none';
-  document.getElementById('blinkL').classList.remove('active-left');
-  document.getElementById('blinkR').classList.remove('active-right');
-  toast('■ Test gestoppt');
-}
-
-// Blinkerfarbe (unabhängig von Effektfarbe)
-let blink = {
-  r:   parseInt(localStorage.getItem('blinkR')  ||'255'),
-  g:   parseInt(localStorage.getItem('blinkG')  ||'140'),
-  b:   parseInt(localStorage.getItem('blinkB')  ||'0'),
-  dim: parseInt(localStorage.getItem('blinkDim')||'40'),
-};
-
-function setBlinkColor(r,g,b) {
-  blink.r=r; blink.g=g; blink.b=b;
-  document.getElementById('bR-sl').value=r;
-  document.getElementById('bG-sl').value=g;
-  document.getElementById('bB-sl').value=b;
-  updateBlinkPreview();
-}
-function onBlinkColor() {
-  blink.r=+document.getElementById('bR-sl').value;
-  blink.g=+document.getElementById('bG-sl').value;
-  blink.b=+document.getElementById('bB-sl').value;
-  document.getElementById('bRVal').textContent=blink.r;
-  document.getElementById('bGVal').textContent=blink.g;
-  document.getElementById('bBVal').textContent=blink.b;
-  updateBlinkPreview();
-}
-function onBlinkDim(v) {
-  blink.dim=+v;
-  document.getElementById('blinkDimVal').textContent=Math.round(v/2.55)+'%';
-}
-function setBlinkDim(v) {
-  blink.dim=v;
-  document.getElementById('blink-dim-sl').value=v;
-  document.getElementById('blinkDimVal').textContent=Math.round(v/2.55)+'%';
-}
-function updateBlinkPreview() {
-  const el=document.getElementById('blinkColorPrev');
-  if(el){el.style.background=`rgb(${blink.r},${blink.g},${blink.b})`;el.style.boxShadow=`0 0 16px rgba(${blink.r},${blink.g},${blink.b},0.3)`;}
-}
-
-function sendBlinkConfig() {
-  localStorage.setItem('blinkR',   blink.r);
-  localStorage.setItem('blinkG',   blink.g);
-  localStorage.setItem('blinkB',   blink.b);
-  localStorage.setItem('blinkDim', blink.dim);
-  localStorage.setItem('blinkLen',  blinkCfg.length);
-  localStorage.setItem('blinkBand', blinkCfg.band);
-  localStorage.setItem('blinkMode', blinkCfg.mode);
-  send(JSON.stringify({
-    cmd:    'blinkconfig',
-    length: blinkCfg.length,
-    band:   blinkCfg.band,
-    mode:   blinkCfg.mode,
-    br:     blink.r,
-    bg:     blink.g,
-    bb:     blink.b,
-    dim:    blink.dim,
-  }));
-  toast('✓ Blinker gespeichert');
-}
-
-function initBlinkUI() {
-  document.getElementById('blink-len-sl').value = blinkCfg.length;
-  document.getElementById('blinkLenVal').textContent = blinkCfg.length;
-  setBlinkBand(blinkCfg.band);
-  setBlinkMode(blinkCfg.mode);
-}
-
-// ── Presets ────────────────────────────────────────
-// Nur Solid (0) und Rainbow (1) — wie im ESP Code
-const PRESETS = {
-  sunset:  { r:255, g:107, b:53,  e:0, spd:128, bri:180 },
-  ocean:   { r:0,   g:220, b:255, e:0, spd:128, bri:150 },
-  party:   { r:255, g:0,   b:200, e:1, spd:220, bri:255 },
-  forest:  { r:0,   g:200, b:60,  e:0, spd:128, bri:80  },
-  white:   { r:255, g:230, b:200, e:0, spd:128, bri:255 },
-  amber:   { r:255, g:140, b:0,   e:0, spd:128, bri:200 },
-  red:     { r:255, g:0,   b:0,   e:0, spd:128, bri:200 },
-  rainbow: { r:255, g:0,   b:200, e:1, spd:128, bri:200 },
-};
-
-function applyPre(name) {
-  const p = PRESETS[name];
-  S = { ...S, r:p.r, g:p.g, b:p.b, eid:p.e, spd:p.spd, bri:p.bri };
-  document.getElementById('bri-sl').value = p.bri; onBri(p.bri);
-  document.getElementById('spd-sl').value = p.spd; onSpd(p.spd);
+function onColor() {
+  const r=+id('sR').value, g=+id('sG').value, b=+id('sB').value, bri=+id('sBri').value;
+  id('vR').textContent=r; id('vG').textContent=g; id('vB').textContent=b; id('vBri').textContent=bri+'%';
+  S.p[S.ap].m[S.am] = {...S.p[S.ap].m[S.am], r,g,b,bri};
   updatePreview();
-  send(JSON.stringify({cmd:'bri', val:p.bri}));
-  send(JSON.stringify({cmd:'color', r:p.r, g:p.g, b:p.b}));
-  setTimeout(()=>send(JSON.stringify({cmd:'effect', id:p.e, spd:p.spd})),100);
-  toast('✓ ' + name + ' geladen');
+}
+function onBlink() {
+  const br=+id('sBR').value, bg=+id('sBG').value, bb=+id('sBB').value, dim=+id('sDim').value;
+  id('vBR').textContent=br; id('vBG').textContent=bg; id('vBB').textContent=bb; id('vDim').textContent=dim+'%';
+  Object.assign(S.p[S.ap], {br,bg,bb,dim});
+}
+function toggleRun() {
+  S.p[S.ap].run = !S.p[S.ap].run;
+  id('togRun').classList.toggle('on', S.p[S.ap].run);
+}
+function toggleStrip(s) {
+  S.p[S.ap].m[S.am].en[s] = !S.p[S.ap].m[S.am].en[s];
+  id('stog'+s).classList.toggle('on', S.p[S.ap].m[S.am].en[s]);
+  if (bleConn) sendCmd({cmd:'setStripEnabled',profile:S.ap,mode:S.am,strip:s,enabled:S.p[S.ap].m[S.am].en[s]});
+}
+function onLenChange(s, val) {
+  const n = Math.min(144, Math.max(1, parseInt(val)||1));
+  S.p[S.ap].sl[s] = n;
+  if (bleConn) sendCmd({cmd:'setStripLength',profile:S.ap,strip:s,length:n});
 }
 
-// ── Strip Config ───────────────────────────────────
-const STRIP_PINS = [4,5,6,7];
-
-(function(){
-  const old=JSON.parse(localStorage.getItem('strips')||'null');
-  if(old && old.length!==4) localStorage.removeItem('strips');
-})();
-
-let cfg = {
-  maxBri: parseInt(localStorage.getItem('maxBri')||'255'),
-  strips: JSON.parse(localStorage.getItem('strips')||JSON.stringify([
-    {id:0,leds:60,on:true},{id:1,leds:60,on:true},
-    {id:2,leds:60,on:true},{id:3,leds:60,on:true}
-  ]))
-};
-while(cfg.strips.length<4) cfg.strips.push({id:cfg.strips.length,leds:0,on:false});
-cfg.strips=cfg.strips.slice(0,4);
-
-function buildStrips() {
-  const c=document.getElementById('stripList');
-  c.innerHTML='';
-  cfg.strips.forEach((s,i)=>{
-    const el=document.createElement('div');
-    el.className='strip-item'+(s.on?' active':'');
-    el.id='si'+i;
-    el.innerHTML=`
-      <div class="strip-hdr">
-        <div class="strip-num">${i+1}</div>
-        <div style="flex:1">
-          <div class="strip-name">Band ${i+1}</div>
-          <div class="strip-gpio">GPIO ${STRIP_PINS[i]}</div>
-        </div>
-        <div class="strip-tog ${s.on?'on':''}" id="tog${i}" onclick="togStrip(${i})"></div>
-      </div>
-      <div id="sf${i}" style="${s.on?'':'opacity:.3;pointer-events:none'}">
-        <div class="led-lbl">Anzahl LEDs</div>
-        <div class="led-row">
-          <button class="num-btn" onclick="chLeds(${i},-10)">−−</button>
-          <button class="num-btn" onclick="chLeds(${i},-1)">−</button>
-          <input type="number" class="num-in" id="li${i}" value="${s.leds}" min="0" max="300"
-            onchange="cfg.strips[${i}].leds=Math.max(0,Math.min(300,+this.value));calcPwr()">
-          <button class="num-btn" onclick="chLeds(${i},1)">+</button>
-          <button class="num-btn" onclick="chLeds(${i},10)">++</button>
-        </div>
-      </div>`;
-    c.appendChild(el);
-  });
-  calcPwr();
+async function sendAll() {
+  const p = S.p[S.ap];
+  const m = p.m[S.am];
+  await sendCmd({cmd:'setColor',profile:S.ap,mode:S.am,r:m.r,g:m.g,b:m.b,bri:m.bri});
+  for (let s=0;s<4;s++) {
+    await sendCmd({cmd:'setStripEnabled',profile:S.ap,mode:S.am,strip:s,enabled:m.en[s]});
+    await sendCmd({cmd:'setStripLength',profile:S.ap,strip:s,length:p.sl[s]});
+  }
+  await sendCmd({cmd:'setBlinker',profile:S.ap,r:p.br,g:p.bg,b:p.bb,dim:p.dim,run:p.run});
+  toast('✓ Gespeichert & gesendet');
 }
 
-function togStrip(i) {
-  cfg.strips[i].on=!cfg.strips[i].on;
-  document.getElementById('tog'+i).classList.toggle('on',cfg.strips[i].on);
-  document.getElementById('si'+i).classList.toggle('active',cfg.strips[i].on);
-  const f=document.getElementById('sf'+i);
-  f.style.opacity=cfg.strips[i].on?'1':'.3';
-  f.style.pointerEvents=cfg.strips[i].on?'auto':'none';
-  calcPwr();
-}
-
-function chLeds(i,d) {
-  cfg.strips[i].leds=Math.max(0,Math.min(300,cfg.strips[i].leds+d));
-  document.getElementById('li'+i).value=cfg.strips[i].leds;
-  calcPwr();
-}
-
-function calcPwr() {
-  const act=cfg.strips.filter(s=>s.on&&s.leds>0);
-  const tot=act.reduce((a,s)=>a+s.leds,0);
-  const amps=tot*60/1000;
-  const rec=Math.ceil(amps*1.2*10)/10;
-  document.getElementById('calcS').textContent=act.length+' Bänder';
-  document.getElementById('calcL').textContent=tot+' LEDs';
-  document.getElementById('calcP').textContent=amps.toFixed(1)+' A';
-  document.getElementById('calcN').textContent='≥ '+rec.toFixed(1)+' A / 5V';
-}
-
-function saveStrips() {
-  cfg.strips.forEach((_,i)=>{
-    const el=document.getElementById('li'+i);
-    if(el) cfg.strips[i].leds=parseInt(el.value)||0;
-  });
-  cfg.maxBri=parseInt(document.getElementById('maxbri-sl').value);
-  localStorage.setItem('strips',JSON.stringify(cfg.strips));
-  localStorage.setItem('maxBri',cfg.maxBri);
-
-  // Strips-Befehl — ESP speichert sofort, kein Neustart nötig
-  const j='['+cfg.strips.map((s,i)=>`{"id":${i},"leds":${s.leds},"on":${s.on}}`).join(',')+']';
-  send(`{"cmd":"strips","strips":${j},"maxBri":${cfg.maxBri}}`);
-
-  document.getElementById('savedHint').classList.add('show');
-  setTimeout(()=>document.getElementById('savedHint').classList.remove('show'),4000);
-  toast('✓ Gespeichert');
-  updateInfo();
-}
-
-function updateInfo() {
-  document.getElementById('iDev').textContent=bleDevice?(bleDevice.name||bleDevice.id||'—'):'—';
-  const act=cfg.strips.filter(s=>s.on&&s.leds>0).length;
-  document.getElementById('iStr').textContent=act>0?act+' aktiv':'—';
-}
-
-function doRestart() {
-  if(!connected){toast('Nicht verbunden');return;}
-  // restart = Flash löschen + Neustart (wie im ESP Code)
-  send(JSON.stringify({cmd:'restart'}));
-  toast('🔄 ESP Neustart (Flash gelöscht)…');
-  autoRC=true;
-  setTimeout(()=>setConn(false),1000);
-}
-function doOff() {
-  if(!connected){toast('Nicht verbunden');return;}
-  send(JSON.stringify({cmd:'off'}));
-  toast('💤 Ausschalten…');
-}
-function resetApp() {
-  localStorage.removeItem('strips'); localStorage.removeItem('maxBri');
-  localStorage.removeItem('blinkLen'); localStorage.removeItem('blinkBand'); localStorage.removeItem('blinkMode');
-  cfg.strips=[{id:0,leds:60,on:true},{id:1,leds:60,on:true},{id:2,leds:60,on:true},{id:3,leds:60,on:true}];
-  cfg.maxBri=255; buildStrips();
-  document.getElementById('maxbri-sl').value=255;
-  document.getElementById('maxBriVal').textContent='100%';
-  blinkCfg={length:6,band:0,mode:0}; initBlinkUI();
-  toast('✓ App zurückgesetzt');
-}
-
-// ── UI ─────────────────────────────────────────────
-function cTab(name) {
-  ['hsv','rgb','pal'].forEach(n=>{
-    document.querySelector(`.tabs .tab[onclick="cTab('${n}')"]`).classList.toggle('active',n===name);
-    document.getElementById('tp-'+n).classList.toggle('active',n===name);
-  });
-}
-function goPage(name,el) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  el.classList.add('active');
-}
-
+// ── Helpers ──────────────────────────────────────────────────
+const id = x => document.getElementById(x);
 let toastT;
 function toast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600);
+  const t=id('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-function hsv2rgb(h,s,v) {
-  const i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);
-  let r,g,b;
-  switch(i%6){case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;case 5:r=v;g=p;b=q;break;}
-  return[Math.round(r*255),Math.round(g*255),Math.round(b*255)];
-}
-
-// Init
-updatePreview(); onHSV(); initBlinkUI();
-// Gespeicherte Blinkerfarbe und Dim laden
-setBlinkColor(blink.r, blink.g, blink.b);
-document.getElementById('blink-dim-sl').value=blink.dim;
-document.getElementById('blinkDimVal').textContent=Math.round(blink.dim/2.55)+'%';
-document.getElementById('maxbri-sl').value=cfg.maxBri;
-document.getElementById('maxBriVal').textContent=Math.round(cfg.maxBri/2.55)+'%';
-buildStrips();
+render();
 </script>
 </body>
 </html>
