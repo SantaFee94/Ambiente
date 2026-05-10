@@ -1,238 +1,789 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>LumaControl v4</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>LumaControl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
-
+/* ═══════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════ */
 :root {
-  --bg:      #080808;
-  --bg2:     #0d0d0d;
-  --panel:   #101010;
-  --panel2:  #141414;
-  --border:  #1c1c1c;
-  --border2: #242424;
-  --accent:  #e8ff00;
-  --orange:  #ff4d00;
-  --blue:    #00c8ff;
-  --green:   #00ff88;
-  --purple:  #b060ff;
-  --dim:     #333;
-  --text:    #d0d0d0;
-  --text2:   #555;
-  --r:       6px;
+  --bg:        #0a0a0a;
+  --surface:   #111111;
+  --surface2:  #171717;
+  --surface3:  #1e1e1e;
+  --border:    rgba(255,255,255,.06);
+  --border2:   rgba(255,255,255,.10);
+  --accent:    #c8ff00;
+  --accent-d:  #a0cc00;
+  --green:     #00e87a;
+  --orange:    #ff5c1a;
+  --blue:      #3d9eff;
+  --text:      #f0f0f0;
+  --text2:     #888;
+  --text3:     #444;
+  --r-sm:      8px;
+  --r-md:      14px;
+  --r-lg:      20px;
+  --mono:      'Space Mono', monospace;
+  --sans:      'DM Sans', sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:999}
 
-/* ── Header ── */
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:50}
-.logo{font-size:1.3rem;font-weight:700;letter-spacing:.14em;color:var(--accent);text-shadow:0 0 18px rgba(232,255,0,.25)}
-.logo span{color:var(--text2);font-weight:400}
-.hdr-right{display:flex;align-items:center;gap:9px;cursor:pointer}
-.ble-lbl{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--text2)}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--dim);transition:all .4s}
-.dot.on{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 6px var(--green)}50%{box-shadow:0 0 16px var(--green),0 0 32px rgba(0,255,136,.15)}}
+/* ═══════════════════════════════════════════════
+RESET & BASE
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; }
+body {
+font-family: var(–sans);
+background: var(–bg);
+color: var(–text);
+min-height: 100%;
+font-size: 15px;
+line-height: 1.5;
+-webkit-font-smoothing: antialiased;
+overscroll-behavior: none;
+}
 
-/* ── Layout ── */
-main{padding:14px 18px 90px;max-width:480px;margin:0 auto}
-.sec{font-family:'Share Tech Mono',monospace;font-size:.63rem;letter-spacing:.2em;color:var(--text2);text-transform:uppercase;margin:22px 0 8px}
+/* ═══════════════════════════════════════════════
+HEADER
+═══════════════════════════════════════════════ */
+.header {
+position: sticky;
+top: 0;
+z-index: 100;
+background: rgba(10,10,10,.85);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-bottom: 1px solid var(–border);
+padding: 0 20px;
+}
+.header-inner {
+display: flex;
+align-items: center;
+justify-content: space-between;
+height: 56px;
+}
+.wordmark {
+font-family: var(–mono);
+font-size: .8rem;
+font-weight: 700;
+letter-spacing: .12em;
+color: var(–text);
+}
+.wordmark em {
+color: var(–accent);
+font-style: normal;
+}
+.conn-btn {
+display: flex;
+align-items: center;
+gap: 7px;
+background: var(–surface2);
+border: 1px solid var(–border2);
+border-radius: 99px;
+padding: 6px 12px 6px 8px;
+cursor: pointer;
+transition: all .2s;
+}
+.conn-btn:active { opacity: .7; }
+.conn-pill {
+width: 8px; height: 8px;
+border-radius: 50%;
+background: var(–text3);
+transition: all .4s;
+flex-shrink: 0;
+}
+.conn-pill.live {
+background: var(–green);
+box-shadow: 0 0 0 3px rgba(0,232,122,.15);
+animation: breathe 2.4s ease-in-out infinite;
+}
+@keyframes breathe {
+0%,100% { box-shadow: 0 0 0 3px rgba(0,232,122,.15); }
+50%      { box-shadow: 0 0 0 6px rgba(0,232,122,.05); }
+}
+.conn-label {
+font-family: var(–mono);
+font-size: .62rem;
+letter-spacing: .08em;
+color: var(–text2);
+}
 
-/* ── CAN bar ── */
-.can-bar{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:9px 14px;display:flex;align-items:center;gap:9px;font-family:'Share Tech Mono',monospace;font-size:.7rem}
-.can-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.can-dot.ok{background:var(--green);box-shadow:0 0 5px var(--green)}
-.can-dot.err{background:var(--orange)}
-.can-txt{color:var(--text2)}
-.can-key{margin-left:auto;color:var(--accent)}
+/* ═══════════════════════════════════════════════
+PROFILE STRIP
+═══════════════════════════════════════════════ */
+.profile-strip {
+padding: 14px 20px 0;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+.profile-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–r-md);
+padding: 14px 16px;
+cursor: pointer;
+transition: all .2s;
+position: relative;
+overflow: hidden;
+}
+.profile-card::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: linear-gradient(135deg, rgba(200,255,0,.06) 0%, transparent 60%);
+opacity: 0;
+transition: opacity .2s;
+}
+.profile-card.active {
+border-color: rgba(200,255,0,.3);
+background: rgba(200,255,0,.04);
+}
+.profile-card.active::before { opacity: 1; }
+.profile-card-top {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+margin-bottom: 10px;
+}
+.profile-icon { font-size: 1.5rem; line-height: 1; }
+.active-badge {
+font-family: var(–mono);
+font-size: .55rem;
+letter-spacing: .1em;
+color: var(–accent);
+background: rgba(200,255,0,.1);
+border: 1px solid rgba(200,255,0,.2);
+border-radius: 99px;
+padding: 2px 7px;
+opacity: 0;
+transition: opacity .2s;
+}
+.profile-card.active .active-badge { opacity: 1; }
+.profile-name {
+font-size: .88rem;
+font-weight: 600;
+color: var(–text);
+margin-bottom: 2px;
+}
+.profile-sub {
+font-family: var(–mono);
+font-size: .6rem;
+color: var(–text3);
+letter-spacing: .06em;
+}
 
-/* ── Key selector ── */
-.key-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.key-btn{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:13px 12px;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
-.key-btn.active{border-color:var(--accent);background:rgba(232,255,0,.04)}
-.key-ind{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--dim)}
-.key-btn.active .key-ind{background:var(--accent);box-shadow:0 0 5px var(--accent)}
-.key-ico{font-size:1.3rem;line-height:1;margin-bottom:4px}
-.key-nm{font-weight:700;font-size:.9rem;letter-spacing:.04em}
-.key-sub{font-size:.72rem;color:var(--text2);font-family:'Share Tech Mono',monospace;margin-top:2px}
+/* ═══════════════════════════════════════════════
+MODE ROW
+═══════════════════════════════════════════════ */
+.mode-row {
+padding: 14px 20px 0;
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 8px;
+}
+.mode-chip {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–r-sm);
+padding: 10px 8px;
+text-align: center;
+cursor: pointer;
+transition: all .2s;
+}
+.mode-chip.active {
+background: var(–surface3);
+border-color: var(–border2);
+}
+.mode-chip .mi { font-size: 1.1rem; display: block; margin-bottom: 3px; }
+.mode-chip .ml {
+font-family: var(–mono);
+font-size: .6rem;
+letter-spacing: .08em;
+color: var(–text2);
+}
+.mode-chip.active .ml { color: var(–text); }
 
-/* ── Mode tabs ── */
-.mode-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.mode-tab{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:9px 6px;text-align:center;cursor:pointer;transition:all .2s;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:.82rem;letter-spacing:.07em;color:var(--text2)}
-.mode-tab .mi{font-size:1.15rem;display:block;margin-bottom:2px}
-.mode-tab.active{border-color:var(--blue);color:var(--blue);background:rgba(0,200,255,.05)}
+/* ═══════════════════════════════════════════════
+TABS
+═══════════════════════════════════════════════ */
+.tab-bar {
+padding: 16px 20px 0;
+display: flex;
+gap: 4px;
+border-bottom: 1px solid var(–border);
+margin: 0 0 0;
+padding-bottom: 0;
+}
+.tab {
+font-family: var(–mono);
+font-size: .65rem;
+letter-spacing: .1em;
+color: var(–text2);
+padding: 10px 14px;
+cursor: pointer;
+border-bottom: 2px solid transparent;
+transition: all .2s;
+white-space: nowrap;
+}
+.tab.active {
+color: var(–accent);
+border-bottom-color: var(–accent);
+}
 
-/* ── Card ── */
-.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px}
-.card-head{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-weight:700;font-size:.88rem;letter-spacing:.06em;color:var(--text)}
-.card-sub{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--text2)}
-.card-body{padding:14px}
+/* ═══════════════════════════════════════════════
+CONTENT PANELS
+═══════════════════════════════════════════════ */
+.panels { padding: 0 20px 100px; }
+.panel { display: none; padding-top: 16px; }
+.panel.active { display: block; }
 
-/* ── Color preview ── */
-.color-prev{height:64px;transition:background .3s;display:flex;align-items:center;justify-content:center}
-.color-prev-lbl{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.3);letter-spacing:.1em}
+/* ═══════════════════════════════════════════════
+CARDS
+═══════════════════════════════════════════════ */
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–r-md);
+overflow: hidden;
+margin-bottom: 10px;
+}
+.card-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 14px 16px;
+border-bottom: 1px solid var(–border);
+}
+.card-title {
+font-size: .8rem;
+font-weight: 600;
+letter-spacing: .04em;
+color: var(–text);
+}
+.card-tag {
+font-family: var(–mono);
+font-size: .58rem;
+letter-spacing: .08em;
+color: var(–text3);
+}
+.card-body { padding: 16px; }
 
-/* ── Sliders ── */
-.sl-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-.sl-row:last-child{margin-bottom:0}
-.sl-hdr{display:flex;justify-content:space-between;align-items:center}
-.sl-lbl{font-family:'Share Tech Mono',monospace;font-size:.66rem;letter-spacing:.1em;color:var(--text2)}
-.sl-val{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--text);min-width:34px;text-align:right}
-input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;outline:none;cursor:pointer}
-input[type=range].r {background:linear-gradient(to right,#1a0000,#ff3333)}
-input[type=range].g {background:linear-gradient(to right,#001a00,#33ff33)}
-input[type=range].b {background:linear-gradient(to right,#00001a,#3333ff)}
-input[type=range].w {background:linear-gradient(to right,#111,#fff)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.3);box-shadow:0 0 5px rgba(0,0,0,.5)}
-.divider{height:1px;background:var(--border);margin:12px 0}
+/* Sub-card */
+.sub-card {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: var(–r-sm);
+padding: 14px;
+margin-bottom: 8px;
+}
+.sub-card:last-child { margin-bottom: 0; }
+.sub-card-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 12px;
+}
+.sub-card-title {
+font-size: .78rem;
+font-weight: 600;
+color: var(–text);
+}
+.sub-card-sub {
+font-family: var(–mono);
+font-size: .58rem;
+color: var(–text3);
+margin-top: 1px;
+}
 
-/* ── Strip toggles ── */
-.strip-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.strip-card{background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:10px 11px;display:flex;flex-direction:column;gap:8px}
-.strip-header{display:flex;align-items:center;justify-content:space-between}
-.strip-name{font-weight:700;font-size:.82rem;letter-spacing:.05em}
-.strip-gpio{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text2)}
+/* ═══════════════════════════════════════════════
+COLOR PREVIEW
+═══════════════════════════════════════════════ */
+.color-swatch {
+height: 80px;
+border-radius: var(–r-sm);
+margin-bottom: 16px;
+transition: background .25s;
+position: relative;
+overflow: hidden;
+display: flex;
+align-items: flex-end;
+padding: 10px 12px;
+}
+.color-swatch::after {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.4));
+}
+.color-hex {
+font-family: var(–mono);
+font-size: .65rem;
+color: rgba(255,255,255,.6);
+position: relative;
+z-index: 1;
+letter-spacing: .08em;
+}
 
-/* Toggle */
-.tog{width:40px;height:22px;background:var(--border2);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:1px solid var(--border2)}
-.tog.on{background:var(--green);border-color:var(--green)}
-.tog::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.4)}
-.tog.on::after{transform:translateX(18px)}
+/* ═══════════════════════════════════════════════
+SLIDERS
+═══════════════════════════════════════════════ */
+.sl-group { display: flex; flex-direction: column; gap: 14px; }
+.sl-row { display: flex; flex-direction: column; gap: 7px; }
+.sl-meta {
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.sl-name {
+font-family: var(–mono);
+font-size: .63rem;
+letter-spacing: .1em;
+color: var(–text2);
+}
+.sl-val {
+font-family: var(–mono);
+font-size: .7rem;
+color: var(–text);
+min-width: 36px;
+text-align: right;
+}
+input[type=range] {
+-webkit-appearance: none;
+appearance: none;
+width: 100%;
+height: 4px;
+border-radius: 2px;
+outline: none;
+cursor: pointer;
+}
+input[type=range].r  { background: linear-gradient(to right, #1a0000, #ff3333); }
+input[type=range].g  { background: linear-gradient(to right, #001a00, #00ee55); }
+input[type=range].b  { background: linear-gradient(to right, #00001a, #3366ff); }
+input[type=range].w  { background: linear-gradient(to right, #1a1a1a, #ffffff); }
+input[type=range].a  { background: linear-gradient(to right, #111, var(–accent)); }
+input[type=range]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: #fff;
+box-shadow: 0 1px 6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1);
+}
 
-/* Strip length input */
-.len-row{display:flex;align-items:center;gap:7px}
-.len-lbl{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text2);white-space:nowrap}
-.len-input{background:var(--bg);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.8rem;padding:4px 7px;width:52px;text-align:center;outline:none}
-.len-input:focus{border-color:var(--accent)}
-.len-leds{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text2)}
+.sep { height: 1px; background: var(–border); margin: 14px 0; }
 
-/* ── Blinker card ── */
-.blink-prev{display:flex;gap:7px;margin-bottom:12px}
-.blink-ind{flex:1;height:28px;border-radius:4px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-family:'Share Tech Mono',monospace;color:var(--text2);transition:all .2s}
-.blink-ind.active{animation:blink 600ms infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+/* ═══════════════════════════════════════════════
+STRIP CARDS
+═══════════════════════════════════════════════ */
+.strip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.strip-sub-card {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: var(–r-sm);
+padding: 13px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.strip-top {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+}
+.strip-label {
+font-size: .82rem;
+font-weight: 600;
+color: var(–text);
+line-height: 1.2;
+}
+.strip-gpio {
+font-family: var(–mono);
+font-size: .58rem;
+color: var(–text3);
+margin-top: 2px;
+}
+.strip-len-row {
+display: flex;
+align-items: center;
+gap: 7px;
+}
+.strip-len-lbl {
+font-family: var(–mono);
+font-size: .58rem;
+color: var(–text3);
+white-space: nowrap;
+}
+.strip-len-input {
+background: var(–surface3);
+border: 1px solid var(–border2);
+border-radius: 6px;
+color: var(–text);
+font-family: var(–mono);
+font-size: .75rem;
+padding: 5px 8px;
+width: 52px;
+text-align: center;
+outline: none;
+-webkit-appearance: none;
+}
+.strip-len-input:focus { border-color: rgba(200,255,0,.4); }
+.strip-max {
+font-family: var(–mono);
+font-size: .56rem;
+color: var(–text3);
+}
 
-/* Toggle row */
-.tog-row{display:flex;align-items:center;justify-content:space-between;padding:2px 0}
-.tog-info .tog-lbl{font-weight:600;font-size:.88rem}
-.tog-info .tog-sub{font-size:.72rem;color:var(--text2);margin-top:1px}
+/* ═══════════════════════════════════════════════
+TOGGLE
+═══════════════════════════════════════════════ */
+.tog {
+width: 44px;
+height: 26px;
+border-radius: 13px;
+background: var(–surface3);
+border: 1px solid var(–border2);
+position: relative;
+cursor: pointer;
+transition: all .22s;
+flex-shrink: 0;
+}
+.tog.on {
+background: var(–green);
+border-color: var(–green);
+box-shadow: 0 0 10px rgba(0,232,122,.25);
+}
+.tog::after {
+content: ‘’;
+position: absolute;
+width: 20px; height: 20px;
+border-radius: 50%;
+background: #fff;
+top: 2px; left: 2px;
+transition: transform .22s cubic-bezier(.34,1.56,.64,1);
+box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+.tog.on::after { transform: translateX(18px); }
 
-/* ── Save ── */
-.save-btn{width:100%;padding:13px;background:var(--accent);border:none;border-radius:var(--r);color:#000;font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:.14em;cursor:pointer;transition:all .15s;text-transform:uppercase;margin-top:6px}
-.save-btn:active{transform:scale(.98);background:#ccdf00}
+.tog-row {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+}
+.tog-info .tog-lbl { font-size: .85rem; font-weight: 600; }
+.tog-info .tog-sub {
+font-family: var(–mono);
+font-size: .6rem;
+color: var(–text3);
+margin-top: 2px;
+}
 
-/* ── Toast ── */
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#161616;border:1px solid var(--border2);border-radius:20px;padding:9px 20px;font-size:.82rem;font-family:'Share Tech Mono',monospace;color:var(--green);transition:transform .28s cubic-bezier(.34,1.56,.64,1);z-index:200;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.6)}
-.toast.show{transform:translateX(-50%) translateY(0)}
+/* ═══════════════════════════════════════════════
+BLINKER PREVIEW
+═══════════════════════════════════════════════ */
+.blink-prev {
+display: flex;
+gap: 8px;
+margin-bottom: 14px;
+}
+.blink-ind {
+flex: 1;
+height: 36px;
+border-radius: var(–r-sm);
+background: var(–surface3);
+border: 1px solid var(–border);
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: var(–mono);
+font-size: .62rem;
+letter-spacing: .06em;
+color: var(–text3);
+transition: all .2s;
+}
+.blink-ind.flash { animation: blink 550ms ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.12} }
+
+/* ═══════════════════════════════════════════════
+SYSTEM CARD
+═══════════════════════════════════════════════ */
+.system-row {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 12px 0;
+border-bottom: 1px solid var(–border);
+}
+.system-row:last-child { border-bottom: none; padding-bottom: 0; }
+.system-row:first-child { padding-top: 0; }
+.sys-dot {
+width: 8px; height: 8px;
+border-radius: 50%;
+flex-shrink: 0;
+}
+.sys-dot.ok  { background: var(–green); box-shadow: 0 0 6px rgba(0,232,122,.4); }
+.sys-dot.err { background: var(–orange); }
+.sys-dot.idle { background: var(–text3); }
+.sys-label { font-size: .85rem; font-weight: 500; flex: 1; }
+.sys-value {
+font-family: var(–mono);
+font-size: .65rem;
+color: var(–text2);
+}
+
+/* ═══════════════════════════════════════════════
+SAVE BUTTON
+═══════════════════════════════════════════════ */
+.save-wrap {
+position: fixed;
+bottom: 0; left: 0; right: 0;
+padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+background: linear-gradient(to top, var(–bg) 60%, transparent);
+z-index: 90;
+}
+.save-btn {
+width: 100%;
+padding: 15px;
+background: var(–accent);
+border: none;
+border-radius: var(–r-md);
+color: #000;
+font-family: var(–mono);
+font-size: .75rem;
+font-weight: 700;
+letter-spacing: .14em;
+cursor: pointer;
+transition: all .18s;
+box-shadow: 0 4px 20px rgba(200,255,0,.2);
+}
+.save-btn:active { transform: scale(.98); background: var(–accent-d); }
+
+/* ═══════════════════════════════════════════════
+TOAST
+═══════════════════════════════════════════════ */
+.toast {
+position: fixed;
+bottom: 90px;
+left: 50%;
+transform: translateX(-50%) translateY(20px);
+opacity: 0;
+background: var(–surface3);
+border: 1px solid var(–border2);
+border-radius: 99px;
+padding: 10px 18px;
+font-family: var(–mono);
+font-size: .65rem;
+letter-spacing: .06em;
+color: var(–text);
+transition: all .25s cubic-bezier(.34,1.56,.64,1);
+z-index: 200;
+white-space: nowrap;
+pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════════════
+UTILITY
+═══════════════════════════════════════════════ */
+.gap { height: 10px; }
 </style>
+
 </head>
 <body>
 
-<header>
-  <div class="logo">LUMA<span>CTRL</span> <span style="font-size:.7rem;color:var(--text2);letter-spacing:.05em">v4</span></div>
-  <div class="hdr-right" onclick="connectBLE()">
-    <span class="ble-lbl" id="bleLbl">GETRENNT</span>
-    <div class="dot" id="dot"></div>
+<!-- ── HEADER ── -->
+
+<header class="header">
+  <div class="header-inner">
+    <div class="wordmark">LUMA<em>CONTROL</em></div>
+    <div class="conn-btn" onclick="connectBLE()">
+      <div class="conn-pill" id="pill"></div>
+      <span class="conn-label" id="connLbl">VERBINDEN</span>
+    </div>
   </div>
 </header>
 
-<main>
+<!-- ── PROFILE STRIP ── -->
 
-  <!-- System -->
-  <div class="sec">System</div>
-  <div class="can-bar">
-    <div class="can-dot err" id="canDot"></div>
-    <span class="can-txt" id="canTxt">CAN Bus — nicht verbunden</span>
-    <span class="can-key" id="canKey"></span>
-  </div>
-
-  <!-- Profile -->
-  <div class="sec">Aktives Profil</div>
-  <div class="key-grid">
-    <div class="key-btn active" id="kb0" onclick="selKey(0)">
-      <div class="key-ind"></div>
-      <div class="key-ico">🗝</div>
-      <div class="key-nm" id="kn0">Schlüssel 1</div>
-      <div class="key-sub">PROFIL 01</div>
+<div class="profile-strip">
+  <div class="profile-card active" id="pc0" onclick="selProfile(0)">
+    <div class="profile-card-top">
+      <div class="profile-icon">🗝</div>
+      <div class="active-badge">AKTIV</div>
     </div>
-    <div class="key-btn" id="kb1" onclick="selKey(1)">
-      <div class="key-ind"></div>
-      <div class="key-ico">🔑</div>
-      <div class="key-nm" id="kn1">Schlüssel 2</div>
-      <div class="key-sub">PROFIL 02</div>
+    <div class="profile-name" id="pn0">Schlüssel 1</div>
+    <div class="profile-sub">PROFIL 01</div>
+  </div>
+  <div class="profile-card" id="pc1" onclick="selProfile(1)">
+    <div class="profile-card-top">
+      <div class="profile-icon">🔑</div>
+      <div class="active-badge">AKTIV</div>
+    </div>
+    <div class="profile-name" id="pn1">Schlüssel 2</div>
+    <div class="profile-sub">PROFIL 02</div>
+  </div>
+</div>
+
+<!-- ── MODE ROW ── -->
+
+<div class="mode-row">
+  <div class="mode-chip active" id="mc0" onclick="selMode(0)">
+    <span class="mi">🌤</span><span class="ml">COMFORT</span>
+  </div>
+  <div class="mode-chip" id="mc1" onclick="selMode(1)">
+    <span class="mi">⚡</span><span class="ml">SPORT</span>
+  </div>
+  <div class="mode-chip" id="mc2" onclick="selMode(2)">
+    <span class="mi">🌙</span><span class="ml">NIGHT</span>
+  </div>
+</div>
+
+<!-- ── TAB BAR ── -->
+
+<div class="tab-bar" style="padding: 0 20px; margin-top: 16px;">
+  <div class="tab active" id="tab0" onclick="selTab(0)">FARBE</div>
+  <div class="tab"        id="tab1" onclick="selTab(1)">BÄNDER</div>
+  <div class="tab"        id="tab2" onclick="selTab(2)">BLINKER</div>
+  <div class="tab"        id="tab3" onclick="selTab(3)">SYSTEM</div>
+</div>
+
+<!-- ── PANELS ── -->
+
+<div class="panels">
+
+  <!-- TAB 0: FARBE -->
+
+  <div class="panel active" id="panel0">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Lichtfarbe</span>
+        <span class="card-tag" id="modeTag">COMFORT</span>
+      </div>
+      <div class="card-body">
+        <div class="color-swatch" id="swatch">
+          <span class="color-hex" id="hexVal">#FFD864</span>
+        </div>
+        <div class="sl-group">
+          <div class="sl-row">
+            <div class="sl-meta">
+              <span class="sl-name">ROT</span>
+              <span class="sl-val" id="vR">255</span>
+            </div>
+            <input type="range" class="r" id="sR" min="0" max="255" value="255" oninput="onColor()">
+          </div>
+          <div class="sl-row">
+            <div class="sl-meta">
+              <span class="sl-name">GRÜN</span>
+              <span class="sl-val" id="vG">200</span>
+            </div>
+            <input type="range" class="g" id="sG" min="0" max="255" value="200" oninput="onColor()">
+          </div>
+          <div class="sl-row">
+            <div class="sl-meta">
+              <span class="sl-name">BLAU</span>
+              <span class="sl-val" id="vB">100</span>
+            </div>
+            <input type="range" class="b" id="sB" min="0" max="255" value="100" oninput="onColor()">
+          </div>
+          <div class="sep"></div>
+          <div class="sl-row">
+            <div class="sl-meta">
+              <span class="sl-name">HELLIGKEIT</span>
+              <span class="sl-val" id="vBri">70%</span>
+            </div>
+            <input type="range" class="a" id="sBri" min="0" max="100" value="70" oninput="onColor()">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Modi -->
-  <div class="sec">Modus</div>
-  <div class="mode-row">
-    <div class="mode-tab active" id="mt0" onclick="selMode(0)"><span class="mi">🌤</span>COMFORT</div>
-    <div class="mode-tab"        id="mt1" onclick="selMode(1)"><span class="mi">⚡</span>SPORT</div>
-    <div class="mode-tab"        id="mt2" onclick="selMode(2)"><span class="mi">🌙</span>NIGHT</div>
-  </div>
+  <!-- TAB 1: BÄNDER -->
 
-  <!-- Farbe -->
-  <div class="sec">Farbe & Helligkeit</div>
-  <div class="card">
-    <div class="color-prev" id="colorPrev"><span class="color-prev-lbl">VORSCHAU</span></div>
-    <div class="card-body">
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">ROT</span><span class="sl-val" id="vR">255</span></div>
-        <input type="range" class="r" id="sR" min="0" max="255" value="255" oninput="onColor()">
+  <div class="panel" id="panel1">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">LED Bänder</span>
+        <span class="card-tag" id="bandModeTag">COMFORT</span>
       </div>
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">GRÜN</span><span class="sl-val" id="vG">200</span></div>
-        <input type="range" class="g" id="sG" min="0" max="255" value="200" oninput="onColor()">
-      </div>
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">BLAU</span><span class="sl-val" id="vB">100</span></div>
-        <input type="range" class="b" id="sB" min="0" max="255" value="100" oninput="onColor()">
-      </div>
-      <div class="divider"></div>
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">HELLIGKEIT</span><span class="sl-val" id="vBri">70%</span></div>
-        <input type="range" class="w" id="sBri" min="0" max="100" value="70" oninput="onColor()">
+      <div class="card-body">
+        <div class="strip-grid" id="stripGrid"></div>
       </div>
     </div>
   </div>
 
-  <!-- LED Bänder -->
-  <div class="sec">LED Bänder — Modus <span id="modeLbl">COMFORT</span></div>
-  <div class="strip-grid" id="stripGrid">
-    <!-- generated -->
-  </div>
+  <!-- TAB 2: BLINKER -->
 
-  <!-- Blinker -->
-  <div class="sec">Blinker — Profil <span id="bProfLbl">1</span></div>
-  <div class="card">
-    <div class="card-body">
+  <div class="panel" id="panel2">
+
+```
+<!-- Blinker Farbe -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Blinker Einstellungen</span>
+    <span class="card-tag" id="blinkProfTag">PROFIL 01</span>
+  </div>
+  <div class="card-body">
+
+    <!-- Vorschau -->
+    <div class="sub-card">
+      <div class="sub-card-header">
+        <div>
+          <div class="sub-card-title">Vorschau</div>
+        </div>
+      </div>
       <div class="blink-prev">
         <div class="blink-ind" id="bindL">◄ LINKS</div>
         <div class="blink-ind" id="bindR">RECHTS ►</div>
       </div>
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">BLINKER ROT</span><span class="sl-val" id="vBR">255</span></div>
-        <input type="range" class="r" id="sBR" min="0" max="255" value="255" oninput="onBlink()">
+    </div>
+
+    <!-- Farbe -->
+    <div class="sub-card">
+      <div class="sub-card-header">
+        <div>
+          <div class="sub-card-title">Farbe</div>
+          <div class="sub-card-sub">Blinkerfarbe für dieses Profil</div>
+        </div>
       </div>
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">BLINKER GRÜN</span><span class="sl-val" id="vBG">100</span></div>
-        <input type="range" class="g" id="sBG" min="0" max="255" value="100" oninput="onBlink()">
+      <div class="sl-group">
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-name">ROT</span><span class="sl-val" id="vBR">255</span></div>
+          <input type="range" class="r" id="sBR" min="0" max="255" value="255" oninput="onBlink()">
+        </div>
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-name">GRÜN</span><span class="sl-val" id="vBG">100</span></div>
+          <input type="range" class="g" id="sBG" min="0" max="255" value="100" oninput="onBlink()">
+        </div>
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-name">BLAU</span><span class="sl-val" id="vBB">0</span></div>
+          <input type="range" class="b" id="sBB" min="0" max="255" value="0" oninput="onBlink()">
+        </div>
       </div>
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">BLINKER BLAU</span><span class="sl-val" id="vBB">0</span></div>
-        <input type="range" class="b" id="sBB" min="0" max="255" value="0" oninput="onBlink()">
+    </div>
+
+    <!-- Verhalten -->
+    <div class="sub-card">
+      <div class="sub-card-header">
+        <div>
+          <div class="sub-card-title">Verhalten</div>
+          <div class="sub-card-sub">Dim & Effekt</div>
+        </div>
       </div>
-      <div class="divider"></div>
-      <div class="sl-row">
-        <div class="sl-hdr"><span class="sl-lbl">DIM-FAKTOR</span><span class="sl-val" id="vDim">30%</span></div>
-        <input type="range" class="w" id="sDim" min="0" max="100" value="30" oninput="onBlink()">
+      <div class="sl-group">
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-name">DIM-FAKTOR</span><span class="sl-val" id="vDim">30%</span></div>
+          <input type="range" class="w" id="sDim" min="0" max="100" value="30" oninput="onBlink()">
+        </div>
       </div>
-      <div class="divider"></div>
+      <div class="sep"></div>
       <div class="tog-row">
         <div class="tog-info">
           <div class="tog-lbl">Laufblinker</div>
@@ -241,20 +792,85 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <div class="tog" id="togRun" onclick="toggleRun()"></div>
       </div>
     </div>
+
+  </div>
+</div>
+```
+
   </div>
 
-  <!-- Speichern -->
-  <button class="save-btn" onclick="sendAll()">SPEICHERN & SENDEN</button>
+  <!-- TAB 3: SYSTEM -->
 
-</main>
+  <div class="panel" id="panel3">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Systemstatus</span>
+      </div>
+      <div class="card-body">
+        <div class="system-row">
+          <div class="sys-dot idle" id="sysBLEDot"></div>
+          <span class="sys-label">Bluetooth</span>
+          <span class="sys-value" id="sysBLE">Getrennt</span>
+        </div>
+        <div class="system-row">
+          <div class="sys-dot idle" id="sysCANDot"></div>
+          <span class="sys-label">CAN Bus</span>
+          <span class="sys-value" id="sysCAN">—</span>
+        </div>
+        <div class="system-row">
+          <div class="sys-dot idle" id="sysKeyDot"></div>
+          <span class="sys-label">Aktiver Schlüssel</span>
+          <span class="sys-value" id="sysKey">—</span>
+        </div>
+      </div>
+    </div>
+
+```
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Profile umbenennen</span>
+  </div>
+  <div class="card-body">
+    <div class="sub-card" style="margin-bottom:8px">
+      <div class="sub-card-header" style="margin-bottom:8px">
+        <div class="sub-card-title">Schlüssel 1</div>
+      </div>
+      <input class="strip-len-input" style="width:100%;font-size:.8rem;padding:8px 10px;"
+        id="nameInput0" value="Schluessel 1" oninput="onName(0,this.value)">
+    </div>
+    <div class="sub-card">
+      <div class="sub-card-header" style="margin-bottom:8px">
+        <div class="sub-card-title">Schlüssel 2</div>
+      </div>
+      <input class="strip-len-input" style="width:100%;font-size:.8rem;padding:8px 10px;"
+        id="nameInput1" value="Schluessel 2" oninput="onName(1,this.value)">
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+</div><!-- /panels -->
+
+<!-- ── SAVE BUTTON ── -->
+
+<div class="save-wrap">
+  <button class="save-btn" onclick="sendAll()">SPEICHERN & SENDEN</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<script>
-// ── State ────────────────────────────────────────────────────
-const modeNames = ['COMFORT','SPORT','NIGHT'];
-const stripLabels = ['BAND 1','BAND 2','BAND 3','BAND 4'];
-const stripGPIOs  = ['GPIO 4','GPIO 5','GPIO 6','GPIO 7'];
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
 
+<script>
+const modeNames  = ['COMFORT','SPORT','NIGHT'];
+const stripNames = ['Band 1','Band 2','Band 3','Band 4'];
+const stripGPIOs = ['GPIO 4','GPIO 5','GPIO 6','GPIO 7'];
+
+// ── Default State ────────────────────────────────────────────
 let S = {
   ap: 0, am: 0, can: false,
   p: [
@@ -284,7 +900,10 @@ let bleChar = null, bleConn = false;
 // ── BLE ─────────────────────────────────────────────────────
 async function connectBLE() {
   try {
-    const dev  = await navigator.bluetooth.requestDevice({filters:[{name:'LumaControl'}],optionalServices:['12345678-1234-1234-1234-123456789abc']});
+    const dev  = await navigator.bluetooth.requestDevice({
+      filters: [{name:'LumaControl'}],
+      optionalServices:['12345678-1234-1234-1234-123456789abc']
+    });
     const srv  = await dev.gatt.connect();
     const svc  = await srv.getPrimaryService('12345678-1234-1234-1234-123456789abc');
     bleChar    = await svc.getCharacteristic('12345678-1234-1234-1234-123456789ab1');
@@ -294,110 +913,48 @@ async function connectBLE() {
       try { applyState(JSON.parse(new TextDecoder().decode(e.target.value))); } catch(x){}
     });
     await sendCmd({cmd:'sync'});
-    bleConn = true;
-    document.getElementById('dot').classList.add('on');
-    document.getElementById('bleLbl').textContent = 'VERBUNDEN';
-    toast('🔗 BLE verbunden');
+    setConnected(true);
+    toast('🔗 Verbunden');
     dev.addEventListener('gattserverdisconnected', () => {
-      bleConn = false; bleChar = null;
-      document.getElementById('dot').classList.remove('on');
-      document.getElementById('bleLbl').textContent = 'GETRENNT';
-      toast('🔌 Getrennt');
+      bleChar = null; setConnected(false); toast('🔌 Getrennt');
     });
-  } catch(e) { toast('⚠ ' + e.message); }
+  } catch(e) {
+    if (e.name !== 'NotFoundError') toast('⚠ ' + e.message);
+  }
+}
+
+function setConnected(v) {
+  bleConn = v;
+  g('pill').classList.toggle('on', v);
+  g('connLbl').textContent = v ? 'VERBUNDEN' : 'VERBINDEN';
+  g('sysBLEDot').className = 'sys-dot ' + (v?'ok':'idle');
+  g('sysBLE').textContent  = v ? 'Verbunden' : 'Getrennt';
 }
 
 async function sendCmd(obj) {
   if (!bleChar) return;
-  await bleChar.writeValue(new TextEncoder().encode(JSON.stringify(obj)));
+  try { await bleChar.writeValue(new TextEncoder().encode(JSON.stringify(obj))); } catch(e){}
 }
 
 function applyState(data) {
-  if (data.p)   S.p  = data.p;
-  if (data.ap !== undefined) S.ap  = data.ap;
-  if (data.am !== undefined) S.am  = data.am;
-  if (data.can !== undefined) S.can = data.can;
-  render(); toast('↓ Synchronisiert');
+  if (data.p)            S.p  = data.p;
+  if (data.ap != null)   S.ap = data.ap;
+  if (data.am != null)   S.am = data.am;
+  if (data.can != null)  S.can = data.can;
+  render();
+  toast('↓ Synchronisiert');
 }
 
-// ── Render ───────────────────────────────────────────────────
-function render() {
-  // Keys
-  [0,1].forEach(i => {
-    document.getElementById('kb'+i).classList.toggle('active', i===S.ap);
-    document.getElementById('kn'+i).textContent = S.p[i].name;
+// ── Navigation ───────────────────────────────────────────────
+let activeTab = 0;
+function selTab(i) {
+  activeTab = i;
+  [0,1,2,3].forEach(t => {
+    g('tab'+t).classList.toggle('active', t===i);
+    g('panel'+t).classList.toggle('active', t===i);
   });
-  // Modes
-  [0,1,2].forEach(i => {
-    document.getElementById('mt'+i).classList.toggle('active', i===S.am);
-  });
-  document.getElementById('modeLbl').textContent = modeNames[S.am];
-
-  // Color
-  const m = S.p[S.ap].m[S.am];
-  setSlider('sR',m.r,'vR',m.r); setSlider('sG',m.g,'vG',m.g);
-  setSlider('sB',m.b,'vB',m.b); setSlider('sBri',m.bri,'vBri',m.bri+'%');
-  updatePreview();
-
-  // Strips
-  renderStrips();
-
-  // Blinker
-  const p = S.p[S.ap];
-  setSlider('sBR',p.br,'vBR',p.br); setSlider('sBG',p.bg,'vBG',p.bg);
-  setSlider('sBB',p.bb,'vBB',p.bb); setSlider('sDim',p.dim,'vDim',p.dim+'%');
-  document.getElementById('togRun').classList.toggle('on', p.run);
-  document.getElementById('bProfLbl').textContent = S.ap+1;
-
-  // CAN
-  const ok = S.can;
-  document.getElementById('canDot').className = 'can-dot ' + (ok?'ok':'err');
-  document.getElementById('canTxt').textContent = ok ? 'CAN Bus — aktiv' : 'CAN Bus — nicht verbunden';
-  document.getElementById('canKey').textContent = ok ? 'KEY '+(S.ap+1) : '';
 }
-
-function setSlider(id, val, valId, display) {
-  document.getElementById(id).value = val;
-  document.getElementById(valId).textContent = display;
-}
-
-function updatePreview() {
-  const m = S.p[S.ap].m[S.am];
-  const f = m.bri/100;
-  const r=Math.round(m.r*f), g=Math.round(m.g*f), b=Math.round(m.b*f);
-  document.getElementById('colorPrev').style.background =
-    `linear-gradient(135deg,rgb(${r},${g},${b}),rgb(${Math.round(r*.55)},${Math.round(g*.55)},${Math.round(b*.55)}))`;
-}
-
-function renderStrips() {
-  const grid = document.getElementById('stripGrid');
-  grid.innerHTML = '';
-  const p = S.p[S.ap];
-  const m = S.p[S.ap].m[S.am];
-  for (let s = 0; s < 4; s++) {
-    const en = m.en[s];
-    const len = p.sl[s];
-    const div = document.createElement('div');
-    div.className = 'strip-card';
-    div.innerHTML = `
-      <div class="strip-header">
-        <div>
-          <div class="strip-name">${stripLabels[s]}</div>
-          <div class="strip-gpio">${stripGPIOs[s]}</div>
-        </div>
-        <div class="tog ${en?'on':''}" id="stog${s}" onclick="toggleStrip(${s})"></div>
-      </div>
-      <div class="len-row">
-        <span class="len-lbl">LEDs</span>
-        <input class="len-input" type="number" min="1" max="144" value="${len}" id="slen${s}" oninput="onLenChange(${s},this.value)">
-        <span class="len-leds">/ 144</span>
-      </div>`;
-    grid.appendChild(div);
-  }
-}
-
-// ── Interactions ─────────────────────────────────────────────
-function selKey(i) {
+function selProfile(i) {
   S.ap = i; render();
   if (bleConn) sendCmd({cmd:'setProfile',profile:i});
 }
@@ -405,53 +962,160 @@ function selMode(i) {
   S.am = i; render();
   if (bleConn) sendCmd({cmd:'setMode',mode:i});
 }
+
+// ── Render ───────────────────────────────────────────────────
+function render() {
+  // Profiles
+  [0,1].forEach(i => {
+    g('pc'+i).classList.toggle('active', i===S.ap);
+    g('pn'+i).textContent = S.p[i].name;
+  });
+  // Modes
+  [0,1,2].forEach(i => g('mc'+i).classList.toggle('active', i===S.am));
+
+  const mn = modeNames[S.am];
+  g('modeTag').textContent    = mn;
+  g('bandModeTag').textContent = mn;
+  g('blinkProfTag').textContent = 'PROFIL 0'+(S.ap+1);
+
+  // Color
+  const m = S.p[S.ap].m[S.am];
+  setSlider('sR',m.r,'vR',m.r);
+  setSlider('sG',m.g,'vG',m.g);
+  setSlider('sB',m.b,'vB',m.b);
+  setSlider('sBri',m.bri,'vBri',m.bri+'%');
+  updateSwatch();
+
+  // Strips
+  renderStrips();
+
+  // Blinker
+  const p = S.p[S.ap];
+  setSlider('sBR',p.br,'vBR',p.br);
+  setSlider('sBG',p.bg,'vBG',p.bg);
+  setSlider('sBB',p.bb,'vBB',p.bb);
+  setSlider('sDim',p.dim,'vDim',p.dim+'%');
+  g('togRun').classList.toggle('on', p.run);
+  updateBlinkPrev();
+
+  // System
+  g('sysCANDot').className = 'sys-dot '+(S.can?'ok':'err');
+  g('sysCAN').textContent  = S.can ? 'Aktiv (500 kbps)' : 'Nicht verbunden';
+  g('sysKeyDot').className = 'sys-dot '+(S.can?'ok':'idle');
+  g('sysKey').textContent  = S.can ? 'Schlüssel '+(S.ap+1) : '—';
+
+  // Names
+  g('nameInput0').value = S.p[0].name;
+  g('nameInput1').value = S.p[1].name;
+}
+
+function setSlider(sid, val, vid, disp) {
+  g(sid).value = val;
+  g(vid).textContent = disp !== undefined ? disp : val;
+}
+
+function updateSwatch() {
+  const m = S.p[S.ap].m[S.am];
+  const f = m.bri/100;
+  const r=Math.round(m.r*f), gg=Math.round(m.g*f), b=Math.round(m.b*f);
+  g('swatch').style.background =
+    `linear-gradient(135deg, rgb(${r},${gg},${b}) 0%, rgb(${Math.round(r*.5)},${Math.round(gg*.5)},${Math.round(b*.5)}) 100%)`;
+  g('hexVal').textContent = '#'+[r,gg,b].map(x=>x.toString(16).padStart(2,'0').toUpperCase()).join('');
+}
+
+function updateBlinkPrev() {
+  const p = S.p[S.ap];
+  const col = `rgb(${p.br},${p.bg},${p.bb})`;
+  ['bindL','bindR'].forEach(id => {
+    g(id).style.background = `rgba(${p.br},${p.bg},${p.bb},.12)`;
+    g(id).style.borderColor = `rgba(${p.br},${p.bg},${p.bb},.3)`;
+    g(id).style.color = col;
+  });
+}
+
+function renderStrips() {
+  const grid = g('stripGrid');
+  grid.innerHTML = '';
+  const p = S.p[S.ap];
+  const m = S.p[S.ap].m[S.am];
+  for (let s=0; s<4; s++) {
+    const en  = m.en[s];
+    const len = p.sl[s];
+    const card = document.createElement('div');
+    card.className = 'strip-sub-card';
+    card.innerHTML = `
+      <div class="strip-top">
+        <div>
+          <div class="strip-label">${stripNames[s]}</div>
+          <div class="strip-gpio">${stripGPIOs[s]}</div>
+        </div>
+        <div class="tog${en?' on':''}" id="stog${s}" onclick="toggleStrip(${s})"></div>
+      </div>
+      <div class="strip-len-row">
+        <span class="strip-len-lbl">LEDs</span>
+        <input class="strip-len-input" type="number" min="1" max="144"
+          value="${len}" id="slen${s}" oninput="onLen(${s},this.value)">
+        <span class="strip-max">MAX 144</span>
+      </div>`;
+    grid.appendChild(card);
+  }
+}
+
+// ── Interactions ─────────────────────────────────────────────
 function onColor() {
-  const r=+id('sR').value, g=+id('sG').value, b=+id('sB').value, bri=+id('sBri').value;
-  id('vR').textContent=r; id('vG').textContent=g; id('vB').textContent=b; id('vBri').textContent=bri+'%';
-  S.p[S.ap].m[S.am] = {...S.p[S.ap].m[S.am], r,g,b,bri};
-  updatePreview();
+  const r=+g('sR').value, gr=+g('sG').value, b=+g('sB').value, bri=+g('sBri').value;
+  g('vR').textContent=r; g('vG').textContent=gr; g('vB').textContent=b; g('vBri').textContent=bri+'%';
+  Object.assign(S.p[S.ap].m[S.am], {r,g:gr,b,bri});
+  updateSwatch();
 }
 function onBlink() {
-  const br=+id('sBR').value, bg=+id('sBG').value, bb=+id('sBB').value, dim=+id('sDim').value;
-  id('vBR').textContent=br; id('vBG').textContent=bg; id('vBB').textContent=bb; id('vDim').textContent=dim+'%';
+  const br=+g('sBR').value, bg=+g('sBG').value, bb=+g('sBB').value, dim=+g('sDim').value;
+  g('vBR').textContent=br; g('vBG').textContent=bg; g('vBB').textContent=bb; g('vDim').textContent=dim+'%';
   Object.assign(S.p[S.ap], {br,bg,bb,dim});
+  updateBlinkPrev();
 }
 function toggleRun() {
   S.p[S.ap].run = !S.p[S.ap].run;
-  id('togRun').classList.toggle('on', S.p[S.ap].run);
+  g('togRun').classList.toggle('on', S.p[S.ap].run);
 }
 function toggleStrip(s) {
   S.p[S.ap].m[S.am].en[s] = !S.p[S.ap].m[S.am].en[s];
-  id('stog'+s).classList.toggle('on', S.p[S.ap].m[S.am].en[s]);
+  g('stog'+s).classList.toggle('on', S.p[S.ap].m[S.am].en[s]);
   if (bleConn) sendCmd({cmd:'setStripEnabled',profile:S.ap,mode:S.am,strip:s,enabled:S.p[S.ap].m[S.am].en[s]});
 }
-function onLenChange(s, val) {
+function onLen(s, val) {
   const n = Math.min(144, Math.max(1, parseInt(val)||1));
   S.p[S.ap].sl[s] = n;
-  if (bleConn) sendCmd({cmd:'setStripLength',profile:S.ap,strip:s,length:n});
+}
+function onName(i, val) {
+  S.p[i].name = val;
+  g('pn'+i).textContent = val;
 }
 
 async function sendAll() {
-  const p = S.p[S.ap];
-  const m = p.m[S.am];
+  if (!bleConn) { toast('⚠ Nicht verbunden'); return; }
+  const p = S.p[S.ap], m = p.m[S.am];
   await sendCmd({cmd:'setColor',profile:S.ap,mode:S.am,r:m.r,g:m.g,b:m.b,bri:m.bri});
   for (let s=0;s<4;s++) {
     await sendCmd({cmd:'setStripEnabled',profile:S.ap,mode:S.am,strip:s,enabled:m.en[s]});
     await sendCmd({cmd:'setStripLength',profile:S.ap,strip:s,length:p.sl[s]});
   }
   await sendCmd({cmd:'setBlinker',profile:S.ap,r:p.br,g:p.bg,b:p.bb,dim:p.dim,run:p.run});
+  await sendCmd({cmd:'setName',profile:0,name:S.p[0].name});
+  await sendCmd({cmd:'setName',profile:1,name:S.p[1].name});
   toast('✓ Gespeichert & gesendet');
 }
 
 // ── Helpers ──────────────────────────────────────────────────
-const id = x => document.getElementById(x);
+const g = id => document.getElementById(id);
 let toastT;
 function toast(msg) {
-  const t=id('toast'); t.textContent=msg; t.classList.add('show');
+  const t=g('toast'); t.textContent=msg; t.classList.add('show');
   clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
 render();
 </script>
+
 </body>
 </html>
