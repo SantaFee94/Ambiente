@@ -6,284 +6,393 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>LumaControl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
    TOKENS
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 :root {
-  --bg:        #0a0a0a;
-  --surface:   #111111;
-  --surface2:  #171717;
-  --surface3:  #1e1e1e;
-  --border:    rgba(255,255,255,.06);
-  --border2:   rgba(255,255,255,.10);
-  --accent:    #c8ff00;
-  --accent-d:  #a0cc00;
-  --green:     #00e87a;
-  --orange:    #ff5c1a;
-  --blue:      #3d9eff;
-  --text:      #f0f0f0;
-  --text2:     #888;
-  --text3:     #444;
+  --bg:        #020408;
+  --glass:     rgba(8,16,28,.7);
+  --glass2:    rgba(12,22,38,.6);
+  --glass3:    rgba(16,28,48,.5);
+  --border:    rgba(0,220,255,.12);
+  --border2:   rgba(0,220,255,.22);
+  --neon-c:    #00dcff;
+  --neon-g:    #c8ff00;
+  --neon-p:    #bf5fff;
+  --neon-o:    #ff5c1a;
+  --text:      #e8f4ff;
+  --text2:     rgba(180,210,240,.5);
+  --text3:     rgba(100,150,200,.3);
+  --r:         14px;
   --r-sm:      8px;
-  --r-md:      14px;
-  --r-lg:      20px;
-  --mono:      'Space Mono', monospace;
-  --sans:      'DM Sans', sans-serif;
+  --mono:      'Orbitron', monospace;
+  --body:      'Rajdhani', sans-serif;
 }
 
-/* ═══════════════════════════════════════════════
-RESET & BASE
-═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+BASE
+═══════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { height: 100%; }
+html, body { height: 100%; overscroll-behavior: none; }
 body {
-font-family: var(–sans);
+font-family: var(–body);
 background: var(–bg);
 color: var(–text);
-min-height: 100%;
 font-size: 15px;
-line-height: 1.5;
 -webkit-font-smoothing: antialiased;
-overscroll-behavior: none;
+overflow-x: hidden;
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
+CANVAS BACKGROUND
+═══════════════════════════════════════ */
+#canvas {
+position: fixed;
+inset: 0;
+z-index: 0;
+pointer-events: none;
+}
+
+/* Grid overlay */
+.grid-overlay {
+position: fixed;
+inset: 0;
+z-index: 1;
+pointer-events: none;
+background-image:
+linear-gradient(rgba(0,220,255,.025) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,220,255,.025) 1px, transparent 1px);
+background-size: 40px 40px;
+}
+
+/* Vignette */
+.vignette {
+position: fixed;
+inset: 0;
+z-index: 2;
+pointer-events: none;
+background: radial-gradient(ellipse at center, transparent 40%, rgba(2,4,8,.85) 100%);
+}
+
+/* ═══════════════════════════════════════
+LAYOUT
+═══════════════════════════════════════ */
+.app {
+position: relative;
+z-index: 10;
+min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════
 HEADER
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .header {
 position: sticky;
 top: 0;
 z-index: 100;
-background: rgba(10,10,10,.85);
-backdrop-filter: blur(20px);
--webkit-backdrop-filter: blur(20px);
+background: rgba(2,4,8,.8);
+backdrop-filter: blur(24px);
+-webkit-backdrop-filter: blur(24px);
 border-bottom: 1px solid var(–border);
-padding: 0 20px;
+padding: 0 18px;
+}
+.header::after {
+content: ‘’;
+position: absolute;
+bottom: -1px; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, var(–neon-c), transparent);
+opacity: .4;
 }
 .header-inner {
 display: flex;
 align-items: center;
 justify-content: space-between;
-height: 56px;
+height: 54px;
 }
 .wordmark {
 font-family: var(–mono);
-font-size: .8rem;
-font-weight: 700;
-letter-spacing: .12em;
+font-size: .72rem;
+font-weight: 900;
+letter-spacing: .18em;
 color: var(–text);
+text-shadow: 0 0 20px rgba(0,220,255,.4);
 }
 .wordmark em {
-color: var(–accent);
+color: var(–neon-c);
 font-style: normal;
+text-shadow: 0 0 12px var(–neon-c), 0 0 30px rgba(0,220,255,.3);
 }
-.conn-btn {
+
+/* ── BLE Button ── */
+.ble-btn {
 display: flex;
 align-items: center;
 gap: 7px;
-background: var(–surface2);
-border: 1px solid var(–border2);
+background: var(–glass2);
+border: 1px solid var(–border);
 border-radius: 99px;
-padding: 6px 12px 6px 8px;
+padding: 7px 13px 7px 9px;
 cursor: pointer;
-transition: all .2s;
+transition: all .25s;
+backdrop-filter: blur(10px);
 }
-.conn-btn:active { opacity: .7; }
-.conn-pill {
-width: 8px; height: 8px;
+.ble-btn:active { transform: scale(.95); }
+.ble-btn.live {
+border-color: rgba(0,232,122,.35);
+box-shadow: 0 0 16px rgba(0,232,122,.15), inset 0 0 12px rgba(0,232,122,.05);
+}
+.ble-dot {
+width: 7px; height: 7px;
 border-radius: 50%;
 background: var(–text3);
 transition: all .4s;
-flex-shrink: 0;
 }
-.conn-pill.live {
-background: var(–green);
-box-shadow: 0 0 0 3px rgba(0,232,122,.15);
-animation: breathe 2.4s ease-in-out infinite;
+.ble-dot.live {
+background: #00e87a;
+box-shadow: 0 0 6px #00e87a, 0 0 14px rgba(0,232,122,.4);
+animation: pulse-dot 2s ease-in-out infinite;
 }
-@keyframes breathe {
-0%,100% { box-shadow: 0 0 0 3px rgba(0,232,122,.15); }
-50%      { box-shadow: 0 0 0 6px rgba(0,232,122,.05); }
+@keyframes pulse-dot {
+0%,100% { box-shadow: 0 0 6px #00e87a, 0 0 14px rgba(0,232,122,.4); }
+50%      { box-shadow: 0 0 10px #00e87a, 0 0 28px rgba(0,232,122,.25); }
 }
-.conn-label {
+.ble-lbl {
 font-family: var(–mono);
-font-size: .62rem;
-letter-spacing: .08em;
+font-size: .55rem;
+letter-spacing: .1em;
 color: var(–text2);
 }
 
-/* ═══════════════════════════════════════════════
-PROFILE STRIP
-═══════════════════════════════════════════════ */
-.profile-strip {
-padding: 14px 20px 0;
+/* ═══════════════════════════════════════
+SCROLL BODY
+═══════════════════════════════════════ */
+.scroll-body {
+padding: 14px 16px 110px;
+}
+
+/* ═══════════════════════════════════════
+PROFILE CARDS
+═══════════════════════════════════════ */
+.profile-grid {
 display: grid;
 grid-template-columns: 1fr 1fr;
 gap: 10px;
+margin-bottom: 12px;
 }
 .profile-card {
-background: var(–surface);
+background: var(–glass2);
 border: 1px solid var(–border);
-border-radius: var(–r-md);
-padding: 14px 16px;
+border-radius: var(–r);
+padding: 14px;
 cursor: pointer;
-transition: all .2s;
+transition: all .25s;
+backdrop-filter: blur(12px);
 position: relative;
 overflow: hidden;
 }
 .profile-card::before {
 content: ‘’;
 position: absolute;
-inset: 0;
-background: linear-gradient(135deg, rgba(200,255,0,.06) 0%, transparent 60%);
+top: 0; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, var(–neon-c), transparent);
 opacity: 0;
-transition: opacity .2s;
+transition: opacity .25s;
+}
+.profile-card::after {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: radial-gradient(ellipse at 20% 50%, rgba(0,220,255,.06) 0%, transparent 70%);
+opacity: 0;
+transition: opacity .25s;
 }
 .profile-card.active {
-border-color: rgba(200,255,0,.3);
-background: rgba(200,255,0,.04);
+border-color: rgba(0,220,255,.3);
+box-shadow: 0 0 24px rgba(0,220,255,.08), inset 0 0 20px rgba(0,220,255,.04);
 }
 .profile-card.active::before { opacity: 1; }
-.profile-card-top {
+.profile-card.active::after  { opacity: 1; }
+.profile-card:active { transform: scale(.97); }
+
+.pc-top {
 display: flex;
 align-items: flex-start;
 justify-content: space-between;
 margin-bottom: 10px;
 }
-.profile-icon { font-size: 1.5rem; line-height: 1; }
-.active-badge {
+.pc-icon { font-size: 1.4rem; line-height: 1; }
+.pc-badge {
 font-family: var(–mono);
-font-size: .55rem;
+font-size: .48rem;
 letter-spacing: .1em;
-color: var(–accent);
-background: rgba(200,255,0,.1);
-border: 1px solid rgba(200,255,0,.2);
+color: var(–neon-c);
+background: rgba(0,220,255,.1);
+border: 1px solid rgba(0,220,255,.25);
 border-radius: 99px;
 padding: 2px 7px;
 opacity: 0;
-transition: opacity .2s;
+transition: opacity .25s;
 }
-.profile-card.active .active-badge { opacity: 1; }
-.profile-name {
+.profile-card.active .pc-badge { opacity: 1; }
+.pc-name {
+font-family: var(–body);
 font-size: .88rem;
-font-weight: 600;
-color: var(–text);
+font-weight: 700;
+letter-spacing: .04em;
 margin-bottom: 2px;
 }
-.profile-sub {
+.pc-sub {
 font-family: var(–mono);
-font-size: .6rem;
+font-size: .52rem;
 color: var(–text3);
-letter-spacing: .06em;
+letter-spacing: .1em;
 }
 
-/* ═══════════════════════════════════════════════
-MODE ROW
-═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+MODE CHIPS
+═══════════════════════════════════════ */
 .mode-row {
-padding: 14px 20px 0;
 display: grid;
-grid-template-columns: repeat(3, 1fr);
+grid-template-columns: repeat(3,1fr);
 gap: 8px;
+margin-bottom: 14px;
 }
 .mode-chip {
-background: var(–surface);
+background: var(–glass2);
 border: 1px solid var(–border);
 border-radius: var(–r-sm);
-padding: 10px 8px;
+padding: 10px 6px;
 text-align: center;
 cursor: pointer;
-transition: all .2s;
+transition: all .22s;
+backdrop-filter: blur(8px);
+position: relative;
+overflow: hidden;
 }
 .mode-chip.active {
-background: var(–surface3);
-border-color: var(–border2);
+border-color: rgba(200,255,0,.3);
+background: rgba(200,255,0,.06);
+box-shadow: 0 0 16px rgba(200,255,0,.1);
 }
-.mode-chip .mi { font-size: 1.1rem; display: block; margin-bottom: 3px; }
-.mode-chip .ml {
+.mode-chip.active .mc-lbl { color: var(–neon-g); text-shadow: 0 0 8px rgba(200,255,0,.5); }
+.mode-chip:active { transform: scale(.95); }
+.mc-icon { font-size: 1.1rem; display: block; margin-bottom: 3px; }
+.mc-lbl {
 font-family: var(–mono);
-font-size: .6rem;
-letter-spacing: .08em;
-color: var(–text2);
+font-size: .52rem;
+letter-spacing: .1em;
+color: var(–text3);
+transition: all .2s;
 }
-.mode-chip.active .ml { color: var(–text); }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
 TABS
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .tab-bar {
-padding: 16px 20px 0;
 display: flex;
-gap: 4px;
+gap: 0;
 border-bottom: 1px solid var(–border);
-margin: 0 0 0;
-padding-bottom: 0;
+margin-bottom: 16px;
+overflow-x: auto;
+scrollbar-width: none;
 }
+.tab-bar::-webkit-scrollbar { display: none; }
 .tab {
 font-family: var(–mono);
-font-size: .65rem;
-letter-spacing: .1em;
-color: var(–text2);
-padding: 10px 14px;
+font-size: .56rem;
+letter-spacing: .12em;
+color: var(–text3);
+padding: 11px 16px;
 cursor: pointer;
 border-bottom: 2px solid transparent;
-transition: all .2s;
+transition: all .22s;
 white-space: nowrap;
+flex-shrink: 0;
 }
 .tab.active {
-color: var(–accent);
-border-bottom-color: var(–accent);
+color: var(–neon-c);
+border-bottom-color: var(–neon-c);
+text-shadow: 0 0 10px rgba(0,220,255,.5);
 }
 
-/* ═══════════════════════════════════════════════
-CONTENT PANELS
-═══════════════════════════════════════════════ */
-.panels { padding: 0 20px 100px; }
-.panel { display: none; padding-top: 16px; }
-.panel.active { display: block; }
+/* ═══════════════════════════════════════
+PANELS
+═══════════════════════════════════════ */
+.panel { display: none; }
+.panel.active { display: block; animation: fadeUp .3s ease; }
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(8px); }
+to   { opacity: 1; transform: translateY(0); }
+}
 
-/* ═══════════════════════════════════════════════
-CARDS
-═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+GLASS CARD
+═══════════════════════════════════════ */
 .card {
-background: var(–surface);
+background: var(–glass);
 border: 1px solid var(–border);
-border-radius: var(–r-md);
+border-radius: var(–r);
 overflow: hidden;
 margin-bottom: 10px;
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+position: relative;
+}
+.card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent 0%, rgba(0,220,255,.3) 50%, transparent 100%);
 }
 .card-header {
 display: flex;
 align-items: center;
 justify-content: space-between;
-padding: 14px 16px;
+padding: 13px 16px;
 border-bottom: 1px solid var(–border);
 }
 .card-title {
-font-size: .8rem;
-font-weight: 600;
+font-family: var(–body);
+font-size: .85rem;
+font-weight: 700;
 letter-spacing: .04em;
-color: var(–text);
 }
 .card-tag {
 font-family: var(–mono);
-font-size: .58rem;
-letter-spacing: .08em;
-color: var(–text3);
+font-size: .52rem;
+letter-spacing: .1em;
+color: var(–neon-c);
+background: rgba(0,220,255,.08);
+border: 1px solid rgba(0,220,255,.2);
+border-radius: 99px;
+padding: 3px 9px;
 }
-.card-body { padding: 16px; }
+.card-body { padding: 14px; }
 
 /* Sub-card */
 .sub-card {
-background: var(–surface2);
+background: var(–glass3);
 border: 1px solid var(–border);
 border-radius: var(–r-sm);
-padding: 14px;
+padding: 13px;
 margin-bottom: 8px;
+backdrop-filter: blur(8px);
+position: relative;
+overflow: hidden;
 }
 .sub-card:last-child { margin-bottom: 0; }
+.sub-card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(0,220,255,.2), transparent);
+}
 .sub-card-header {
 display: flex;
 align-items: center;
@@ -291,589 +400,766 @@ justify-content: space-between;
 margin-bottom: 12px;
 }
 .sub-card-title {
-font-size: .78rem;
-font-weight: 600;
-color: var(–text);
+font-size: .8rem;
+font-weight: 700;
+letter-spacing: .03em;
 }
 .sub-card-sub {
 font-family: var(–mono);
-font-size: .58rem;
+font-size: .52rem;
 color: var(–text3);
-margin-top: 1px;
+margin-top: 2px;
+letter-spacing: .08em;
 }
 
-/* ═══════════════════════════════════════════════
-COLOR PREVIEW
-═══════════════════════════════════════════════ */
-.color-swatch {
-height: 80px;
+/* ═══════════════════════════════════════
+COLOR SWATCH
+═══════════════════════════════════════ */
+.swatch {
+height: 76px;
 border-radius: var(–r-sm);
-margin-bottom: 16px;
-transition: background .25s;
+margin-bottom: 14px;
+transition: background .3s;
 position: relative;
 overflow: hidden;
 display: flex;
 align-items: flex-end;
-padding: 10px 12px;
+padding: 8px 12px;
+border: 1px solid rgba(255,255,255,.06);
 }
-.color-swatch::after {
+.swatch::after {
 content: ‘’;
 position: absolute;
 inset: 0;
-background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.4));
+background: linear-gradient(to bottom, transparent 30%, rgba(0,0,0,.55));
 }
-.color-hex {
+.swatch-hex {
 font-family: var(–mono);
-font-size: .65rem;
-color: rgba(255,255,255,.6);
+font-size: .62rem;
+color: rgba(255,255,255,.55);
 position: relative;
 z-index: 1;
-letter-spacing: .08em;
+letter-spacing: .1em;
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
 SLIDERS
-═══════════════════════════════════════════════ */
-.sl-group { display: flex; flex-direction: column; gap: 14px; }
-.sl-row { display: flex; flex-direction: column; gap: 7px; }
-.sl-meta {
-display: flex;
-align-items: center;
-justify-content: space-between;
-}
-.sl-name {
+═══════════════════════════════════════ */
+.sl-group { display: flex; flex-direction: column; gap: 15px; }
+.sl-row { display: flex; flex-direction: column; gap: 8px; }
+.sl-meta { display: flex; align-items: center; justify-content: space-between; }
+.sl-lbl {
 font-family: var(–mono);
-font-size: .63rem;
-letter-spacing: .1em;
+font-size: .56rem;
+letter-spacing: .12em;
 color: var(–text2);
 }
 .sl-val {
 font-family: var(–mono);
-font-size: .7rem;
+font-size: .65rem;
 color: var(–text);
-min-width: 36px;
+min-width: 38px;
 text-align: right;
 }
+
 input[type=range] {
 -webkit-appearance: none;
-appearance: none;
 width: 100%;
 height: 4px;
 border-radius: 2px;
 outline: none;
 cursor: pointer;
 }
-input[type=range].r  { background: linear-gradient(to right, #1a0000, #ff3333); }
-input[type=range].g  { background: linear-gradient(to right, #001a00, #00ee55); }
-input[type=range].b  { background: linear-gradient(to right, #00001a, #3366ff); }
-input[type=range].w  { background: linear-gradient(to right, #1a1a1a, #ffffff); }
-input[type=range].a  { background: linear-gradient(to right, #111, var(–accent)); }
+input[type=range].r  { background: linear-gradient(to right, #1a0005, #ff2244); }
+input[type=range].g  { background: linear-gradient(to right, #001a08, #00ff66); }
+input[type=range].b  { background: linear-gradient(to right, #00051a, #2266ff); }
+input[type=range].w  { background: linear-gradient(to right, #0a0d12, rgba(0,220,255,.8)); }
 input[type=range]::-webkit-slider-thumb {
 -webkit-appearance: none;
-width: 20px;
-height: 20px;
+width: 20px; height: 20px;
 border-radius: 50%;
-background: #fff;
-box-shadow: 0 1px 6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1);
+background: var(–text);
+box-shadow: 0 0 0 2px rgba(0,220,255,.3), 0 2px 8px rgba(0,0,0,.7);
+transition: box-shadow .2s;
+}
+input[type=range]:active::-webkit-slider-thumb {
+box-shadow: 0 0 0 4px rgba(0,220,255,.25), 0 0 16px rgba(0,220,255,.4), 0 2px 8px rgba(0,0,0,.7);
 }
 
-.sep { height: 1px; background: var(–border); margin: 14px 0; }
+.sep { height: 1px; background: var(–border); margin: 13px 0; }
 
-/* ═══════════════════════════════════════════════
-STRIP CARDS
-═══════════════════════════════════════════════ */
-.strip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* ═══════════════════════════════════════
+STRIP GRID
+═══════════════════════════════════════ */
+.strip-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+}
 .strip-sub-card {
-background: var(–surface2);
+background: var(–glass3);
 border: 1px solid var(–border);
 border-radius: var(–r-sm);
-padding: 13px;
+padding: 12px;
 display: flex;
 flex-direction: column;
 gap: 10px;
+backdrop-filter: blur(8px);
+transition: border-color .2s, box-shadow .2s;
+position: relative;
+overflow: hidden;
+}
+.strip-sub-card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(0,220,255,.2), transparent);
+}
+.strip-sub-card.enabled {
+border-color: rgba(0,220,255,.25);
+box-shadow: 0 0 14px rgba(0,220,255,.07);
 }
 .strip-top {
 display: flex;
 align-items: flex-start;
 justify-content: space-between;
 }
-.strip-label {
+.strip-name {
 font-size: .82rem;
-font-weight: 600;
-color: var(–text);
-line-height: 1.2;
+font-weight: 700;
+letter-spacing: .03em;
 }
 .strip-gpio {
 font-family: var(–mono);
-font-size: .58rem;
+font-size: .52rem;
 color: var(–text3);
 margin-top: 2px;
+letter-spacing: .07em;
 }
 .strip-len-row {
 display: flex;
 align-items: center;
-gap: 7px;
+gap: 6px;
 }
 .strip-len-lbl {
 font-family: var(–mono);
-font-size: .58rem;
+font-size: .52rem;
 color: var(–text3);
-white-space: nowrap;
+letter-spacing: .06em;
 }
 .strip-len-input {
-background: var(–surface3);
-border: 1px solid var(–border2);
+background: rgba(0,220,255,.06);
+border: 1px solid rgba(0,220,255,.15);
 border-radius: 6px;
 color: var(–text);
 font-family: var(–mono);
-font-size: .75rem;
+font-size: .72rem;
 padding: 5px 8px;
 width: 52px;
 text-align: center;
 outline: none;
 -webkit-appearance: none;
+transition: border-color .2s, box-shadow .2s;
 }
-.strip-len-input:focus { border-color: rgba(200,255,0,.4); }
+.strip-len-input:focus {
+border-color: rgba(0,220,255,.4);
+box-shadow: 0 0 10px rgba(0,220,255,.15);
+}
 .strip-max {
 font-family: var(–mono);
-font-size: .56rem;
+font-size: .48rem;
 color: var(–text3);
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
 TOGGLE
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .tog {
-width: 44px;
-height: 26px;
-border-radius: 13px;
-background: var(–surface3);
-border: 1px solid var(–border2);
+width: 42px; height: 24px;
+border-radius: 12px;
+background: rgba(255,255,255,.06);
+border: 1px solid var(–border);
 position: relative;
 cursor: pointer;
-transition: all .22s;
+transition: all .25s;
 flex-shrink: 0;
 }
 .tog.on {
-background: var(–green);
-border-color: var(–green);
-box-shadow: 0 0 10px rgba(0,232,122,.25);
+background: rgba(0,220,255,.2);
+border-color: rgba(0,220,255,.5);
+box-shadow: 0 0 12px rgba(0,220,255,.25), inset 0 0 8px rgba(0,220,255,.1);
 }
 .tog::after {
 content: ‘’;
 position: absolute;
-width: 20px; height: 20px;
+width: 18px; height: 18px;
 border-radius: 50%;
-background: #fff;
+background: rgba(180,210,240,.7);
 top: 2px; left: 2px;
-transition: transform .22s cubic-bezier(.34,1.56,.64,1);
-box-shadow: 0 1px 4px rgba(0,0,0,.4);
+transition: transform .25s cubic-bezier(.34,1.56,.64,1), background .25s;
+box-shadow: 0 1px 4px rgba(0,0,0,.5);
 }
-.tog.on::after { transform: translateX(18px); }
-
+.tog.on::after {
+transform: translateX(18px);
+background: var(–neon-c);
+box-shadow: 0 0 8px var(–neon-c), 0 1px 4px rgba(0,0,0,.5);
+}
 .tog-row {
 display: flex;
 align-items: center;
 justify-content: space-between;
 gap: 12px;
 }
-.tog-info .tog-lbl { font-size: .85rem; font-weight: 600; }
+.tog-info .tog-lbl { font-size: .85rem; font-weight: 700; }
 .tog-info .tog-sub {
 font-family: var(–mono);
-font-size: .6rem;
+font-size: .52rem;
 color: var(–text3);
 margin-top: 2px;
+letter-spacing: .06em;
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
 BLINKER PREVIEW
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .blink-prev {
 display: flex;
 gap: 8px;
-margin-bottom: 14px;
+margin-bottom: 12px;
 }
 .blink-ind {
-flex: 1;
-height: 36px;
+flex: 1; height: 34px;
 border-radius: var(–r-sm);
-background: var(–surface3);
+background: var(–glass3);
 border: 1px solid var(–border);
 display: flex;
 align-items: center;
 justify-content: center;
 font-family: var(–mono);
-font-size: .62rem;
-letter-spacing: .06em;
+font-size: .56rem;
+letter-spacing: .08em;
 color: var(–text3);
-transition: all .2s;
+transition: all .3s;
 }
-.blink-ind.flash { animation: blink 550ms ease-in-out infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.12} }
 
-/* ═══════════════════════════════════════════════
-SYSTEM CARD
-═══════════════════════════════════════════════ */
-.system-row {
+/* ═══════════════════════════════════════
+SYSTEM ROWS
+═══════════════════════════════════════ */
+.sys-row {
 display: flex;
 align-items: center;
 gap: 12px;
-padding: 12px 0;
+padding: 11px 0;
 border-bottom: 1px solid var(–border);
 }
-.system-row:last-child { border-bottom: none; padding-bottom: 0; }
-.system-row:first-child { padding-top: 0; }
+.sys-row:last-child { border: none; padding-bottom: 0; }
+.sys-row:first-child { padding-top: 0; }
 .sys-dot {
-width: 8px; height: 8px;
+width: 7px; height: 7px;
 border-radius: 50%;
 flex-shrink: 0;
+background: var(–text3);
 }
-.sys-dot.ok  { background: var(–green); box-shadow: 0 0 6px rgba(0,232,122,.4); }
-.sys-dot.err { background: var(–orange); }
-.sys-dot.idle { background: var(–text3); }
-.sys-label { font-size: .85rem; font-weight: 500; flex: 1; }
-.sys-value {
+.sys-dot.ok  { background: #00e87a; box-shadow: 0 0 7px rgba(0,232,122,.5); }
+.sys-dot.err { background: var(–neon-o); box-shadow: 0 0 7px rgba(255,92,26,.4); }
+.sys-lbl { font-size: .85rem; font-weight: 600; flex: 1; letter-spacing: .02em; }
+.sys-val {
 font-family: var(–mono);
-font-size: .65rem;
+font-size: .58rem;
 color: var(–text2);
+letter-spacing: .06em;
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
+NAME INPUT
+═══════════════════════════════════════ */
+.name-input {
+width: 100%;
+background: rgba(0,220,255,.06);
+border: 1px solid rgba(0,220,255,.15);
+border-radius: var(–r-sm);
+color: var(–text);
+font-family: var(–body);
+font-size: .9rem;
+font-weight: 600;
+padding: 9px 12px;
+outline: none;
+transition: border-color .2s, box-shadow .2s;
+letter-spacing: .03em;
+}
+.name-input:focus {
+border-color: rgba(0,220,255,.4);
+box-shadow: 0 0 14px rgba(0,220,255,.12);
+}
+
+/* ═══════════════════════════════════════
 SAVE BUTTON
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .save-wrap {
 position: fixed;
 bottom: 0; left: 0; right: 0;
-padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
-background: linear-gradient(to top, var(–bg) 60%, transparent);
+padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+background: linear-gradient(to top, rgba(2,4,8,.98) 50%, transparent);
 z-index: 90;
 }
 .save-btn {
 width: 100%;
 padding: 15px;
-background: var(–accent);
-border: none;
-border-radius: var(–r-md);
-color: #000;
+background: linear-gradient(135deg, rgba(0,220,255,.15), rgba(0,220,255,.08));
+border: 1px solid rgba(0,220,255,.4);
+border-radius: var(–r);
+color: var(–neon-c);
 font-family: var(–mono);
-font-size: .75rem;
+font-size: .68rem;
 font-weight: 700;
-letter-spacing: .14em;
+letter-spacing: .18em;
 cursor: pointer;
-transition: all .18s;
-box-shadow: 0 4px 20px rgba(200,255,0,.2);
+transition: all .22s;
+box-shadow: 0 0 20px rgba(0,220,255,.12), inset 0 1px 0 rgba(0,220,255,.1);
+text-shadow: 0 0 12px rgba(0,220,255,.6);
+backdrop-filter: blur(12px);
+position: relative;
+overflow: hidden;
 }
-.save-btn:active { transform: scale(.98); background: var(–accent-d); }
+.save-btn::before {
+content: ‘’;
+position: absolute;
+top: 0; left: -100%;
+width: 100%; height: 100%;
+background: linear-gradient(90deg, transparent, rgba(0,220,255,.12), transparent);
+transition: left .5s;
+}
+.save-btn:active { transform: scale(.98); }
+.save-btn:active::before { left: 100%; }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════
 TOAST
-═══════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 .toast {
 position: fixed;
-bottom: 90px;
-left: 50%;
-transform: translateX(-50%) translateY(20px);
+bottom: 90px; left: 50%;
+transform: translateX(-50%) translateY(16px);
 opacity: 0;
-background: var(–surface3);
-border: 1px solid var(–border2);
+background: rgba(0,220,255,.12);
+border: 1px solid rgba(0,220,255,.3);
 border-radius: 99px;
-padding: 10px 18px;
+padding: 9px 18px;
 font-family: var(–mono);
-font-size: .65rem;
-letter-spacing: .06em;
-color: var(–text);
-transition: all .25s cubic-bezier(.34,1.56,.64,1);
+font-size: .58rem;
+letter-spacing: .1em;
+color: var(–neon-c);
+backdrop-filter: blur(16px);
+transition: all .28s cubic-bezier(.34,1.56,.64,1);
 z-index: 200;
 white-space: nowrap;
 pointer-events: none;
+text-shadow: 0 0 10px rgba(0,220,255,.5);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ═══════════════════════════════════════════════
-UTILITY
-═══════════════════════════════════════════════ */
-.gap { height: 10px; }
+/* ═══════════════════════════════════════
+SCAN LINE EFFECT
+═══════════════════════════════════════ */
+.scanline {
+position: fixed;
+inset: 0;
+z-index: 3;
+pointer-events: none;
+background: repeating-linear-gradient(
+0deg,
+transparent,
+transparent 3px,
+rgba(0,0,0,.04) 3px,
+rgba(0,0,0,.04) 4px
+);
+}
+
+/* ═══════════════════════════════════════
+NEON SECTION LABEL
+═══════════════════════════════════════ */
+.sec-lbl {
+font-family: var(–mono);
+font-size: .52rem;
+letter-spacing: .2em;
+color: var(–text3);
+margin: 18px 0 8px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.sec-lbl::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: linear-gradient(to right, var(–border), transparent);
+}
 </style>
 
 </head>
 <body>
 
-<!-- ── HEADER ── -->
+<!-- Background layers -->
 
-<header class="header">
-  <div class="header-inner">
-    <div class="wordmark">LUMA<em>CONTROL</em></div>
-    <div class="conn-btn" onclick="connectBLE()">
-      <div class="conn-pill" id="pill"></div>
-      <span class="conn-label" id="connLbl">VERBINDEN</span>
+<canvas id="canvas"></canvas>
+
+<div class="grid-overlay"></div>
+<div class="scanline"></div>
+<div class="vignette"></div>
+
+<div class="app">
+
+  <!-- HEADER -->
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="wordmark">LUMA<em>CONTROL</em></div>
+      <div class="ble-btn" id="bleBtn" onclick="connectBLE()">
+        <div class="ble-dot" id="bleDot"></div>
+        <span class="ble-lbl" id="bleLbl">CONNECT</span>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<!-- ── PROFILE STRIP ── -->
+  <div class="scroll-body">
 
-<div class="profile-strip">
+```
+<!-- PROFILES -->
+<div class="sec-lbl">PROFIL</div>
+<div class="profile-grid">
   <div class="profile-card active" id="pc0" onclick="selProfile(0)">
-    <div class="profile-card-top">
-      <div class="profile-icon">🗝</div>
-      <div class="active-badge">AKTIV</div>
+    <div class="pc-top">
+      <div class="pc-icon">🗝</div>
+      <div class="pc-badge">AKTIV</div>
     </div>
-    <div class="profile-name" id="pn0">Schlüssel 1</div>
-    <div class="profile-sub">PROFIL 01</div>
+    <div class="pc-name" id="pn0">Schlüssel 1</div>
+    <div class="pc-sub">PROFIL · 01</div>
   </div>
   <div class="profile-card" id="pc1" onclick="selProfile(1)">
-    <div class="profile-card-top">
-      <div class="profile-icon">🔑</div>
-      <div class="active-badge">AKTIV</div>
+    <div class="pc-top">
+      <div class="pc-icon">🔑</div>
+      <div class="pc-badge">AKTIV</div>
     </div>
-    <div class="profile-name" id="pn1">Schlüssel 2</div>
-    <div class="profile-sub">PROFIL 02</div>
+    <div class="pc-name" id="pn1">Schlüssel 2</div>
+    <div class="pc-sub">PROFIL · 02</div>
   </div>
 </div>
 
-<!-- ── MODE ROW ── -->
-
+<!-- MODES -->
+<div class="sec-lbl">MODUS</div>
 <div class="mode-row">
   <div class="mode-chip active" id="mc0" onclick="selMode(0)">
-    <span class="mi">🌤</span><span class="ml">COMFORT</span>
+    <span class="mc-icon">🌤</span><span class="mc-lbl">COMFORT</span>
   </div>
   <div class="mode-chip" id="mc1" onclick="selMode(1)">
-    <span class="mi">⚡</span><span class="ml">SPORT</span>
+    <span class="mc-icon">⚡</span><span class="mc-lbl">SPORT</span>
   </div>
   <div class="mode-chip" id="mc2" onclick="selMode(2)">
-    <span class="mi">🌙</span><span class="ml">NIGHT</span>
+    <span class="mc-icon">🌙</span><span class="mc-lbl">NIGHT</span>
   </div>
 </div>
 
-<!-- ── TAB BAR ── -->
-
-<div class="tab-bar" style="padding: 0 20px; margin-top: 16px;">
+<!-- TABS -->
+<div class="tab-bar">
   <div class="tab active" id="tab0" onclick="selTab(0)">FARBE</div>
   <div class="tab"        id="tab1" onclick="selTab(1)">BÄNDER</div>
   <div class="tab"        id="tab2" onclick="selTab(2)">BLINKER</div>
   <div class="tab"        id="tab3" onclick="selTab(3)">SYSTEM</div>
 </div>
 
-<!-- ── PANELS ── -->
-
-<div class="panels">
-
-  <!-- TAB 0: FARBE -->
-
-  <div class="panel active" id="panel0">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">Lichtfarbe</span>
-        <span class="card-tag" id="modeTag">COMFORT</span>
+<!-- ── TAB 0: FARBE ── -->
+<div class="panel active" id="panel0">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Lichtfarbe</span>
+      <span class="card-tag" id="modeTag">COMFORT</span>
+    </div>
+    <div class="card-body">
+      <div class="swatch" id="swatch">
+        <span class="swatch-hex" id="hexVal">#FFC864</span>
       </div>
-      <div class="card-body">
-        <div class="color-swatch" id="swatch">
-          <span class="color-hex" id="hexVal">#FFD864</span>
+      <div class="sl-group">
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-lbl">ROT</span><span class="sl-val" id="vR">255</span></div>
+          <input type="range" class="r" id="sR" min="0" max="255" value="255" oninput="onColor()">
+        </div>
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-lbl">GRÜN</span><span class="sl-val" id="vG">200</span></div>
+          <input type="range" class="g" id="sG" min="0" max="255" value="200" oninput="onColor()">
+        </div>
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-lbl">BLAU</span><span class="sl-val" id="vB">100</span></div>
+          <input type="range" class="b" id="sB" min="0" max="255" value="100" oninput="onColor()">
+        </div>
+        <div class="sep"></div>
+        <div class="sl-row">
+          <div class="sl-meta"><span class="sl-lbl">HELLIGKEIT</span><span class="sl-val" id="vBri">70%</span></div>
+          <input type="range" class="w" id="sBri" min="0" max="100" value="70" oninput="onColor()">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB 1: BÄNDER ── -->
+<div class="panel" id="panel1">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">LED Bänder</span>
+      <span class="card-tag" id="bandTag">COMFORT</span>
+    </div>
+    <div class="card-body">
+      <div class="strip-grid" id="stripGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB 2: BLINKER ── -->
+<div class="panel" id="panel2">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Blinker</span>
+      <span class="card-tag" id="blinkTag">PROFIL 01</span>
+    </div>
+    <div class="card-body">
+
+      <div class="sub-card">
+        <div class="sub-card-header"><div><div class="sub-card-title">Vorschau</div></div></div>
+        <div class="blink-prev">
+          <div class="blink-ind" id="bindL">◄ LINKS</div>
+          <div class="blink-ind" id="bindR">RECHTS ►</div>
+        </div>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card-header">
+          <div>
+            <div class="sub-card-title">Farbe</div>
+            <div class="sub-card-sub">PRO PROFIL EINSTELLBAR</div>
+          </div>
         </div>
         <div class="sl-group">
           <div class="sl-row">
-            <div class="sl-meta">
-              <span class="sl-name">ROT</span>
-              <span class="sl-val" id="vR">255</span>
-            </div>
-            <input type="range" class="r" id="sR" min="0" max="255" value="255" oninput="onColor()">
+            <div class="sl-meta"><span class="sl-lbl">ROT</span><span class="sl-val" id="vBR">255</span></div>
+            <input type="range" class="r" id="sBR" min="0" max="255" value="255" oninput="onBlink()">
           </div>
           <div class="sl-row">
-            <div class="sl-meta">
-              <span class="sl-name">GRÜN</span>
-              <span class="sl-val" id="vG">200</span>
-            </div>
-            <input type="range" class="g" id="sG" min="0" max="255" value="200" oninput="onColor()">
+            <div class="sl-meta"><span class="sl-lbl">GRÜN</span><span class="sl-val" id="vBG">100</span></div>
+            <input type="range" class="g" id="sBG" min="0" max="255" value="100" oninput="onBlink()">
           </div>
           <div class="sl-row">
-            <div class="sl-meta">
-              <span class="sl-name">BLAU</span>
-              <span class="sl-val" id="vB">100</span>
-            </div>
-            <input type="range" class="b" id="sB" min="0" max="255" value="100" oninput="onColor()">
+            <div class="sl-meta"><span class="sl-lbl">BLAU</span><span class="sl-val" id="vBB">0</span></div>
+            <input type="range" class="b" id="sBB" min="0" max="255" value="0" oninput="onBlink()">
           </div>
-          <div class="sep"></div>
+        </div>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card-header">
+          <div>
+            <div class="sub-card-title">Verhalten</div>
+            <div class="sub-card-sub">DIM & EFFEKT</div>
+          </div>
+        </div>
+        <div class="sl-group">
           <div class="sl-row">
-            <div class="sl-meta">
-              <span class="sl-name">HELLIGKEIT</span>
-              <span class="sl-val" id="vBri">70%</span>
-            </div>
-            <input type="range" class="a" id="sBri" min="0" max="100" value="70" oninput="onColor()">
+            <div class="sl-meta"><span class="sl-lbl">DIM-FAKTOR</span><span class="sl-val" id="vDim">30%</span></div>
+            <input type="range" class="w" id="sDim" min="0" max="100" value="30" oninput="onBlink()">
           </div>
         </div>
+        <div class="sep"></div>
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-lbl">Laufblinker</div>
+            <div class="tog-sub">KNIGHT RIDER EFFEKT</div>
+          </div>
+          <div class="tog" id="togRun" onclick="toggleRun()"></div>
+        </div>
       </div>
+
     </div>
-  </div>
-
-  <!-- TAB 1: BÄNDER -->
-
-  <div class="panel" id="panel1">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">LED Bänder</span>
-        <span class="card-tag" id="bandModeTag">COMFORT</span>
-      </div>
-      <div class="card-body">
-        <div class="strip-grid" id="stripGrid"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 2: BLINKER -->
-
-  <div class="panel" id="panel2">
-
-```
-<!-- Blinker Farbe -->
-<div class="card">
-  <div class="card-header">
-    <span class="card-title">Blinker Einstellungen</span>
-    <span class="card-tag" id="blinkProfTag">PROFIL 01</span>
-  </div>
-  <div class="card-body">
-
-    <!-- Vorschau -->
-    <div class="sub-card">
-      <div class="sub-card-header">
-        <div>
-          <div class="sub-card-title">Vorschau</div>
-        </div>
-      </div>
-      <div class="blink-prev">
-        <div class="blink-ind" id="bindL">◄ LINKS</div>
-        <div class="blink-ind" id="bindR">RECHTS ►</div>
-      </div>
-    </div>
-
-    <!-- Farbe -->
-    <div class="sub-card">
-      <div class="sub-card-header">
-        <div>
-          <div class="sub-card-title">Farbe</div>
-          <div class="sub-card-sub">Blinkerfarbe für dieses Profil</div>
-        </div>
-      </div>
-      <div class="sl-group">
-        <div class="sl-row">
-          <div class="sl-meta"><span class="sl-name">ROT</span><span class="sl-val" id="vBR">255</span></div>
-          <input type="range" class="r" id="sBR" min="0" max="255" value="255" oninput="onBlink()">
-        </div>
-        <div class="sl-row">
-          <div class="sl-meta"><span class="sl-name">GRÜN</span><span class="sl-val" id="vBG">100</span></div>
-          <input type="range" class="g" id="sBG" min="0" max="255" value="100" oninput="onBlink()">
-        </div>
-        <div class="sl-row">
-          <div class="sl-meta"><span class="sl-name">BLAU</span><span class="sl-val" id="vBB">0</span></div>
-          <input type="range" class="b" id="sBB" min="0" max="255" value="0" oninput="onBlink()">
-        </div>
-      </div>
-    </div>
-
-    <!-- Verhalten -->
-    <div class="sub-card">
-      <div class="sub-card-header">
-        <div>
-          <div class="sub-card-title">Verhalten</div>
-          <div class="sub-card-sub">Dim & Effekt</div>
-        </div>
-      </div>
-      <div class="sl-group">
-        <div class="sl-row">
-          <div class="sl-meta"><span class="sl-name">DIM-FAKTOR</span><span class="sl-val" id="vDim">30%</span></div>
-          <input type="range" class="w" id="sDim" min="0" max="100" value="30" oninput="onBlink()">
-        </div>
-      </div>
-      <div class="sep"></div>
-      <div class="tog-row">
-        <div class="tog-info">
-          <div class="tog-lbl">Laufblinker</div>
-          <div class="tog-sub">Knight Rider Effekt</div>
-        </div>
-        <div class="tog" id="togRun" onclick="toggleRun()"></div>
-      </div>
-    </div>
-
   </div>
 </div>
-```
 
-  </div>
-
-  <!-- TAB 3: SYSTEM -->
-
-  <div class="panel" id="panel3">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">Systemstatus</span>
+<!-- ── TAB 3: SYSTEM ── -->
+<div class="panel" id="panel3">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Systemstatus</span></div>
+    <div class="card-body">
+      <div class="sys-row">
+        <div class="sys-dot" id="dotBLE"></div>
+        <span class="sys-lbl">Bluetooth</span>
+        <span class="sys-val" id="sysBLE">GETRENNT</span>
       </div>
-      <div class="card-body">
-        <div class="system-row">
-          <div class="sys-dot idle" id="sysBLEDot"></div>
-          <span class="sys-label">Bluetooth</span>
-          <span class="sys-value" id="sysBLE">Getrennt</span>
-        </div>
-        <div class="system-row">
-          <div class="sys-dot idle" id="sysCANDot"></div>
-          <span class="sys-label">CAN Bus</span>
-          <span class="sys-value" id="sysCAN">—</span>
-        </div>
-        <div class="system-row">
-          <div class="sys-dot idle" id="sysKeyDot"></div>
-          <span class="sys-label">Aktiver Schlüssel</span>
-          <span class="sys-value" id="sysKey">—</span>
-        </div>
+      <div class="sys-row">
+        <div class="sys-dot" id="dotCAN"></div>
+        <span class="sys-lbl">CAN Bus</span>
+        <span class="sys-val" id="sysCAN">—</span>
+      </div>
+      <div class="sys-row">
+        <div class="sys-dot" id="dotKey"></div>
+        <span class="sys-lbl">Aktiver Schlüssel</span>
+        <span class="sys-val" id="sysKey">—</span>
       </div>
     </div>
-
-```
-<div class="card">
-  <div class="card-header">
-    <span class="card-title">Profile umbenennen</span>
   </div>
-  <div class="card-body">
-    <div class="sub-card" style="margin-bottom:8px">
-      <div class="sub-card-header" style="margin-bottom:8px">
-        <div class="sub-card-title">Schlüssel 1</div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">Profile umbenennen</span></div>
+    <div class="card-body">
+      <div class="sub-card" style="margin-bottom:8px">
+        <div class="sub-card-header" style="margin-bottom:8px">
+          <div class="sub-card-title">Schlüssel 1</div>
+        </div>
+        <input class="name-input" id="ni0" value="Schluessel 1" oninput="onName(0,this.value)">
       </div>
-      <input class="strip-len-input" style="width:100%;font-size:.8rem;padding:8px 10px;"
-        id="nameInput0" value="Schluessel 1" oninput="onName(0,this.value)">
-    </div>
-    <div class="sub-card">
-      <div class="sub-card-header" style="margin-bottom:8px">
-        <div class="sub-card-title">Schlüssel 2</div>
+      <div class="sub-card">
+        <div class="sub-card-header" style="margin-bottom:8px">
+          <div class="sub-card-title">Schlüssel 2</div>
+        </div>
+        <input class="name-input" id="ni1" value="Schluessel 2" oninput="onName(1,this.value)">
       </div>
-      <input class="strip-len-input" style="width:100%;font-size:.8rem;padding:8px 10px;"
-        id="nameInput1" value="Schluessel 2" oninput="onName(1,this.value)">
     </div>
   </div>
 </div>
 ```
 
+  </div><!-- /scroll-body -->
+
+  <!-- SAVE -->
+
+  <div class="save-wrap">
+    <button class="save-btn" onclick="sendAll()">SPEICHERN &amp; SENDEN</button>
   </div>
 
-</div><!-- /panels -->
-
-<!-- ── SAVE BUTTON ── -->
-
-<div class="save-wrap">
-  <button class="save-btn" onclick="sendAll()">SPEICHERN & SENDEN</button>
-</div>
+</div><!-- /app -->
 
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════
+     CANVAS PARTICLE SYSTEM
+══════════════════════════════════════════ -->
+
+<script>
+(function() {
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], lines = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Particles
+  const COLORS = ['rgba(0,220,255,', 'rgba(200,255,0,', 'rgba(191,95,255,'];
+  for (let i = 0; i < 55; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - .5) * .35,
+      vy: (Math.random() - .5) * .35,
+      r: Math.random() * 1.5 + .4,
+      col: COLORS[Math.floor(Math.random() * COLORS.length)],
+      alpha: Math.random() * .5 + .15,
+    });
+  }
+
+  // Shooting stars
+  let stars = [];
+  function spawnStar() {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H * .5,
+      len: Math.random() * 80 + 40,
+      speed: Math.random() * 4 + 3,
+      alpha: 1,
+      angle: Math.PI / 5,
+      col: COLORS[Math.floor(Math.random() * COLORS.length)],
+    });
+  }
+  setInterval(spawnStar, 3200);
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,220,255,${.07 * (1 - dist/120)})`;
+          ctx.lineWidth = .5;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw particles
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.col + p.alpha + ')';
+      ctx.fill();
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI*2);
+      ctx.fillStyle = p.col + (p.alpha * .08) + ')';
+      ctx.fill();
+    });
+
+    // Draw shooting stars
+    stars = stars.filter(s => s.alpha > 0);
+    stars.forEach(s => {
+      ctx.beginPath();
+      const grad = ctx.createLinearGradient(
+        s.x, s.y,
+        s.x - Math.cos(s.angle) * s.len,
+        s.y - Math.sin(s.angle) * s.len
+      );
+      grad.addColorStop(0, s.col + s.alpha + ')');
+      grad.addColorStop(1, s.col + '0)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.5;
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x - Math.cos(s.angle)*s.len, s.y - Math.sin(s.angle)*s.len);
+      ctx.stroke();
+
+      s.x += Math.cos(s.angle) * s.speed;
+      s.y += Math.sin(s.angle) * s.speed;
+      s.alpha -= .018;
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+<!-- ══════════════════════════════════════════
+     APP LOGIC
+══════════════════════════════════════════ -->
 
 <script>
 const modeNames  = ['COMFORT','SPORT','NIGHT'];
 const stripNames = ['Band 1','Band 2','Band 3','Band 4'];
 const stripGPIOs = ['GPIO 4','GPIO 5','GPIO 6','GPIO 7'];
 
-// ── Default State ────────────────────────────────────────────
 let S = {
-  ap: 0, am: 0, can: false,
-  p: [
+  ap:0, am:0, can:false,
+  p:[
     {
       name:'Schluessel 1', br:255,bg:100,bb:0, dim:30, run:false,
       sl:[30,30,30,30],
@@ -895,13 +1181,13 @@ let S = {
   ]
 };
 
-let bleChar = null, bleConn = false;
+let bleChar=null, bleConn=false;
 
 // ── BLE ─────────────────────────────────────────────────────
 async function connectBLE() {
   try {
     const dev  = await navigator.bluetooth.requestDevice({
-      filters: [{name:'LumaControl'}],
+      filters:[{name:'LumaControl'}],
       optionalServices:['12345678-1234-1234-1234-123456789abc']
     });
     const srv  = await dev.gatt.connect();
@@ -913,22 +1199,23 @@ async function connectBLE() {
       try { applyState(JSON.parse(new TextDecoder().decode(e.target.value))); } catch(x){}
     });
     await sendCmd({cmd:'sync'});
-    setConnected(true);
-    toast('🔗 Verbunden');
+    setConn(true);
+    toast('// LINK ESTABLISHED');
     dev.addEventListener('gattserverdisconnected', () => {
-      bleChar = null; setConnected(false); toast('🔌 Getrennt');
+      bleChar=null; setConn(false); toast('// LINK LOST');
     });
   } catch(e) {
-    if (e.name !== 'NotFoundError') toast('⚠ ' + e.message);
+    if (e.name !== 'NotFoundError') toast('// ERR: '+e.message);
   }
 }
 
-function setConnected(v) {
+function setConn(v) {
   bleConn = v;
-  g('pill').classList.toggle('on', v);
-  g('connLbl').textContent = v ? 'VERBUNDEN' : 'VERBINDEN';
-  g('sysBLEDot').className = 'sys-dot ' + (v?'ok':'idle');
-  g('sysBLE').textContent  = v ? 'Verbunden' : 'Getrennt';
+  g('bleDot').classList.toggle('live', v);
+  g('bleBtn').classList.toggle('live', v);
+  g('bleLbl').textContent = v ? 'ONLINE' : 'CONNECT';
+  g('dotBLE').className = 'sys-dot '+(v?'ok':'');
+  g('sysBLE').textContent = v ? 'VERBUNDEN' : 'GETRENNT';
 }
 
 async function sendCmd(obj) {
@@ -936,80 +1223,66 @@ async function sendCmd(obj) {
   try { await bleChar.writeValue(new TextEncoder().encode(JSON.stringify(obj))); } catch(e){}
 }
 
-function applyState(data) {
-  if (data.p)            S.p  = data.p;
-  if (data.ap != null)   S.ap = data.ap;
-  if (data.am != null)   S.am = data.am;
-  if (data.can != null)  S.can = data.can;
-  render();
-  toast('↓ Synchronisiert');
+function applyState(d) {
+  if (d.p)           S.p  = d.p;
+  if (d.ap != null)  S.ap = d.ap;
+  if (d.am != null)  S.am = d.am;
+  if (d.can != null) S.can = d.can;
+  render(); toast('// STATE SYNCED');
 }
 
-// ── Navigation ───────────────────────────────────────────────
-let activeTab = 0;
+// ── Nav ──────────────────────────────────────────────────────
 function selTab(i) {
-  activeTab = i;
   [0,1,2,3].forEach(t => {
     g('tab'+t).classList.toggle('active', t===i);
     g('panel'+t).classList.toggle('active', t===i);
   });
 }
 function selProfile(i) {
-  S.ap = i; render();
+  S.ap=i; render();
   if (bleConn) sendCmd({cmd:'setProfile',profile:i});
 }
 function selMode(i) {
-  S.am = i; render();
+  S.am=i; render();
   if (bleConn) sendCmd({cmd:'setMode',mode:i});
 }
 
 // ── Render ───────────────────────────────────────────────────
 function render() {
-  // Profiles
   [0,1].forEach(i => {
     g('pc'+i).classList.toggle('active', i===S.ap);
     g('pn'+i).textContent = S.p[i].name;
   });
-  // Modes
   [0,1,2].forEach(i => g('mc'+i).classList.toggle('active', i===S.am));
 
   const mn = modeNames[S.am];
-  g('modeTag').textContent    = mn;
-  g('bandModeTag').textContent = mn;
-  g('blinkProfTag').textContent = 'PROFIL 0'+(S.ap+1);
+  g('modeTag').textContent = mn;
+  g('bandTag').textContent = mn;
+  g('blinkTag').textContent = 'PROFIL 0'+(S.ap+1);
 
-  // Color
   const m = S.p[S.ap].m[S.am];
-  setSlider('sR',m.r,'vR',m.r);
-  setSlider('sG',m.g,'vG',m.g);
-  setSlider('sB',m.b,'vB',m.b);
-  setSlider('sBri',m.bri,'vBri',m.bri+'%');
+  sl('sR',m.r,'vR',m.r); sl('sG',m.g,'vG',m.g);
+  sl('sB',m.b,'vB',m.b); sl('sBri',m.bri,'vBri',m.bri+'%');
   updateSwatch();
 
-  // Strips
   renderStrips();
 
-  // Blinker
   const p = S.p[S.ap];
-  setSlider('sBR',p.br,'vBR',p.br);
-  setSlider('sBG',p.bg,'vBG',p.bg);
-  setSlider('sBB',p.bb,'vBB',p.bb);
-  setSlider('sDim',p.dim,'vDim',p.dim+'%');
+  sl('sBR',p.br,'vBR',p.br); sl('sBG',p.bg,'vBG',p.bg);
+  sl('sBB',p.bb,'vBB',p.bb); sl('sDim',p.dim,'vDim',p.dim+'%');
   g('togRun').classList.toggle('on', p.run);
   updateBlinkPrev();
 
-  // System
-  g('sysCANDot').className = 'sys-dot '+(S.can?'ok':'err');
-  g('sysCAN').textContent  = S.can ? 'Aktiv (500 kbps)' : 'Nicht verbunden';
-  g('sysKeyDot').className = 'sys-dot '+(S.can?'ok':'idle');
-  g('sysKey').textContent  = S.can ? 'Schlüssel '+(S.ap+1) : '—';
+  g('dotCAN').className = 'sys-dot '+(S.can?'ok':'err');
+  g('sysCAN').textContent  = S.can ? '500 KBPS · AKTIV' : 'NICHT VERBUNDEN';
+  g('dotKey').className = 'sys-dot '+(S.can?'ok':'');
+  g('sysKey').textContent  = S.can ? 'SCHLÜSSEL '+(S.ap+1) : '—';
 
-  // Names
-  g('nameInput0').value = S.p[0].name;
-  g('nameInput1').value = S.p[1].name;
+  g('ni0').value = S.p[0].name;
+  g('ni1').value = S.p[1].name;
 }
 
-function setSlider(sid, val, vid, disp) {
+function sl(sid, val, vid, disp) {
   g(sid).value = val;
   g(vid).textContent = disp !== undefined ? disp : val;
 }
@@ -1019,7 +1292,7 @@ function updateSwatch() {
   const f = m.bri/100;
   const r=Math.round(m.r*f), gg=Math.round(m.g*f), b=Math.round(m.b*f);
   g('swatch').style.background =
-    `linear-gradient(135deg, rgb(${r},${gg},${b}) 0%, rgb(${Math.round(r*.5)},${Math.round(gg*.5)},${Math.round(b*.5)}) 100%)`;
+    `linear-gradient(135deg, rgb(${r},${gg},${b}) 0%, rgb(${Math.round(r*.45)},${Math.round(gg*.45)},${Math.round(b*.45)}) 100%)`;
   g('hexVal').textContent = '#'+[r,gg,b].map(x=>x.toString(16).padStart(2,'0').toUpperCase()).join('');
 }
 
@@ -1027,26 +1300,25 @@ function updateBlinkPrev() {
   const p = S.p[S.ap];
   const col = `rgb(${p.br},${p.bg},${p.bb})`;
   ['bindL','bindR'].forEach(id => {
-    g(id).style.background = `rgba(${p.br},${p.bg},${p.bb},.12)`;
-    g(id).style.borderColor = `rgba(${p.br},${p.bg},${p.bb},.3)`;
-    g(id).style.color = col;
+    g(id).style.background    = `rgba(${p.br},${p.bg},${p.bb},.1)`;
+    g(id).style.borderColor   = `rgba(${p.br},${p.bg},${p.bb},.35)`;
+    g(id).style.color         = col;
+    g(id).style.textShadow    = `0 0 8px ${col}`;
   });
 }
 
 function renderStrips() {
   const grid = g('stripGrid');
   grid.innerHTML = '';
-  const p = S.p[S.ap];
-  const m = S.p[S.ap].m[S.am];
+  const p = S.p[S.ap], m = S.p[S.ap].m[S.am];
   for (let s=0; s<4; s++) {
-    const en  = m.en[s];
-    const len = p.sl[s];
-    const card = document.createElement('div');
-    card.className = 'strip-sub-card';
-    card.innerHTML = `
+    const en = m.en[s], len = p.sl[s];
+    const c = document.createElement('div');
+    c.className = 'strip-sub-card' + (en ? ' enabled' : '');
+    c.innerHTML = `
       <div class="strip-top">
         <div>
-          <div class="strip-label">${stripNames[s]}</div>
+          <div class="strip-name">${stripNames[s]}</div>
           <div class="strip-gpio">${stripGPIOs[s]}</div>
         </div>
         <div class="tog${en?' on':''}" id="stog${s}" onclick="toggleStrip(${s})"></div>
@@ -1055,17 +1327,17 @@ function renderStrips() {
         <span class="strip-len-lbl">LEDs</span>
         <input class="strip-len-input" type="number" min="1" max="144"
           value="${len}" id="slen${s}" oninput="onLen(${s},this.value)">
-        <span class="strip-max">MAX 144</span>
+        <span class="strip-max">/ 144</span>
       </div>`;
-    grid.appendChild(card);
+    grid.appendChild(c);
   }
 }
 
 // ── Interactions ─────────────────────────────────────────────
 function onColor() {
-  const r=+g('sR').value, gr=+g('sG').value, b=+g('sB').value, bri=+g('sBri').value;
-  g('vR').textContent=r; g('vG').textContent=gr; g('vB').textContent=b; g('vBri').textContent=bri+'%';
-  Object.assign(S.p[S.ap].m[S.am], {r,g:gr,b,bri});
+  const r=+g('sR').value, gg=+g('sG').value, b=+g('sB').value, bri=+g('sBri').value;
+  g('vR').textContent=r; g('vG').textContent=gg; g('vB').textContent=b; g('vBri').textContent=bri+'%';
+  Object.assign(S.p[S.ap].m[S.am], {r,g:gg,b,bri});
   updateSwatch();
 }
 function onBlink() {
@@ -1080,21 +1352,21 @@ function toggleRun() {
 }
 function toggleStrip(s) {
   S.p[S.ap].m[S.am].en[s] = !S.p[S.ap].m[S.am].en[s];
-  g('stog'+s).classList.toggle('on', S.p[S.ap].m[S.am].en[s]);
+  renderStrips();
   if (bleConn) sendCmd({cmd:'setStripEnabled',profile:S.ap,mode:S.am,strip:s,enabled:S.p[S.ap].m[S.am].en[s]});
 }
 function onLen(s, val) {
   const n = Math.min(144, Math.max(1, parseInt(val)||1));
   S.p[S.ap].sl[s] = n;
 }
-function onName(i, val) {
-  S.p[i].name = val;
-  g('pn'+i).textContent = val;
+function onName(i, v) {
+  S.p[i].name = v;
+  g('pn'+i).textContent = v;
 }
 
 async function sendAll() {
-  if (!bleConn) { toast('⚠ Nicht verbunden'); return; }
-  const p = S.p[S.ap], m = p.m[S.am];
+  if (!bleConn) { toast('// NOT CONNECTED'); return; }
+  const p=S.p[S.ap], m=p.m[S.am];
   await sendCmd({cmd:'setColor',profile:S.ap,mode:S.am,r:m.r,g:m.g,b:m.b,bri:m.bri});
   for (let s=0;s<4;s++) {
     await sendCmd({cmd:'setStripEnabled',profile:S.ap,mode:S.am,strip:s,enabled:m.en[s]});
@@ -1103,7 +1375,7 @@ async function sendAll() {
   await sendCmd({cmd:'setBlinker',profile:S.ap,r:p.br,g:p.bg,b:p.bb,dim:p.dim,run:p.run});
   await sendCmd({cmd:'setName',profile:0,name:S.p[0].name});
   await sendCmd({cmd:'setName',profile:1,name:S.p[1].name});
-  toast('✓ Gespeichert & gesendet');
+  toast('// SAVED · TRANSMITTED');
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -1111,7 +1383,7 @@ const g = id => document.getElementById(id);
 let toastT;
 function toast(msg) {
   const t=g('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200);
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400);
 }
 
 render();
